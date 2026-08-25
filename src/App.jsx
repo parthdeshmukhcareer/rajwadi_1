@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import localProducts from './data/products'
 import Header from './components/Header'
 import Home from './pages/Home'
 import Catalog from './pages/Catalog'
@@ -15,7 +16,7 @@ import Footer from './components/Footer'
 import WishlistSidebar from './components/WishlistSidebar'
 
 function App() {
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState(localProducts)
   const [cartCount, setCartCount] = useState(0)
   const [wishlist, setWishlist] = useState([])
   const [isWishlistOpen, setIsWishlistOpen] = useState(false)
@@ -29,14 +30,7 @@ function App() {
   }
 
   useEffect(() => {
-    // Fetch products from our backend API
-    axios.get("http://localhost:3000/api/products")
-      .then(res => {
-        setProducts(res.data)
-      })
-      .catch(err => {
-        console.error("Failed to fetch products:", err)
-      })
+    // Products are now loaded statically from local data.
   }, [])
 
   const toggleCart = () => {
