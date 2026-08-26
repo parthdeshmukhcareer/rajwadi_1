@@ -61,7 +61,7 @@ function Home() {
             
             {/*  Card 1: Rajputi Poshakh  */}
             <div className="premium-store-card" style={{flex: '0 0 calc(33.333% - 15px)', minWidth: '280px', height: '380px', borderRadius: '8px', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 25px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => {filterByCategory('Rajputi Poshakh')}}>
-              <img src="assets/images/lehenga.png" />
+              <img src="assets/images/c448f31266ab16343b17a56cca813e6e.jpg" style={{ objectPosition: 'top center' }} />
               <div className="store-card-overlay" style={{position: 'absolute', inset: '0', background: 'linear-gradient(to top, rgba(15,5,5,0.95) 0%, rgba(15,5,5,0.4) 45%, transparent 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '30px 15px'}}>
                 <i className="fa-solid fa-crown" style={{color: '#dfceab', fontSize: '1.6rem', marginBottom: '12px'}}></i>
                 <h3 style={{fontFamily: 'var(--font-serif)', color: '#fcfbf9', fontSize: '1.3rem', letterSpacing: '0.15em', marginBottom: '12px', fontWeight: '300'}}>RAJPUTI POSHAKH</h3>
@@ -71,7 +71,7 @@ function Home() {
             
             {/*  Card 2: Accessories  */}
             <div className="premium-store-card" style={{flex: '0 0 calc(33.333% - 15px)', minWidth: '280px', height: '380px', borderRadius: '8px', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 25px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => {filterByCategory('Accessories')}}>
-              <img src="assets/images/accessories_royal.png" />
+              <img src="assets/images/7d08712106caadebf74d60911d9d2474.jpg" style={{ objectPosition: 'center 75%' }} />
               <div className="store-card-overlay" style={{position: 'absolute', inset: '0', background: 'linear-gradient(to top, rgba(15,5,5,0.95) 0%, rgba(15,5,5,0.4) 45%, transparent 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '30px 15px'}}>
                 <i className="fa-solid fa-gem" style={{color: '#dfceab', fontSize: '1.6rem', marginBottom: '12px'}}></i>
                 <h3 style={{fontFamily: 'var(--font-serif)', color: '#fcfbf9', fontSize: '1.3rem', letterSpacing: '0.15em', marginBottom: '12px', fontWeight: '300'}}>ACCESSORIES</h3>
@@ -121,7 +121,7 @@ function Home() {
             </a>
             
             <div className="elegant-main-img-wrapper" style={{flexGrow: '1', position: 'relative', marginRight: '40px', minHeight: '400px'}}>
-              <img src="assets/images/haldi_look.png" alt="Elegant Moments Main" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', position: 'absolute', inset: '0'}} />
+              <img src="assets/images/rajputi poshakh.jpg" alt="Elegant Moments Main" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%', position: 'absolute', inset: '0'}} />
             </div>
           </div>
 
@@ -136,7 +136,7 @@ function Home() {
                   <span className="elegant-item-link" style={{fontFamily: 'var(--font-sans)', fontSize: '0.75rem', letterSpacing: '0.15em', color: '#a48c5a', textTransform: 'uppercase', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '8px'}}>EXPLORE <i className="fa-solid fa-arrow-right-long"></i></span>
                </div>
                <div className="elegant-item-img-container" style={{width: '60%', position: 'absolute', right: '0', top: '0', bottom: '0', zIndex: '1', clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0 100%)', overflow: 'hidden'}}>
-                  <img src="assets/images/wedding_look.png" alt="Bridal Edit" style={{width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease'}} className="elegant-item-img" />
+                  <img src="assets/images/bridal.jpg" alt="Bridal Edit" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', transition: 'transform 0.6s ease'}} className="elegant-item-img" />
                </div>
             </div>
 
@@ -148,7 +148,7 @@ function Home() {
                   <span className="elegant-item-link" style={{fontFamily: 'var(--font-sans)', fontSize: '0.75rem', letterSpacing: '0.15em', color: '#a48c5a', textTransform: 'uppercase', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '8px'}}>EXPLORE <i className="fa-solid fa-arrow-right-long"></i></span>
                </div>
                <div className="elegant-item-img-container" style={{width: '60%', position: 'absolute', right: '0', top: '0', bottom: '0', zIndex: '1', clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0 100%)', overflow: 'hidden'}}>
-                  <img src="assets/images/sangeet_look.png" alt="Outsider Edit" style={{width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease'}} className="elegant-item-img" />
+                  <img src="assets/images/outsider look.jpg" alt="Outsider Edit" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', transition: 'transform 0.6s ease'}} className="elegant-item-img" />
                </div>
             </div>
 

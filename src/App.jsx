@@ -14,10 +14,14 @@ import Account from './pages/Account'
 import ProductDetail from './pages/ProductDetail'
 import Footer from './components/Footer'
 import WishlistSidebar from './components/WishlistSidebar'
+import CartSidebar from './components/CartSidebar'
+import Checkout from './pages/Checkout'
+import Invoice from './pages/Invoice'
 
 function App() {
   const [products, setProducts] = useState(localProducts)
-  const [cartCount, setCartCount] = useState(0)
+  const [cart, setCart] = useState([])
+  const [isCartOpen, setIsCartOpen] = useState(false)
   const [wishlist, setWishlist] = useState([])
   const [isWishlistOpen, setIsWishlistOpen] = useState(false)
 
@@ -34,13 +38,26 @@ function App() {
   }, [])
 
   const toggleCart = () => {
-    console.log("Toggle cart drawer")
+    setIsCartOpen(true)
+  }
+
+  const addToCart = (productId) => {
+    setCart(prev => [...prev, productId])
+  }
+
+  const removeFromCart = (indexToRemove) => {
+    setCart(prev => prev.filter((_, index) => index !== indexToRemove))
+  }
+
+  const clearCart = () => {
+    setCart([])
   }
 
   return (
     <>
       <Header 
-        cartCount={cartCount} 
+        cartCount={cart.length} 
+        wishlistCount={wishlist.length}
         toggleCart={toggleCart} 
         toggleWishlistSidebar={() => setIsWishlistOpen(true)} 
       />
@@ -49,12 +66,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/story" element={<Story />} />
-          <Route path="/catalog" element={<Catalog products={products} wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+          <Route path="/catalog" element={<Catalog products={products} wishlist={wishlist} toggleWishlist={toggleWishlist} addToCart={addToCart} />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/account" element={<Account />} />
-          <Route path="/product/:id" element={<ProductDetail products={products} toggleCart={toggleCart} wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+          <Route path="/checkout" element={<Checkout cart={cart} products={products} clearCart={clearCart} />} />
+          <Route path="/invoice" element={<Invoice />} />
+          <Route path="/product/:id" element={<ProductDetail products={products} cart={cart} toggleCart={toggleCart} addToCart={addToCart} wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
         </Routes>
       </main>
       <Footer />
@@ -64,6 +83,13 @@ function App() {
         wishlist={wishlist} 
         products={products} 
         toggleWishlist={toggleWishlist} 
+      />
+      <CartSidebar 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
+        cart={cart} 
+        products={products} 
+        removeFromCart={removeFromCart} 
       />
     </>
   )

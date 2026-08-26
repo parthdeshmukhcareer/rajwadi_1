@@ -4452,3 +4452,116 @@ body.lock-scroll {
 .view-all-link:hover {
   opacity: 0.7;
 }
+
+/* Myntra Style Product Cards */
+.myntra-style-card {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  transition: box-shadow 0.2s ease-in-out;
+  background: #fff;
+}
+
+.myntra-style-card:hover {
+  box-shadow: 0 2px 16px 4px rgba(40,44,63,0.07) !important;
+}
+
+.myntra-style-card .product-img-wrapper {
+  position: relative;
+  overflow: hidden;
+  height: 300px;
+}
+
+.wishlist-btn-myntra {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  border: 1px solid #eaeaec;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+.myntra-style-card:hover .wishlist-btn-myntra {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.add-to-cart-btn-myntra {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 14px 0;
+  background: white;
+  border: 1px solid #d4d5d9;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #282c3f;
+  cursor: pointer;
+  z-index: 10;
+  transform: translateY(100%);
+  transition: transform 0.25s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-to-cart-btn-myntra:hover {
+  background: #f7f7f7;
+}
+
+.myntra-style-card:hover .add-to-cart-btn-myntra {
+  transform: translateY(0);
+}
+
+.myntra-style-card .product-details-summary {
+  padding: 12px 10px;
+  text-align: left;
+}
+
+.myntra-style-card .product-brand {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #282c3f;
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+}
+
+.myntra-style-card .product-title-myntra {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: #535766;
+  margin: 0 0 6px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.myntra-style-card .product-price-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.myntra-style-card .product-price {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #282c3f;
+}

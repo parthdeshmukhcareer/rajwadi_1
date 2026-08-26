@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-function Catalog({ products, wishlist = [], toggleWishlist }) {
+function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -85,12 +85,30 @@ function Catalog({ products, wishlist = [], toggleWishlist }) {
           </div>
 
 
+          {/* Category Filter */}
+          <div className="filter-group" style={{ marginBottom: '20px' }}>
+            <h4 className="filter-group-title" style={{ marginBottom: '10px', fontSize: '15px' }}>Category</h4>
+            <div className="filter-options" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {['Rajputi Poshakh', 'Jewellery', 'Accessories'].map(cat => (
+                <label className="filter-checkbox-label" key={cat} style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input 
+                    type="checkbox" 
+                    className="category-filter-check" 
+                    value={cat}
+                    checked={filters.categories.includes(cat)}
+                    onChange={() => handleCheckboxChange('categories', cat)}
+                  /> {cat}
+                </label>
+              ))}
+            </div>
+          </div>
+
           {/* Color Filter */}
-          <div className="filter-group">
-            <h4 className="filter-group-title">Color</h4>
-            <div className="filter-options">
+          <div className="filter-group" style={{ marginBottom: '20px' }}>
+            <h4 className="filter-group-title" style={{ marginBottom: '10px', fontSize: '15px' }}>Color</h4>
+            <div className="filter-options" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {['Red', 'Cream', 'Green', 'Gold', 'Blue'].map(col => (
-                <label className="filter-checkbox-label" key={col}>
+                <label className="filter-checkbox-label" key={col} style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input 
                     type="checkbox" 
                     className="color-filter-check" 
@@ -103,29 +121,13 @@ function Catalog({ products, wishlist = [], toggleWishlist }) {
             </div>
           </div>
 
-          {/* Fabric Filter */}
-          <div className="filter-group">
-            <h4 className="filter-group-title">Fabric</h4>
-            <div className="filter-options">
-              {['Silk', 'Velvet', 'Georgette', 'Brocade'].map(fab => (
-                <label className="filter-checkbox-label" key={fab}>
-                  <input 
-                    type="checkbox" 
-                    className="fabric-filter-check" 
-                    value={fab}
-                    checked={filters.fabrics.includes(fab)}
-                    onChange={() => handleCheckboxChange('fabrics', fab)}
-                  /> {fab}
-                </label>
-              ))}
-            </div>
-          </div>
+
 
           {/* Price Filter */}
-          <div className="filter-group">
-            <h4 className="filter-group-title">Price Range</h4>
-            <div className="filter-options">
-              <label className="filter-checkbox-label">
+          <div className="filter-group" style={{ marginBottom: '10px' }}>
+            <h4 className="filter-group-title" style={{ marginBottom: '10px', fontSize: '15px' }}>Price Range</h4>
+            <div className="filter-options" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label className="filter-checkbox-label" style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input 
                   type="radio" 
                   name="price-filter" 
@@ -134,7 +136,7 @@ function Catalog({ products, wishlist = [], toggleWishlist }) {
                   onChange={() => setFilters(p => ({ ...p, priceRange: 'all' }))}
                 /> All Prices
               </label>
-              <label className="filter-checkbox-label">
+              <label className="filter-checkbox-label" style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input 
                   type="radio" 
                   name="price-filter" 
@@ -143,7 +145,7 @@ function Catalog({ products, wishlist = [], toggleWishlist }) {
                   onChange={() => setFilters(p => ({ ...p, priceRange: 'under200' }))}
                 /> Under 20000
               </label>
-              <label className="filter-checkbox-label">
+              <label className="filter-checkbox-label" style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input 
                   type="radio" 
                   name="price-filter" 
@@ -152,7 +154,7 @@ function Catalog({ products, wishlist = [], toggleWishlist }) {
                   onChange={() => setFilters(p => ({ ...p, priceRange: '200-300' }))}
                 /> 20000 - 300000
               </label>
-              <label className="filter-checkbox-label">
+              <label className="filter-checkbox-label" style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input 
                   type="radio" 
                   name="price-filter" 
@@ -169,7 +171,7 @@ function Catalog({ products, wishlist = [], toggleWishlist }) {
         <div className="catalog-content">
           <div className="catalog-content-header">
               <h2 className="catalog-title" style={{ fontFamily: 'var(--font-serif)', fontSize: '2.5rem', margin: 0, color: '#3a1a20' }}>
-                {searchQuery ? `Search Results for "${searchQuery}"` : "Ethnic Wear Collections"}
+                {searchQuery ? `Search Results for "${searchQuery}"` : "Rajputi Poshakh Collections"}
               </h2>
             <div className="catalog-actions-row">
               <button className="mobile-filter-btn" onClick={() => setIsMobileFilterOpen(true)}>
@@ -177,12 +179,33 @@ function Catalog({ products, wishlist = [], toggleWishlist }) {
               </button>
               <div className="catalog-sorting">
                 <span>Sort By:</span>
-                <select id="sortSelect" className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                  <option value="default">Featured</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="rating">Top Rated</option>
-                </select>
+                <div className="custom-sort-dropdown" style={{ position: 'relative' }}>
+                  <button 
+                    onClick={() => { /* Toggle state */ document.getElementById('sortOptionsList').classList.toggle('show'); }} 
+                    onBlur={() => { setTimeout(() => document.getElementById('sortOptionsList').classList.remove('show'), 200); }}
+                    style={{ padding: '8px 16px', backgroundColor: '#fff', border: '1px solid #d4d5d9', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-sans)', fontSize: '14px', color: '#432227', display: 'flex', alignItems: 'center', gap: '10px', minWidth: '160px', justifyContent: 'space-between' }}
+                  >
+                    <span>{
+                      sortBy === 'default' ? 'Featured' : 
+                      sortBy === 'price-low' ? 'Price: Low to High' : 
+                      sortBy === 'price-high' ? 'Price: High to Low' : 
+                      'Top Rated'
+                    }</span>
+                    <i className="fa-solid fa-chevron-down" style={{ fontSize: '12px', color: '#a48c5a' }}></i>
+                  </button>
+                  <ul id="sortOptionsList" style={{ position: 'absolute', top: '100%', right: 0, marginTop: '4px', backgroundColor: '#fff', border: '1px solid #eee', borderRadius: '4px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', listStyle: 'none', padding: '5px 0', margin: 0, width: '100%', minWidth: '180px', zIndex: 50, display: 'none', flexDirection: 'column' }}>
+                    <style>{`
+                      #sortOptionsList.show { display: flex !important; }
+                      .sort-opt { padding: 10px 16px; cursor: pointer; font-family: var(--font-sans); font-size: 14px; color: #555; transition: all 0.2s; }
+                      .sort-opt:hover { background-color: rgba(164, 140, 90, 0.1); color: #432227; }
+                      .sort-opt.active { background-color: #fcf8f0; color: #432227; font-weight: bold; border-left: 3px solid #a48c5a; padding-left: 13px; }
+                    `}</style>
+                    <li className={`sort-opt ${sortBy === 'default' ? 'active' : ''}`} onClick={() => { setSortBy('default'); document.getElementById('sortOptionsList').classList.remove('show'); }}>Featured</li>
+                    <li className={`sort-opt ${sortBy === 'price-low' ? 'active' : ''}`} onClick={() => { setSortBy('price-low'); document.getElementById('sortOptionsList').classList.remove('show'); }}>Price: Low to High</li>
+                    <li className={`sort-opt ${sortBy === 'price-high' ? 'active' : ''}`} onClick={() => { setSortBy('price-high'); document.getElementById('sortOptionsList').classList.remove('show'); }}>Price: High to Low</li>
+                    <li className={`sort-opt ${sortBy === 'rating' ? 'active' : ''}`} onClick={() => { setSortBy('rating'); document.getElementById('sortOptionsList').classList.remove('show'); }}>Top Rated</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -200,34 +223,41 @@ function Catalog({ products, wishlist = [], toggleWishlist }) {
               const emptyStars = 5 - (fullStars + halfStar);
 
               return (
-                <div className="product-card" key={product.id}>
-                  {product.tags && product.tags.length > 0 && product.id !== "prod-lehenga-01" && (
-                    <span className="product-tag">{product.tags[0]}</span>
-                  )}
-                  <div className="product-img-wrapper" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden' }}>
+                <div className="product-card myntra-style-card" key={product.id}>
+                  <div className="product-img-wrapper" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden' }} onClick={() => navigate(`/product/${product.id}`)}>
                     <button 
-                      title="Add to Wishlist" 
+                      className="wishlist-btn-myntra"
+                      title="Wishlist" 
                       onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
-                      style={{ position: 'absolute', top: '10px', right: '10px', background: 'white', border: 'none', borderRadius: '50%', width: '34px', height: '34px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', cursor: 'pointer', transition: 'all 0.2s' }}
                     >
-                      <i className={`${wishlist.includes(product.id) ? 'fa-solid' : 'fa-regular'} fa-heart`} style={{ color: wishlist.includes(product.id) ? 'var(--color-maroon)' : '#555', fontSize: '16px' }}></i>
+                      <i className={`${wishlist.includes(product.id) ? 'fa-solid' : 'fa-regular'} fa-heart`} style={{ color: wishlist.includes(product.id) ? '#ff3f6c' : '#535766', fontSize: '18px' }}></i>
                     </button>
-                    <div onClick={() => navigate(`/product/${product.id}`)} style={{ width: '100%', height: '100%' }}>
-                      <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
-                    </div>
+                    <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transform: 'scale(1.5)', transformOrigin: 'center 75%' }} />
                   </div>
-                  <div className="product-details-summary">
-                    <span className="product-cat">{product.id === "prod-lehenga-01" ? "" : product.category}</span>
-                    <h3 className="product-title" onClick={() => navigate(`/product/${product.id}`)} style={{ cursor: 'pointer' }}>{product.name}</h3>
-                    <div className="product-rating">
-                      {[...Array(fullStars)].map((_, i) => <i key={`f-${i}`} className="fa-solid fa-star stars"></i>)}
-                      {halfStar > 0 && <i className="fa-solid fa-star-half-stroke stars"></i>}
-                      {[...Array(emptyStars)].map((_, i) => <i key={`e-${i}`} className="fa-regular fa-star stars"></i>)}
-                      <span>({product.reviews || 0})</span>
-                    </div>
-                    <div className="product-price-row">
-                      <span className="product-price">₹{product.price.toFixed(2)}</span>
-                      <button className="product-card-btn" onClick={() => navigate(`/product/${product.id}`)}>View Details</button>
+                  <div className="product-details-summary" onClick={() => navigate(`/product/${product.id}`)}>
+                    <h3 className="product-brand">{product.brand || 'RAJWADI'}</h3>
+                    <p className="product-title-myntra">{product.name}</p>
+                    <div className="product-price-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                      <span className="product-price" style={{ fontSize: '16px', fontWeight: 'bold', color: '#3a1a20' }}>Rs. {product.price.toFixed(0)}</span>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button 
+                          style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#fff', color: '#432227', border: '1px solid #432227', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+                          title="Add to Cart"
+                          onMouseOver={e => { e.currentTarget.style.backgroundColor = '#432227'; e.currentTarget.style.color = '#fff'; }}
+                          onMouseOut={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#432227'; }}
+                          onClick={(e) => { e.stopPropagation(); addToCart(product.id); }}
+                        >
+                          <i className="fa-solid fa-cart-shopping"></i>
+                        </button>
+                        <button 
+                          style={{ padding: '0 12px', height: '32px', borderRadius: '4px', backgroundColor: '#432227', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', transition: 'background-color 0.2s' }}
+                          onMouseOver={e => e.currentTarget.style.backgroundColor = '#2a1518'}
+                          onMouseOut={e => e.currentTarget.style.backgroundColor = '#432227'}
+                          onClick={(e) => { e.stopPropagation(); addToCart(product.id); navigate('/checkout'); }}
+                        >
+                          BUY NOW
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

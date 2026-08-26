@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-function Header({ cartCount, toggleCart, toggleWishlistSidebar }) {
+function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
@@ -16,10 +16,10 @@ function Header({ cartCount, toggleCart, toggleWishlistSidebar }) {
 
   return (
     <header className="main-header" style={{ width: '100%', zIndex: 1000, position: 'relative', backgroundColor: '#1c120f' }}>
-      <div className="header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', height: '80px', padding: '0 4%', boxSizing: 'border-box' }}>
+      <div className="header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', height: '60px', padding: '0 30px 0 10px', boxSizing: 'border-box' }}>
         
         {/* Left side: Mobile Menu Toggle & Logo */}
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', flex: 1, justifyContent: 'flex-start' }}>
           <button className="action-icon-btn mobile-menu-btn" title="Menu" style={{ marginRight: '15px', color: 'var(--color-gold)', fontSize: '28px', background: 'none', border: 'none', cursor: 'pointer' }}>
             <i className="fa-solid fa-bars"></i>
           </button>
@@ -31,24 +31,21 @@ function Header({ cartCount, toggleCart, toggleWishlistSidebar }) {
         </div>
 
         {/* Center side: Navigation Links */}
-        <nav className="nav-categories-header" style={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+        <nav className="nav-categories-header" style={{ flex: 2, display: 'flex', justifyContent: 'center' }}>
           <ul className="nav-menu" style={{ display: 'flex', gap: '35px', listStyle: 'none', margin: 0, padding: 0 }}>
             <li className="nav-item"><Link to="/" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>HOME</Link></li>
+            <li className="nav-item"><Link to="/catalog" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>COLLECTION</Link></li>
             <li className="nav-item"><Link to="/about" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>ABOUT US</Link></li>
-            <li className="nav-item"><Link to="/story" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>OUR STORY</Link></li>
-            <li className="nav-item"><Link to="/catalog" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>COLLECTIONS</Link></li>
             <li className="nav-item"><Link to="/blog" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>BLOG</Link></li>
             <li className="nav-item"><Link to="/contact" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>CONTACT US</Link></li>
           </ul>
         </nav>
 
         {/* Right side: Actions */}
-        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
-          <button className="action-icon-btn" onClick={() => setIsSearchOpen(true)} title="Search" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-            <i className="fa-solid fa-magnifying-glass" style={{ color: '#d4c098', fontSize: '20px' }}></i>
-          </button>
-          <button className="action-icon-btn" onClick={toggleWishlistSidebar} title="Wishlist" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '25px', flex: 1, justifyContent: 'flex-end' }}>
+          <button className="action-icon-btn" onClick={toggleWishlistSidebar} title="Wishlist" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <i className="fa-regular fa-heart" style={{ color: '#d4c098', fontSize: '20px' }}></i>
+            <span className="cart-badge" style={{ position: 'absolute', top: '-8px', right: '-12px', background: '#d4c098', color: '#2b161c', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>{wishlistCount || 0}</span>
           </button>
           <Link to="/account" className="action-icon-btn account-btn" title="Account" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
             <i className="fa-regular fa-user" style={{ color: '#d4c098', fontSize: '20px' }}></i>
