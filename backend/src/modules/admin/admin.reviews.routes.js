@@ -26,7 +26,16 @@ export async function adminReviewRoutes(app) {
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
     
     const [countRes] = await db.select({ count: sql`count(*)`.mapWith(Number) }).from(reviews).where(whereClause);
-    const data = await db.select().from(reviews).where(whereClause).orderBy(desc(reviews.createdAt)).limit(limit).offset(offset);
+    const reviewsData = await db.select().from(reviews).where(whereClause).orderBy(desc(reviews.createdAt)).limit(limit).offset(offset);
+    
+    // Fetch relationships
+    const { users, products } = await import('../../db/schema/index.js');
+    
+    const data = await Promise.all(reviewsData.map(async (review) => {
+      const [user] = await db.select().from(users).where(eq(users.id, review.userId)).limit(1);
+      const [product] = await db.select().from(products).where(eq(products.id, review.productId)).limit(1);
+      return { ...review, user, product };
+    }));
     
     return reply.send({ success: true, data, total: countRes.count });
   });

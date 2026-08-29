@@ -38,7 +38,12 @@ export async function adminOrderRoutes(app) {
     const { id } = req.params;
     const [order] = await db.select().from(orders).where(eq(orders.id, id)).limit(1);
     if (!order) throw Errors.ORDER_NOT_FOUND();
-    return reply.send({ success: true, data: order });
+    
+    const { orderItems, users } = await import('../../db/schema/index.js');
+    const items = await db.select().from(orderItems).where(eq(orderItems.orderId, id));
+    const [user] = await db.select().from(users).where(eq(users.id, order.userId)).limit(1);
+    
+    return reply.send({ success: true, data: { ...order, items, user } });
   });
 
   app.patch('/:id/status', async (req, reply) => {

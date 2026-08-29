@@ -131,7 +131,7 @@ function Footer() {
     <div style={{backgroundColor: '#110a08', padding: '15px 0 10px', textAlign: 'center', position: 'relative'}}>
        
 
-       <p style={{fontFamily: 'var(--font-sans)', fontSize: '0.85rem', color: 'rgba(229, 209, 179, 0.6)', margin: '0', marginTop: '15px'}}>&copy; 2026 Rajwadi Royal. All Rights Reserved. Crafted with Premium Vanilla CSS & JS.</p>
+       <p style={{fontFamily: 'var(--font-sans)', fontSize: '0.85rem', color: 'rgba(229, 209, 179, 0.6)', margin: '0', marginTop: '15px'}}>Developed and managed by Bizleap.in</p>
     </div>
   </footer>
   );

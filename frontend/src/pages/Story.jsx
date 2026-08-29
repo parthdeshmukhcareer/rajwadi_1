@@ -27,8 +27,8 @@ function Story() {
             <span style={{display: 'inline-block', width: '40px', height: '1px', backgroundColor: '#dfceab'}}></span>
           </div>
           
-          <h2 style={{fontFamily: 'var(--font-serif)', fontSize: 'clamp(3rem, 5.5vw, 5rem)', color: '#fdfbf7', lineHeight: '1.1', fontWeight: '300', marginBottom: '25px', letterSpacing: '0.03em', textShadow: '0 5px 15px rgba(0,0,0,0.3)'}}>
-            A Royal Legacy
+          <h2 className="resp-hero-text" style={{fontFamily: 'var(--font-serif)', fontSize: 'clamp(3rem, 5.5vw, 5rem)', color: '#fdfbf7', lineHeight: '1.1', fontWeight: '300', marginBottom: '25px', letterSpacing: '0.03em', textShadow: '0 5px 15px rgba(0,0,0,0.3)'}}>
+            Where Tradition <br/> Meets Elegance
           </h2>
           
           <p style={{fontFamily: 'var(--font-sans)', fontSize: '1.15rem', lineHeight: '1.8', color: 'rgba(253, 251, 247, 0.9)', fontWeight: '300', maxWidth: '500px', margin: '0 auto', marginBottom: '40px'}}>
@@ -45,14 +45,14 @@ function Story() {
       </div>
 
       {/*  2. Minimalist Story Sections  */}
-      <div style={{backgroundColor: '#FDFBF7', padding: '40px 20px 100px'}}>
+      <div className="resp-padding" style={{backgroundColor: '#FDFBF7', padding: '40px 20px 100px'}}>
         <div style={{maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '50px'}}>
           
           {/*  Block 1  */}
-          <div style={{position: 'relative', padding: '60px 0', backgroundColor: '#FDFBF7', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '80px', overflow: 'hidden', marginBottom: '0'}}>
+          <div className="resp-flex-col resp-padding" style={{position: 'relative', padding: '60px 0', backgroundColor: '#FDFBF7', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '80px', overflow: 'hidden', marginBottom: '0'}}>
             
-            {/*  Huge faded 1979 background  */}
-            <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontFamily: 'var(--font-serif)', fontSize: 'clamp(15rem, 30vw, 35rem)', color: '#a48c5a', opacity: '0.04', fontWeight: '700', pointerEvents: 'none', whiteSpace: 'nowrap', userSelect: 'none'}}>
+            {/* Watermark text */}
+            <div className="resp-hero-bg-text resp-hidden" style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontFamily: 'var(--font-serif)', fontSize: 'clamp(15rem, 30vw, 35rem)', color: '#a48c5a', opacity: '0.04', fontWeight: '700', pointerEvents: 'none', whiteSpace: 'nowrap', userSelect: 'none'}}>
               1979
             </div>
 
@@ -102,7 +102,7 @@ function Story() {
           </div>
 
           {/*  Block 2: Timeline  */}
-          <div style={{display: 'flex', alignItems: 'stretch', gap: '60px', backgroundColor: '#ffffff', padding: '60px', borderRadius: '8px', boxShadow: '0 15px 40px rgba(0,0,0,0.04)', marginTop: '0'}}>
+          <div className="resp-flex-col resp-padding" style={{display: 'flex', alignItems: 'stretch', gap: '60px', backgroundColor: '#ffffff', padding: '60px', borderRadius: '8px', boxShadow: '0 15px 40px rgba(0,0,0,0.04)', marginTop: '0'}}>
             
             {/*  Left: Timeline  */}
             <div style={{flex: '1', padding: '20px 40px 20px 20px', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>

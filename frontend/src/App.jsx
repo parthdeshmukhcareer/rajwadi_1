@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import localProducts from './data/products'
@@ -17,6 +17,8 @@ import WishlistSidebar from './components/WishlistSidebar'
 import CartSidebar from './components/CartSidebar'
 import Checkout from './pages/Checkout'
 import Invoice from './pages/Invoice'
+import ScrollToTop from './components/ScrollToTop'
+import AdminApp from './admin/AdminApp'
 
 function App() {
   const [products, setProducts] = useState(localProducts)
@@ -24,6 +26,9 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [wishlist, setWishlist] = useState([])
   const [isWishlistOpen, setIsWishlistOpen] = useState(false)
+  const location = useLocation()
+  
+  const isAdminRoute = location.pathname.startsWith('/admin')
 
   const toggleWishlist = (productId) => {
     setWishlist(prev => 
@@ -53,8 +58,13 @@ function App() {
     setCart([])
   }
 
+  if (isAdminRoute) {
+    return <AdminApp />
+  }
+
   return (
     <>
+      <ScrollToTop />
       <Header 
         cartCount={cart.length} 
         wishlistCount={wishlist.length}

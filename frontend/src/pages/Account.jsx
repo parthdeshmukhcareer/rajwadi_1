@@ -64,7 +64,7 @@ function Account() {
 
   return (
     <section id="account-view" className="view-section active">
-      <div className="account-page-container" style={{ alignItems: 'flex-start', paddingTop: '120px', paddingBottom: '120px', minHeight: '100vh', position: 'relative' }}>
+      <div className="account-page-container resp-padding" style={{ alignItems: 'flex-start', paddingTop: '120px', paddingBottom: '120px', minHeight: '100vh', position: 'relative' }}>
         
         {toastMessage && (
           <div style={{ position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-maroon-dark)', color: 'white', padding: '10px 20px', borderRadius: '4px', zIndex: 1100, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
@@ -159,7 +159,7 @@ function Account() {
                 <p style={{ color: '#888', margin: 0, fontSize: '14px' }}>{user?.email}</p>
               </div>
 
-              <div style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
+              <div className="resp-flex-col" style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
                 <div style={{ flex: 1, backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px', textAlign: 'center', border: '1px solid #eaeaea' }}>
                   <span style={{ display: 'block', fontSize: '24px', color: '#a48c5a', marginBottom: '5px' }}>♦</span>
                   <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#555', textTransform: 'uppercase' }}>Royal Member</span>

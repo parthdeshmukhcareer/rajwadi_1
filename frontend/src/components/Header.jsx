@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
@@ -14,32 +15,54 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
     }
   };
 
+  React.useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
   return (
     <header className="main-header" style={{ width: '100%', zIndex: 1000, position: 'relative', backgroundColor: '#1c120f' }}>
-      <div className="header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', height: '60px', padding: '0 30px 0 10px', boxSizing: 'border-box' }}>
+      <div className="header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', height: '50px', padding: '0 30px 0 10px', boxSizing: 'border-box' }}>
         
         {/* Left side: Mobile Menu Toggle & Logo */}
         <div style={{ display: 'flex', alignItems: 'center', flex: 1, justifyContent: 'flex-start' }}>
-          <button className="action-icon-btn mobile-menu-btn" title="Menu" style={{ marginRight: '15px', color: 'var(--color-gold)', fontSize: '28px', background: 'none', border: 'none', cursor: 'pointer' }}>
+          <button className="action-icon-btn mobile-menu-btn" title="Menu" onClick={() => setIsMobileMenuOpen(true)} style={{ marginRight: '15px', color: 'var(--color-gold)', fontSize: '28px', background: 'none', border: 'none', cursor: 'pointer' }}>
             <i className="fa-solid fa-bars"></i>
           </button>
 
           <Link to="/" className="logo-area" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-            <img src="https://www.rajwadi.com/static/version1780378735/frontend/Aureatelabs/rajwadi/en_US/images/logo.svg" alt="Rajwadi Logo Desktop" style={{ height: '45px', width: 'auto', border: 'none', background: 'transparent', boxShadow: 'none', borderRadius: '0' }} className="logo-desktop" />
+            <img src="https://www.rajwadi.com/static/version1780378735/frontend/Aureatelabs/rajwadi/en_US/images/logo.svg" alt="Rajwadi Logo Desktop" style={{ height: '35px', width: 'auto', border: 'none', background: 'transparent', boxShadow: 'none', borderRadius: '0' }} className="logo-desktop" />
             <img src="https://www.rajwadi.com/static/version1780378735/frontend/Aureatelabs/rajwadi/en_US/images/logo.svg" alt="Rajwadi Logo Mobile" style={{ height: '35px', width: 'auto', border: 'none', background: 'transparent', boxShadow: 'none', borderRadius: '0' }} className="logo-mobile" />
           </Link>
         </div>
 
         {/* Center side: Navigation Links */}
-        <nav className="nav-categories-header" style={{ flex: 2, display: 'flex', justifyContent: 'center' }}>
+        <nav className={`nav-categories-header ${isMobileMenuOpen ? 'active' : ''}`} style={{ backgroundColor: '#17100e' }}>
+          <div className="mobile-drawer-header" style={{ backgroundColor: '#17100e' }}>
+            <button className="mobile-menu-close" onClick={() => setIsMobileMenuOpen(false)}>
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, paddingRight: '40px'}}>
+              <span style={{color: '#dfceab', fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: '400', letterSpacing: '0.05em'}}>Rajwadi</span>
+            </div>
+          </div>
           <ul className="nav-menu" style={{ display: 'flex', gap: '35px', listStyle: 'none', margin: 0, padding: 0 }}>
-            <li className="nav-item"><Link to="/" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>HOME</Link></li>
-            <li className="nav-item"><Link to="/catalog" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>COLLECTION</Link></li>
-            <li className="nav-item"><Link to="/about" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>ABOUT US</Link></li>
-            <li className="nav-item"><Link to="/blog" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>BLOG</Link></li>
-            <li className="nav-item"><Link to="/contact" className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>CONTACT US</Link></li>
+            <li className="nav-item"><Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>HOME</Link></li>
+            <li className="nav-item"><Link to="/catalog" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>COLLECTION</Link></li>
+            <li className="nav-item"><Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>ABOUT US</Link></li>
+            <li className="nav-item"><Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>BLOG</Link></li>
+            <li className="nav-item"><Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>CONTACT US</Link></li>
           </ul>
         </nav>
+        
+        {/* Mobile Overlay */}
+        <div className={`mobile-menu-overlay ${isMobileMenuOpen ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}></div>
 
         {/* Right side: Actions */}
         <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '25px', flex: 1, justifyContent: 'flex-end' }}>

@@ -1,0 +1,248 @@
+/* Component Specific Styles for Admin */
+
+/* Sidebar */
+.admin-sidebar-header {
+  height: var(--admin-topbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.admin-logo-text {
+  color: var(--admin-secondary);
+  font-family: var(--admin-font-heading);
+  letter-spacing: 2px;
+  font-size: 24px;
+  margin: 0;
+}
+
+.admin-sidebar-nav {
+  padding: 20px 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.admin-nav-group {
+  margin-bottom: 16px;
+}
+
+.admin-nav-header {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+  padding: 0 24px;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  color: rgba(255,255,255,0.8);
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.admin-nav-link:hover {
+  background-color: rgba(255,255,255,0.05);
+  color: white;
+}
+
+.admin-nav-link.active {
+  background-color: rgba(255,255,255,0.1);
+  color: var(--admin-secondary);
+  border-left-color: var(--admin-secondary);
+}
+
+.admin-nav-icon {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.admin-sidebar.collapsed .admin-nav-icon {
+  margin-right: 0;
+}
+
+.admin-sidebar.collapsed .admin-nav-link {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+/* Topbar */
+.admin-topbar-left, .admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-icon-btn {
+  color: var(--admin-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.admin-icon-btn:hover {
+  background-color: rgba(0,0,0,0.05);
+  color: var(--admin-primary);
+}
+
+.admin-search-container {
+  display: flex;
+  align-items: center;
+  background-color: var(--admin-bg-main);
+  border-radius: 100px;
+  padding: 6px 16px;
+  width: 300px;
+  border: 1px solid var(--admin-border);
+}
+
+.admin-search-icon {
+  color: var(--admin-text-muted);
+  margin-right: 8px;
+}
+
+.admin-search-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  outline: none;
+  font-family: var(--admin-font-body);
+}
+
+.admin-notification-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--admin-danger);
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.admin-profile-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 100px;
+  transition: background-color 0.2s;
+}
+
+.admin-profile-menu:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.admin-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--admin-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-profile-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Image Uploader */
+.image-uploader-container {
+  width: 100%;
+}
+
+.upload-dropzone {
+  border: 2px dashed var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  background-color: var(--admin-bg-main);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.upload-dropzone:hover, .upload-dropzone.dragging {
+  border-color: var(--admin-secondary);
+  background-color: rgba(212, 175, 55, 0.05);
+}
+
+.upload-icon {
+  color: var(--admin-text-muted);
+  margin-bottom: 12px;
+}
+
+.upload-dropzone p {
+  margin: 0 0 8px;
+  font-weight: 500;
+  color: var(--admin-text-main);
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: var(--admin-text-muted);
+}
+
+.upload-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.image-preview-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--admin-radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--admin-border);
+}
+
+.image-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.remove-image-btn:hover {
+  background-color: var(--admin-danger);
+}

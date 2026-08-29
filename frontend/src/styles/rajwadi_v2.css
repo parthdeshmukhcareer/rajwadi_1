@@ -4141,6 +4141,10 @@ body.lock-scroll {
   /* Better focus on the model */
 }
 
+.hero-bg-img {
+  object-position: center 20%;
+}
+
 .custom-hero-overlay {
   position: absolute;
   inset: 0;
@@ -4168,8 +4172,8 @@ body.lock-scroll {
 
 .custom-hero-kicker {
   font-family: var(--font-sans);
-  font-size: 0.85rem;
-  letter-spacing: 0.25em;
+  font-size: 0.8rem;
+  letter-spacing: 0.35em;
   color: #dfceab;
   margin-bottom: 25px;
   display: flex;
@@ -4190,11 +4194,10 @@ body.lock-scroll {
 
 .custom-hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(3.5rem, 6vw, 6rem);
-  /* Made slightly larger */
+  font-size: clamp(2.8rem, 4.5vw, 4.6rem);
   line-height: 1.1;
   font-weight: 300;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   margin-bottom: 30px;
   color: #fcfbf9;
 }
