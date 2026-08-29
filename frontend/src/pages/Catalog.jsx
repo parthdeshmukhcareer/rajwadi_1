@@ -1,7 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { productService } from '../services/product.service';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
+  useDocumentTitle('Shop Collection | Rajwadi');
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -16,6 +19,12 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
   const [sortBy, setSortBy] = useState('default');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState(null);
+  const [page, setPage] = useState(1);
+
   const handleCheckboxChange = (type, value) => {
     setFilters(prev => {
       const currentList = prev[type];
@@ -25,52 +34,66 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
         return { ...prev, [type]: [...currentList, value] };
       }
     });
+    setPage(1); // Reset page on filter change
   };
 
-  const filteredProducts = useMemo(() => {
-    let result = [...(products || [])];
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const params = { page, limit: 12 };
+        if (searchQuery) params.search = searchQuery;
+        if (filters.categories.length > 0) params.category = filters.categories[0];
+        if (filters.colors.length > 0) params.color = filters.colors[0];
+        if (filters.fabrics.length > 0) params.fabric = filters.fabrics[0];
+        if (filters.priceRange !== 'all') {
+          if (filters.priceRange === 'under200') params.maxPrice = 20000;
+          if (filters.priceRange === '200-300') { params.minPrice = 20000; params.maxPrice = 300000; }
+          if (filters.priceRange === 'over300') params.minPrice = 300000;
+        }
+        if (sortBy && sortBy !== 'default') params.sort = sortBy;
 
-    if (searchQuery) {
-      const lowerQuery = searchQuery.toLowerCase();
-      result = result.filter(p => (p.name && p.name.toLowerCase().includes(lowerQuery)) || (p.category && p.category.toLowerCase().includes(lowerQuery)));
-    }
-
-    if (filters.categories.length > 0) {
-      result = result.filter(p => filters.categories.includes(p.category));
-    }
+        const { data, pagination } = await productService.getProducts(params);
+        if (data && data.length > 0) {
+          setFilteredProducts(data);
+          setPagination(pagination);
+        } else {
+          throw new Error('No backend products');
+        }
+        setError(null);
+      } catch (err) {
+        // Fallback to local products filtering
+        let local = [...(products || [])];
+        if (searchQuery) {
+          local = local.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+        if (filters.categories.length > 0) {
+          local = local.filter(p => filters.categories.includes(p.category));
+        }
+        if (filters.colors.length > 0) {
+          local = local.filter(p => filters.colors.includes(p.color));
+        }
+        if (filters.fabrics.length > 0) {
+          local = local.filter(p => filters.fabrics.includes(p.fabric));
+        }
+        if (filters.priceRange !== 'all') {
+          local = local.filter(p => {
+            const pr = Number(p.price || p.basePrice || 0);
+            if (filters.priceRange === 'under200') return pr < 20000;
+            if (filters.priceRange === '200-300') return pr >= 20000 && pr <= 300000;
+            if (filters.priceRange === 'over300') return pr > 300000;
+            return true;
+          });
+        }
+        setFilteredProducts(local);
+        setError(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    if (filters.colors.length > 0) {
-      // Assuming product has a color array or string
-      result = result.filter(p => {
-         if (Array.isArray(p.color)) return p.color.some(c => filters.colors.includes(c));
-         return filters.colors.includes(p.color);
-      });
-    }
-
-    if (filters.fabrics.length > 0) {
-      // Assuming product has fabric
-      result = result.filter(p => filters.fabrics.includes(p.fabric));
-    }
-
-    if (filters.priceRange !== 'all') {
-      result = result.filter(p => {
-        if (filters.priceRange === 'under200') return p.price < 20000;
-        if (filters.priceRange === '200-300') return p.price >= 20000 && p.price <= 300000;
-        if (filters.priceRange === 'over300') return p.price > 300000;
-        return true;
-      });
-    }
-
-    if (sortBy === 'price-low') {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price-high') {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortBy === 'rating') {
-      result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    }
-
-    return result;
-  }, [products, filters, sortBy]);
+    fetchProducts();
+  }, [searchQuery, filters, sortBy, page, products]);
 
   return (
     <section id="catalog-view" className="view-section active" style={{ paddingTop: '100px' }}>
@@ -89,7 +112,7 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
           <div className="filter-group" style={{ marginBottom: '20px' }}>
             <h4 className="filter-group-title" style={{ marginBottom: '10px', fontSize: '15px' }}>Category</h4>
             <div className="filter-options" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {['Rajputi Poshakh', 'Jewellery', 'Accessories'].map(cat => (
+              {['Lehenga', 'Saree', 'Sherwani', 'Salwar Kameez'].map(cat => (
                 <label className="filter-checkbox-label" key={cat} style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input 
                     type="checkbox" 
@@ -212,57 +235,70 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
 
           {/* Grid of Products */}
           <div className="catalog-grid-display" id="productGrid">
-            {filteredProducts.length === 0 && (
+            {isLoading ? (
+              <div style={{ padding: '40px', textAlign: 'center', width: '100%', gridColumn: '1 / -1' }}>
+                <p>Loading products...</p>
+              </div>
+            ) : error ? (
+              <div style={{ padding: '40px', textAlign: 'center', width: '100%', gridColumn: '1 / -1', color: 'red' }}>
+                <p>{error}</p>
+              </div>
+            ) : filteredProducts.length === 0 ? (
               <div style={{ padding: '40px', textAlign: 'center', width: '100%', gridColumn: '1 / -1' }}>
                 <p>No products found matching your criteria.</p>
               </div>
-            )}
-            {filteredProducts.map(product => {
-              const fullStars = Math.floor(product.rating || 5);
-              const halfStar = (product.rating || 5) % 1 >= 0.5 ? 1 : 0;
-              const emptyStars = 5 - (fullStars + halfStar);
+            ) : (
+              filteredProducts.map(product => {
+                const fullStars = 5; // Default for now
+                let imageUrl = '/assets/images/placeholder.png';
+                if (product.image) {
+                  imageUrl = product.image;
+                } else if (product.images && product.images.length > 0) {
+                  imageUrl = product.images[0].url || product.images[0] || imageUrl;
+                }
 
-              return (
-                <div className="product-card myntra-style-card" key={product.id}>
-                  <div className="product-img-wrapper" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden' }} onClick={() => navigate(`/product/${product.id}`)}>
-                    <button 
-                      className="wishlist-btn-myntra"
-                      title="Wishlist" 
-                      onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
-                    >
-                      <i className={`${wishlist.includes(product.id) ? 'fa-solid' : 'fa-regular'} fa-heart`} style={{ color: wishlist.includes(product.id) ? '#ff3f6c' : '#535766', fontSize: '18px' }}></i>
-                    </button>
-                    <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', transform: 'scale(1.5)', transformOrigin: 'center 75%' }} />
-                  </div>
-                  <div className="product-details-summary" onClick={() => navigate(`/product/${product.id}`)}>
-                    <h3 className="product-brand">{product.brand || 'RAJWADI'}</h3>
-                    <p className="product-title-myntra">{product.name}</p>
-                    <div className="product-price-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-                      <span className="product-price" style={{ fontSize: '16px', fontWeight: 'bold', color: '#3a1a20' }}>Rs. {product.price.toFixed(0)}</span>
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button 
-                          style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#fff', color: '#432227', border: '1px solid #432227', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
-                          title="Add to Cart"
-                          onMouseOver={e => { e.currentTarget.style.backgroundColor = '#432227'; e.currentTarget.style.color = '#fff'; }}
-                          onMouseOut={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#432227'; }}
-                          onClick={(e) => { e.stopPropagation(); addToCart(product.id); }}
-                        >
-                          <i className="fa-solid fa-cart-shopping"></i>
-                        </button>
-                        <button 
-                          style={{ padding: '0 12px', height: '32px', borderRadius: '4px', backgroundColor: '#432227', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', transition: 'background-color 0.2s' }}
-                          onMouseOver={e => e.currentTarget.style.backgroundColor = '#2a1518'}
-                          onMouseOut={e => e.currentTarget.style.backgroundColor = '#432227'}
-                          onClick={(e) => { e.stopPropagation(); addToCart(product.id); navigate('/checkout'); }}
-                        >
-                          BUY NOW
-                        </button>
+                return (
+                  <div className="product-card myntra-style-card" key={product.id}>
+                    <div className="product-img-wrapper" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden' }} onClick={() => navigate(`/product/${product.slug || product.id}`)}>
+                      <button 
+                        className="wishlist-btn-myntra"
+                        title="Wishlist" 
+                        onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
+                      >
+                        <i className={`${wishlist.includes(product.id) ? 'fa-solid' : 'fa-regular'} fa-heart`} style={{ color: wishlist.includes(product.id) ? '#ff3f6c' : '#535766', fontSize: '18px' }}></i>
+                      </button>
+                      <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+                    </div>
+                    <div className="product-details-summary" onClick={() => navigate(`/product/${product.slug || product.id}`)}>
+                      <h3 className="product-brand">{product.brand || 'RAJWADI'}</h3>
+                      <p className="product-title-myntra" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</p>
+                      <div className="product-price-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                        <span className="product-price" style={{ fontSize: '16px', fontWeight: 'bold', color: '#3a1a20' }}>Rs. {product.basePrice}</span>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button 
+                            style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#fff', color: '#432227', border: '1px solid #432227', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+                            title="Add to Cart"
+                            onMouseOver={e => { e.currentTarget.style.backgroundColor = '#432227'; e.currentTarget.style.color = '#fff'; }}
+                            onMouseOut={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#432227'; }}
+                            onClick={(e) => { e.stopPropagation(); addToCart(product.defaultVariantId || product.id); }}
+                          >
+                            <i className="fa-solid fa-cart-shopping"></i>
+                          </button>
+                          <button 
+                            style={{ padding: '0 12px', height: '32px', borderRadius: '4px', backgroundColor: '#432227', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', transition: 'background-color 0.2s' }}
+                            onMouseOver={e => e.currentTarget.style.backgroundColor = '#2a1518'}
+                            onMouseOut={e => e.currentTarget.style.backgroundColor = '#432227'}
+                            onClick={(e) => { e.stopPropagation(); addToCart(product.defaultVariantId || product.id); navigate('/checkout'); }}
+                          >
+                            BUY NOW
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
       </div>

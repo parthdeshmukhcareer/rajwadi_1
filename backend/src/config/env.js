@@ -23,8 +23,8 @@ const envSchema = z.object({
   MAX_IMAGE_SIZE_MB: z.string().transform(Number).default('5'),
   ORDER_EXPIRATION_MINUTES: z.string().transform(Number).default('15'),
   ORDER_EXPIRATION_INTERVAL_MS: z.string().transform(Number).default('60000'),
-  FREE_SHIPPING_THRESHOLD: z.string().transform(Number).default('299900'),
-  DEFAULT_SHIPPING_FEE: z.string().transform(Number).default('9900'),
+  FREE_SHIPPING_THRESHOLD: z.string().transform(Number).default('2999'), // 2999 Rupees
+  DEFAULT_SHIPPING_FEE: z.string().transform(Number).default('99'), // 99 Rupees
   RAZORPAY_KEY_ID: z.string().default('rzp_test_dummykey'),
   RAZORPAY_KEY_SECRET: z.string().default('dummysecret'),
   RAZORPAY_WEBHOOK_SECRET: z.string().default('dummywebhooksecret'),

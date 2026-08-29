@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar }) {
+  const { isAuthenticated, logout } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,9 +72,34 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
             <i className="fa-regular fa-heart" style={{ color: '#d4c098', fontSize: '20px' }}></i>
             <span className="cart-badge" style={{ position: 'absolute', top: '-8px', right: '-12px', background: '#d4c098', color: '#2b161c', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>{wishlistCount || 0}</span>
           </button>
-          <Link to="/account" className="action-icon-btn account-btn" title="Account" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-            <i className="fa-regular fa-user" style={{ color: '#d4c098', fontSize: '20px' }}></i>
-          </Link>
+          
+          <div style={{ position: 'relative' }} className="user-dropdown-container">
+            <style>{`
+              .user-dropdown-container:hover .user-dropdown-menu { display: block; }
+              .user-dropdown-menu { display: none; position: absolute; top: 100%; right: -20px; background: white; border: 1px solid #eaeaea; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 10px 0; min-width: 180px; z-index: 1001; }
+              .user-dropdown-menu::before { content: ''; position: absolute; top: -6px; right: 26px; width: 10px; height: 10px; background: white; border-top: 1px solid #eaeaea; border-left: 1px solid #eaeaea; transform: rotate(45deg); }
+              .user-dropdown-menu::after { content: ''; position: absolute; top: -20px; left: 0; right: 0; height: 20px; background: transparent; }
+              .user-dropdown-item { display: block; padding: 10px 20px; color: #432227; text-decoration: none; font-size: 14px; font-weight: bold; transition: background 0.2s; cursor: pointer; }
+              .user-dropdown-item:hover { background: #fcf8f0; color: #a48c5a; }
+            `}</style>
+            <Link to="/account" className="action-icon-btn account-btn" title="Account" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', padding: '10px 0' }}>
+              <i className="fa-regular fa-user" style={{ color: '#d4c098', fontSize: '20px' }}></i>
+            </Link>
+            <div className="user-dropdown-menu">
+              {isAuthenticated ? (
+                <>
+                  <Link to="/account" className="user-dropdown-item">My Account</Link>
+                  <Link to="/account/orders" className="user-dropdown-item">My Orders</Link>
+                  <button onClick={() => { logout(); navigate('/account'); }} className="user-dropdown-item" style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none' }}>Sign Out</button>
+                </>
+              ) : (
+                <>
+                  <Link to="/account" className="user-dropdown-item">Sign In / Register</Link>
+                </>
+              )}
+            </div>
+          </div>
+
           <button className="action-icon-btn" onClick={toggleCart} title="Shopping Cart" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <i className="fa-solid fa-bag-shopping" style={{ color: '#d4c098', fontSize: '20px' }}></i>
             <span className="cart-badge" style={{ position: 'absolute', top: '-8px', right: '-12px', background: '#d4c098', color: '#2b161c', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>{cartCount || 0}</span>

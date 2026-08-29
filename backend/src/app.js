@@ -50,6 +50,7 @@ export const buildApp = async () => {
   await app.register(cors, {
     origin: env.FRONTEND_URL,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
   });
 
   await app.register(helmet);
@@ -109,7 +110,8 @@ export const buildApp = async () => {
       success: false,
       error: {
         code: 'INTERNAL_ERROR',
-        message: 'Internal server error',
+        message: error.message || 'Internal server error',
+        stack: error.stack
       }
     });
   });

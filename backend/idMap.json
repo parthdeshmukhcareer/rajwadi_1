@@ -1,0 +1,132 @@
+{
+  "idMap": {
+    "prod-lehenga-01": "013d3a8a-7446-4913-b5d4-544c4f332a6e",
+    "prod-saree-01": "2cd78137-6cac-4969-920c-6be43ea8da6a",
+    "prod-sherwani-01": "ffc55226-3a30-4ca5-9933-b539c299e666",
+    "prod-salwar-01": "f59891ce-7eb8-416e-96d7-ae90525c1420",
+    "prod-saree-02": "4baf082b-913d-48b2-bcd6-7895cc8d410b",
+    "prod-sherwani-02": "9f479d63-6304-4e58-9893-4a383454c368",
+    "prod-lehenga-02": "b7a42c89-02b6-459d-bf50-e4f0a34914aa",
+    "prod-lehenga-03": "487ae8a4-3ed7-4624-a7e2-1e937b96e84b",
+    "prod-lehenga-04": "025f9f59-1180-45b5-b6ec-10541dc6fe80",
+    "prod-lehenga-05": "357dc930-4204-4bef-a891-6f481aede6ab",
+    "prod-saree-03": "19f5fee2-cfc8-4229-b579-828aef923ecf",
+    "prod-saree-04": "47670d0f-b3ea-45de-8671-300e0312d02f",
+    "prod-saree-05": "09cbeed5-6d30-4d41-8c8b-67c1fabd9673",
+    "prod-sherwani-03": "8860c086-1e60-4e5d-966e-f7b78213886e",
+    "prod-sherwani-04": "93c7d0d9-e1f7-4e86-af15-6da022a89e4e",
+    "prod-sherwani-05": "30fcf31a-7deb-4b96-a423-2eddb99a89a6",
+    "prod-salwar-02": "2dcb0c75-517d-40b1-8f22-76a7fda06093",
+    "prod-salwar-03": "41d61cf6-f38d-449b-be50-e728f71a3d97"
+  },
+  "variantMap": {
+    "prod-lehenga-01": {
+      "S": "4d6c897f-a97e-4a22-9628-da02c39e625a",
+      "M": "321c8184-1f84-4cb0-b4e9-1a5ca01dd3f7",
+      "L": "fcbb7b4f-0ce7-4be6-b157-b87a2700e91d",
+      "XL": "e4f37096-872e-47f0-901a-bb74472a0704"
+    },
+    "prod-saree-01": {
+      "S": "bfd003f7-0117-4ba2-ab34-9f7f9a763418",
+      "M": "fea4c5d7-99dd-4fab-b130-9e098e6c29cc",
+      "L": "e0a220e1-0885-4f4e-b5a1-60e5f6198b83",
+      "XL": "55c46460-bcc7-4a41-a79c-3e99e45b5780"
+    },
+    "prod-sherwani-01": {
+      "S": "a61bf58a-e27e-44ce-8972-778924151a5a",
+      "M": "c8fc52ad-603b-4822-9e90-58bc76b710b2",
+      "L": "fed18388-6ab6-4801-8a7a-4f1bd648dcd2",
+      "XL": "46f05b9e-6907-48cd-b97d-a450b8f8adba"
+    },
+    "prod-salwar-01": {
+      "S": "c9a43e46-3134-4b1d-ab16-73fa0af2fed2",
+      "M": "e46956ed-3bc4-419d-9739-cb2487b03422",
+      "L": "993a9b03-e39d-404e-abbf-1b310d566f3a",
+      "XL": "536d09a2-9910-4243-aeb1-b6a4cb57d77e"
+    },
+    "prod-saree-02": {
+      "S": "49427fde-eb17-44b2-92d0-238e9265e497",
+      "M": "90e51311-d256-4662-9075-5aa551da10f1",
+      "L": "16d1fa31-e7c0-44bb-b8dd-d0734206a764",
+      "XL": "667d25e6-33ed-44eb-be94-2d8003cd2481"
+    },
+    "prod-sherwani-02": {
+      "S": "984d5a74-25d2-4b36-a3a6-5bb265b513df",
+      "M": "4383e15f-b244-4202-9d0d-df8f8ab89c53",
+      "L": "ff12255f-c835-4c25-be4b-667591d69de6",
+      "XL": "c9a38685-b960-47d9-bc5a-c36eba7134f8"
+    },
+    "prod-lehenga-02": {
+      "S": "82908846-edc5-4355-9a62-797849f0d08f",
+      "M": "990e9fd6-66cc-412d-9d99-95e81bd8a5b1",
+      "L": "5ff5654d-d337-4017-ac56-ba18d5a63ad3",
+      "XL": "26638c0a-8aaa-46d3-adb3-e8b68609547d"
+    },
+    "prod-lehenga-03": {
+      "S": "0a7a382e-d8bb-40a4-880b-555b94230c1f",
+      "M": "7516dcf2-8bff-4667-acd6-08ad0fb917af",
+      "L": "6e546dfa-18bf-4dc1-b14e-19c91a013b48",
+      "XL": "bf3f96ec-7c35-4d72-b6a8-bc8b5bdd71d1"
+    },
+    "prod-lehenga-04": {
+      "S": "eec18769-7a1b-42db-9065-e7a6b77844b6",
+      "M": "f91bb943-838e-448c-8c2b-b7db82b05547",
+      "L": "f542281a-1d25-498f-b80c-1e73134d5c75",
+      "XL": "ba74ab3d-de13-44f0-b12e-60ac1a08a3a7"
+    },
+    "prod-lehenga-05": {
+      "S": "0cf6beeb-37ad-4969-9f10-086697d00ff0",
+      "M": "4113b738-e4e9-4c76-a3b6-2a31cdde4ba6",
+      "L": "72a79c45-cd92-4a91-b677-e63738e79556",
+      "XL": "2d631796-424c-41e3-819b-6196c8530c74"
+    },
+    "prod-saree-03": {
+      "S": "1e3589a4-c374-4569-90e6-72472b155a8f",
+      "M": "939993a4-beeb-4849-adff-3b849be7247b",
+      "L": "c16c63a3-8395-4a89-a85b-bd041606090f",
+      "XL": "f199f56f-a2bd-4574-8a4d-c45a822c4914"
+    },
+    "prod-saree-04": {
+      "S": "c3647bbb-d736-46ff-bc5b-1993b8ba826e",
+      "M": "af636123-98d2-44cd-a533-d8d116032884",
+      "L": "c9521f11-0d37-4434-bd05-d794d788f529",
+      "XL": "b48d996f-9e76-40bf-a95d-f0eda568ea90"
+    },
+    "prod-saree-05": {
+      "S": "1aa66a50-bad9-413b-8c1b-5921148ff91d",
+      "M": "30fce4ad-8adb-409c-b53d-22e255560f82",
+      "L": "a746357d-837d-4120-9c70-815403bcb143",
+      "XL": "a581527c-9db2-4ae1-ac82-f95bf9186659"
+    },
+    "prod-sherwani-03": {
+      "S": "89518a64-3693-49fb-bc4d-3002e3b5a98d",
+      "M": "8b92980f-0ad4-4973-bda8-4d4218757195",
+      "L": "70d99cad-46cc-41f0-ba1c-e25982163552",
+      "XL": "ebb6eddf-7163-416b-a0a9-3154ccb3a37f"
+    },
+    "prod-sherwani-04": {
+      "S": "b152e3a5-b258-4a4f-b307-8591b33da6bc",
+      "M": "055693c4-9342-44e0-84d1-e29d0b56c8b4",
+      "L": "3e23d88e-bd56-4de8-b7a3-7939c0fbed21",
+      "XL": "608ce086-3f07-4b40-9fac-27bec5dd2e96"
+    },
+    "prod-sherwani-05": {
+      "S": "6fc5bbf3-360c-497d-8a71-24748014d12c",
+      "M": "81c1a639-c57f-41f6-909b-f0b444ecf528",
+      "L": "f33cff97-5588-4aee-b181-79890767c7c2",
+      "XL": "b89873ce-9541-4b4a-a79f-57f2bf036823"
+    },
+    "prod-salwar-02": {
+      "S": "1d9cb1d3-d518-4c00-a914-9c7804d8605e",
+      "M": "cbb0180a-64f9-4ad7-b674-458526cf49bb",
+      "L": "e75e99e1-f6ad-41b1-a6c7-4de73c60dbd1",
+      "XL": "9a743063-4e7c-4a79-8881-c99ebb716de5"
+    },
+    "prod-salwar-03": {
+      "S": "36873b2b-6779-4412-88ba-476fd963ca28",
+      "M": "7cbdad8c-061d-4d26-baf3-291f380d720a",
+      "L": "01088467-9950-4ed5-96fb-0401f9b9256d",
+      "XL": "55abbe0b-bfad-4cef-8e2d-8c22918aed0a"
+    }
+  }
+}

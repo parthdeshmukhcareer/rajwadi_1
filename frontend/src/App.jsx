@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import localProducts from './data/products'
 import Header from './components/Header'
+import Payment from './pages/Payment'
 import Home from './pages/Home'
 import Catalog from './pages/Catalog'
 import About from './pages/About'
@@ -17,16 +18,20 @@ import WishlistSidebar from './components/WishlistSidebar'
 import CartSidebar from './components/CartSidebar'
 import Checkout from './pages/Checkout'
 import Invoice from './pages/Invoice'
+import Orders from './pages/Orders'
+import OrderDetails from './pages/OrderDetails'
+import ProtectedRoute from './components/ProtectedRoute'
 import ScrollToTop from './components/ScrollToTop'
 import AdminApp from './admin/AdminApp'
+import { useCart } from './context/CartContext'
 
 function App() {
   const [products, setProducts] = useState(localProducts)
-  const [cart, setCart] = useState([])
-  const [isCartOpen, setIsCartOpen] = useState(false)
   const [wishlist, setWishlist] = useState([])
   const [isWishlistOpen, setIsWishlistOpen] = useState(false)
   const location = useLocation()
+  
+  const { cartItemCount, toggleCartSidebar, clearCart, addToCart } = useCart()
   
   const isAdminRoute = location.pathname.startsWith('/admin')
 
@@ -39,24 +44,8 @@ function App() {
   }
 
   useEffect(() => {
-    // Products are now loaded statically from local data.
+    // Products are loaded statically from local data.
   }, [])
-
-  const toggleCart = () => {
-    setIsCartOpen(true)
-  }
-
-  const addToCart = (productId) => {
-    setCart(prev => [...prev, productId])
-  }
-
-  const removeFromCart = (indexToRemove) => {
-    setCart(prev => prev.filter((_, index) => index !== indexToRemove))
-  }
-
-  const clearCart = () => {
-    setCart([])
-  }
 
   if (isAdminRoute) {
     return <AdminApp />
@@ -66,9 +55,9 @@ function App() {
     <>
       <ScrollToTop />
       <Header 
-        cartCount={cart.length} 
+        cartCount={cartItemCount} 
         wishlistCount={wishlist.length}
-        toggleCart={toggleCart} 
+        toggleCart={toggleCartSidebar} 
         toggleWishlistSidebar={() => setIsWishlistOpen(true)} 
       />
       <main className="main-content">
@@ -81,9 +70,12 @@ function App() {
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/account" element={<Account />} />
-          <Route path="/checkout" element={<Checkout cart={cart} products={products} clearCart={clearCart} />} />
+          <Route path="/checkout" element={<Checkout products={products} />} />
+          <Route path="/payment/:orderNumber" element={<Payment />} />
           <Route path="/invoice" element={<Invoice />} />
-          <Route path="/product/:id" element={<ProductDetail products={products} cart={cart} toggleCart={toggleCart} addToCart={addToCart} wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+          <Route path="/product/:slug" element={<ProductDetail products={products} wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+          <Route path="/account/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+          <Route path="/account/orders/:orderNumber" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
         </Routes>
       </main>
       <Footer />
@@ -94,13 +86,7 @@ function App() {
         products={products} 
         toggleWishlist={toggleWishlist} 
       />
-      <CartSidebar 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cart={cart} 
-        products={products} 
-        removeFromCart={removeFromCart} 
-      />
+      <CartSidebar />
     </>
   )
 }

@@ -28,9 +28,7 @@ export const refreshSession = async () => {
 
   refreshTokenPromise = fetch(`${API_BASE_URL}/auth/refresh`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: {},
     credentials: 'include', // Important to send HttpOnly refresh_token cookie
   }).then(async (response) => {
     if (!response.ok) {
@@ -66,7 +64,7 @@ export const apiRequest = async (endpoint, options = {}, customConfig = {}) => {
   
   const headers = new Headers(options.headers || {});
   
-  if (!headers.has('Content-Type') && !(options.body instanceof FormData)) {
+  if (options.body && !headers.has('Content-Type') && !(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
 
@@ -78,6 +76,7 @@ export const apiRequest = async (endpoint, options = {}, customConfig = {}) => {
     ...options,
     headers,
     credentials: 'include',
+    cache: options.cache || 'no-store', // Prevent aggressive browser caching of GET requests
   };
 
   let response = await fetch(`${API_BASE_URL}${endpoint}`, config);
@@ -109,7 +108,11 @@ export const apiRequest = async (endpoint, options = {}, customConfig = {}) => {
   }
 
   if (!response.ok) {
-    const error = new Error(data?.error?.message || 'API request failed');
+    let errorMsg = data?.error?.message || data?.message;
+    if (!errorMsg && response.status === 401) {
+      errorMsg = 'Your session has expired. Please log in again.';
+    }
+    const error = new Error(errorMsg || 'API request failed');
     error.status = response.status;
     error.data = data;
     throw error;

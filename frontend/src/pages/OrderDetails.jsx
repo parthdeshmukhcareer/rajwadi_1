@@ -1,0 +1,299 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { orderService } from '../services/order.service';
+
+function OrderDetails() {
+  const { orderNumber } = useParams();
+  const [order, setOrder] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState(null);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        setIsLoading(true);
+        const res = await orderService.getOrderDetails(orderNumber);
+        // Flatten the backend response { order, items } into a single object
+        setOrder({ ...res.order, items: res.items });
+      } catch (err) {
+        setError(err.message || 'Failed to load order details.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchOrder();
+  }, [orderNumber]);
+
+  const handleCancelOrder = async () => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) return;
+    
+    setCancelError(null);
+    setCancelLoading(true);
+    try {
+      const res = await orderService.cancelOrder(orderNumber);
+      // Backend might return updated order or just a success message.
+      // Easiest is to reload the order details.
+      const updatedOrderRes = await orderService.getOrderDetails(orderNumber);
+      setOrder({ ...updatedOrderRes.order, items: updatedOrderRes.items });
+    } catch (err) {
+      setCancelError(err.message || 'Failed to cancel the order.');
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <section className="view-section active" style={{ paddingTop: '150px', paddingBottom: '100px', backgroundColor: '#fcf8f0', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', color: '#888' }}>
+          <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '32px', marginBottom: '15px' }}></i>
+          <p>Retrieving Order Details...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <section className="view-section active" style={{ paddingTop: '150px', paddingBottom: '100px', backgroundColor: '#fcf8f0', minHeight: '100vh' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ backgroundColor: '#fff', padding: '50px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+            <h1 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '28px', marginBottom: '15px' }}>Oops!</h1>
+            <p style={{ color: '#e74c3c', marginBottom: '20px' }}>{error || 'Order not found.'}</p>
+            <Link to="/account/orders" style={{ display: 'inline-block', backgroundColor: '#432227', color: '#fff', padding: '12px 30px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold' }}>Back to Orders</Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const formattedDate = new Date(order.createdAt).toLocaleDateString('en-IN', {
+    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'PENDING_PAYMENT': return '#f39c12';
+      case 'CONFIRMED': return '#3498db';
+      case 'PROCESSING': return '#9b59b6';
+      case 'SHIPPED': return '#2980b9';
+      case 'DELIVERED': return '#27ae60';
+      case 'CANCELLED': return '#e74c3c';
+      default: return '#888';
+    }
+  };
+
+  const getPaymentStatusColor = (status) => {
+    switch(status) {
+      case 'PENDING': return '#f39c12';
+      case 'PAID': return '#27ae60';
+      case 'FAILED': return '#e74c3c';
+      case 'REFUNDED': return '#8e44ad';
+      default: return '#888';
+    }
+  };
+
+  const shippingFlow = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+  let currentFlowIndex = shippingFlow.indexOf(order.status);
+  if (currentFlowIndex === -1 && order.status !== 'CANCELLED' && order.status !== 'PENDING_PAYMENT') {
+    currentFlowIndex = 0;
+  }
+
+  // Determine if cancellation is allowed (fallback logic visually, actual logic is in backend)
+  const canCancel = ['PENDING_PAYMENT', 'CONFIRMED'].includes(order.status);
+
+  return (
+    <section className="view-section active" style={{ paddingTop: '120px', paddingBottom: '80px', backgroundColor: '#fcf8f0', minHeight: '100vh' }}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 20px' }}>
+        
+        <div style={{ marginBottom: '20px' }}>
+          <Link to="/account/orders" style={{ color: '#a48c5a', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>&larr; Back to All Orders</Link>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' }}>
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '32px', margin: '0 0 5px 0' }}>Order #{order.orderNumber}</h1>
+            <p style={{ color: '#888', margin: 0, fontSize: '14px' }}>Placed on {formattedDate}</p>
+          </div>
+          
+          <div style={{ display: 'flex', gap: '15px' }}>
+            <div style={{ textAlign: 'center', backgroundColor: '#fff', padding: '10px 20px', borderRadius: '8px', border: '1px solid #eaeaea' }}>
+              <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>Payment</span>
+              <span style={{ color: getPaymentStatusColor(order.paymentStatus), fontWeight: 'bold', fontSize: '13px' }}>{order.paymentStatus}</span>
+            </div>
+            <div style={{ textAlign: 'center', backgroundColor: '#fff', padding: '10px 20px', borderRadius: '8px', border: '1px solid #eaeaea' }}>
+              <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>Order Status</span>
+              <span style={{ color: getStatusColor(order.status), fontWeight: 'bold', fontSize: '13px' }}>{order.status}</span>
+            </div>
+          </div>
+        </div>
+
+        {cancelError && (
+          <div style={{ backgroundColor: '#f8d7da', color: '#721c24', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #f5c6cb' }}>
+            <i className="fa-solid fa-circle-exclamation"></i> {cancelError}
+          </div>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', marginBottom: '30px' }}>
+          
+          {/* Customer & Shipping Info */}
+          <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '20px', marginTop: 0, marginBottom: '20px', borderBottom: '1px solid #eaeaea', paddingBottom: '10px' }}>Shipping Details</h3>
+            
+            <div style={{ marginBottom: '15px' }}>
+              <strong style={{ display: 'block', color: '#333', fontSize: '15px', marginBottom: '5px' }}>{order.shippingAddress?.fullName || order.user?.firstName + ' ' + order.user?.lastName}</strong>
+              <p style={{ color: '#666', fontSize: '14px', margin: '0 0 5px 0', lineHeight: '1.5' }}>
+                {order.shippingAddress?.addressLine1}<br />
+                {order.shippingAddress?.addressLine2 && <>{order.shippingAddress?.addressLine2}<br /></>}
+                {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.postalCode}<br />
+                {order.shippingAddress?.country || 'India'}
+              </p>
+              <p style={{ color: '#666', fontSize: '14px', margin: 0 }}>
+                <i className="fa-solid fa-phone" style={{ fontSize: '12px', color: '#a48c5a', marginRight: '5px' }}></i> {order.shippingAddress?.phone}
+              </p>
+            </div>
+          </div>
+
+          {/* Tracking Flow */}
+          <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '20px', marginTop: 0, marginBottom: '20px', borderBottom: '1px solid #eaeaea', paddingBottom: '10px' }}>Tracking Status</h3>
+            
+            {order.status === 'CANCELLED' ? (
+              <div style={{ padding: '20px', backgroundColor: '#fef1f0', color: '#e74c3c', borderRadius: '8px', textAlign: 'center', fontWeight: 'bold' }}>
+                This order has been cancelled.
+              </div>
+            ) : order.status === 'PENDING_PAYMENT' ? (
+               <div style={{ padding: '20px', backgroundColor: '#fff8e5', color: '#f39c12', borderRadius: '8px', textAlign: 'center', fontWeight: 'bold' }}>
+                Awaiting Payment Completion.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', margin: '30px 0 20px 0' }}>
+                {/* Progress Line */}
+                <div style={{ position: 'absolute', top: '15px', left: '10%', right: '10%', height: '3px', backgroundColor: '#eaeaea', zIndex: 1 }}></div>
+                <div style={{ position: 'absolute', top: '15px', left: '10%', width: currentFlowIndex >= 0 ? `${(currentFlowIndex / (shippingFlow.length - 1)) * 80}%` : '0%', height: '3px', backgroundColor: '#a48c5a', zIndex: 2, transition: 'width 0.5s ease' }}></div>
+
+                {shippingFlow.map((step, index) => {
+                  const isCompleted = index <= currentFlowIndex;
+                  return (
+                    <div key={step} style={{ position: 'relative', zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: isCompleted ? '#a48c5a' : '#fff', border: `3px solid ${isCompleted ? '#a48c5a' : '#eaeaea'}`, color: isCompleted ? '#fff' : '#eaeaea', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px', fontSize: '12px' }}>
+                        <i className={`fa-solid ${index === 0 ? 'fa-check' : index === 1 ? 'fa-box' : index === 2 ? 'fa-truck-fast' : 'fa-house'}`}></i>
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: 'bold', color: isCompleted ? '#432227' : '#aaa', textTransform: 'uppercase' }}>{step}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Tracking Info if available */}
+            {order.trackingNumber && (
+              <div style={{ marginTop: '25px', padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px dashed #ccc' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                  <span style={{ fontSize: '13px', color: '#888' }}>Carrier</span>
+                  <strong style={{ fontSize: '13px', color: '#432227' }}>{order.shippingCarrier || 'Standard Delivery'}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '13px', color: '#888' }}>Tracking No.</span>
+                  <strong style={{ fontSize: '13px', color: '#432227' }}>{order.trackingNumber}</strong>
+                </div>
+                {order.trackingUrl && (
+                  <a href={order.trackingUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'block', marginTop: '10px', textAlign: 'center', color: '#a48c5a', fontSize: '13px', fontWeight: 'bold', textDecoration: 'none' }}>Track Package <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '10px' }}></i></a>
+                )}
+              </div>
+            )}
+
+            {/* Cancellation Button */}
+            {canCancel && order.status !== 'CANCELLED' && (
+               <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                  <button 
+                    onClick={handleCancelOrder}
+                    disabled={cancelLoading}
+                    style={{ background: 'none', border: '1px solid #e74c3c', color: '#e74c3c', padding: '10px 20px', borderRadius: '4px', fontSize: '13px', fontWeight: 'bold', cursor: cancelLoading ? 'not-allowed' : 'pointer', textTransform: 'uppercase' }}
+                  >
+                    {cancelLoading ? 'Processing...' : 'Cancel Order'}
+                  </button>
+               </div>
+            )}
+          </div>
+        </div>
+
+        {/* Order Items */}
+        <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', marginBottom: '30px' }}>
+          <h3 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '20px', marginTop: 0, marginBottom: '20px', borderBottom: '1px solid #eaeaea', paddingBottom: '10px' }}>Items Ordered</h3>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {order.items?.map((item) => (
+              <div key={item.id} style={{ display: 'flex', gap: '20px', paddingBottom: '20px', borderBottom: '1px solid #f5f5f5' }}>
+                <div style={{ width: '100px', height: '120px', backgroundColor: '#fcfcfc', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                  {item.productImage ? (
+                    <img src={item.productImage} alt={item.productName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc' }}><i className="fa-solid fa-image"></i></div>
+                  )}
+                </div>
+                
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <h4 style={{ margin: '0 0 5px 0', fontSize: '16px', color: '#432227' }}>{item.productName || 'Unknown Product'}</h4>
+                  <div style={{ fontSize: '13px', color: '#888', marginBottom: '10px', display: 'flex', gap: '15px' }}>
+                    {item.color && <span>Color: <strong>{item.color}</strong></span>}
+                    {item.size && <span>Size: <strong>{item.size}</strong></span>}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#555' }}>
+                    Qty: <strong>{item.quantity}</strong>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end' }}>
+                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#432227' }}>₹{Number(item.unitPrice).toFixed(2)}</span>
+                  {item.quantity > 1 && (
+                     <span style={{ fontSize: '12px', color: '#888' }}>₹{(Number(item.unitPrice) * item.quantity).toFixed(2)} total</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Order Summary Totals */}
+          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ width: '300px', backgroundColor: '#fcf8f0', padding: '20px', borderRadius: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', color: '#555' }}>
+                <span>Subtotal</span>
+                <span>₹{Number(order.subtotal).toFixed(2)}</span>
+              </div>
+              
+              {Number(order.discountTotal) > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', color: '#27ae60' }}>
+                  <span>Discount</span>
+                  <span>-₹{Number(order.discountTotal).toFixed(2)}</span>
+                </div>
+              )}
+              
+              {/* 
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', color: '#555' }}>
+                <span>Tax (GST)</span>
+                <span>₹{Number(order.taxTotal).toFixed(2)}</span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#555' }}>
+                <span>Shipping</span>
+                <span>{Number(order.shippingTotal) === 0 ? 'FREE' : `₹${Number(order.shippingTotal).toFixed(2)}`}</span>
+              </div>
+              */}
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '15px', borderTop: '1px solid #ddd', fontSize: '18px', color: '#432227', fontWeight: 'bold' }}>
+                <span>Grand Total</span>
+                <span>₹{Number(order.grandTotal).toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
+export default OrderDetails;

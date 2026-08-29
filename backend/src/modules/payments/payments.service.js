@@ -1,6 +1,6 @@
 import { razorpay } from '../../config/razorpay.js';
 import { PaymentsRepository } from './payments.repository.js';
-import { Errors } from '../../utils/Errors.js';
+import { Errors } from '../../utils/errors.js';
 import { env } from '../../config/env.js';
 import crypto from 'crypto';
 

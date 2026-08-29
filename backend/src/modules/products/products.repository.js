@@ -95,13 +95,15 @@ export class ProductsRepository {
       const startingPrice = vars.length > 0 ? Math.min(...vars.map(v => v.price)) : prod.basePrice;
       const images = allImages.filter(img => img.productId === prod.id);
       const stats = allReviewsStats.find(s => s.productId === prod.id) || { averageRating: 0, reviewCount: 0 };
+      const firstVariantId = vars.length > 0 ? vars[0].id : null;
       
       return {
         ...prod,
         startingPrice,
         image: images.length > 0 ? images[0].imageUrl : null,
         averageRating: stats.averageRating,
-        reviewCount: stats.reviewCount
+        reviewCount: stats.reviewCount,
+        defaultVariantId: firstVariantId
       };
     });
 

@@ -1,274 +1,831 @@
 const products = [
   {
-    id: "prod-lehenga-01",
-    name: "poshakh 1",
-    category: "Lehenga",
-    price: 349.00,
-    rating: 4.9,
-    reviews: 42,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.15 PM.jpeg",
-    images: ["/assets/collection/WhatsApp Image 2026-07-16 at 5.51.23 PM.jpeg", "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.24 PM (2).jpeg", "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.27 PM (2) (1).jpeg"],
-    color: "Green",
-    fabric: "Georgette",
-    description: "A traditional Rajputi Poshakh featuring an elegant green lehenga paired with a contrasting pink odhani. Adorned with intricate gota patti and zari work, this ensemble perfectly captures the royal heritage of Rajasthan.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Bridal", "Wedding", "Best Seller"]
+    "id": "013d3a8a-7446-4913-b5d4-544c4f332a6e",
+    "name": "poshakh 1",
+    "category": "Lehenga",
+    "price": 349,
+    "rating": 4.9,
+    "reviews": 42,
+    "image": "/assets/collection/collection-img-01.jpeg",
+    "images": [
+      "/assets/collection/collection-img-01.jpeg"
+    ],
+    "color": "Green",
+    "fabric": "Georgette",
+    "description": "A traditional Rajputi Poshakh featuring an elegant green lehenga paired with a contrasting pink odhani. Adorned with intricate gota patti and zari work, this ensemble perfectly captures the royal heritage of Rajasthan.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Bridal",
+      "Wedding",
+      "Best Seller"
+    ],
+    "variants": [
+      {
+        "id": "4d6c897f-a97e-4a22-9628-da02c39e625a",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "321c8184-1f84-4cb0-b4e9-1a5ca01dd3f7",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "fcbb7b4f-0ce7-4be6-b157-b87a2700e91d",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "e4f37096-872e-47f0-901a-bb74472a0704",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-saree-01",
-    name: "Magnificent Ruby Banarasi Silk Saree",
-    category: "Saree",
-    price: 189.00,
-    rating: 4.8,
-    reviews: 29,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.16 PM.jpeg",
-    color: "Red",
-    fabric: "Silk",
-    description: "An exquisite Banarasi silk saree woven with genuine gold zari thread work. Features a rich pallu and a classic border. Includes a matching unstitched silk blouse piece.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Traditional", "Festive", "New Arrival"]
+    "id": "2cd78137-6cac-4969-920c-6be43ea8da6a",
+    "name": "Magnificent Ruby Banarasi Silk Saree",
+    "category": "Saree",
+    "price": 189,
+    "rating": 4.8,
+    "reviews": 29,
+    "image": "/assets/collection/collection-img-02.jpeg",
+    "color": "Red",
+    "fabric": "Silk",
+    "description": "An exquisite Banarasi silk saree woven with genuine gold zari thread work. Features a rich pallu and a classic border. Includes a matching unstitched silk blouse piece.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Traditional",
+      "Festive",
+      "New Arrival"
+    ],
+    "variants": [
+      {
+        "id": "bfd003f7-0117-4ba2-ab34-9f7f9a763418",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "fea4c5d7-99dd-4fab-b130-9e098e6c29cc",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "e0a220e1-0885-4f4e-b5a1-60e5f6198b83",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "55c46460-bcc7-4a41-a79c-3e99e45b5780",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-sherwani-01",
-    name: "Maharaja Cream Embroidered Sherwani Set",
-    category: "Sherwani",
-    price: 399.00,
-    rating: 4.9,
-    reviews: 35,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.17 PM (1).jpeg",
-    color: "Cream",
-    fabric: "Brocade",
-    description: "Make a grand entrance in this imperial cream sherwani tailored in raw silk brocade. Adorned with delicate sequence work, tilla embroidery, paired with a royal maroon churidar and pocket square.",
-    stitchingOptions: ["standard", "custom"],
-    inStock: true,
-    tags: ["Grooms Wear", "Wedding", "Royal"]
+    "id": "ffc55226-3a30-4ca5-9933-b539c299e666",
+    "name": "Maharaja Cream Embroidered Sherwani Set",
+    "category": "Sherwani",
+    "price": 399,
+    "rating": 4.9,
+    "reviews": 35,
+    "image": "/assets/collection/collection-img-03.jpeg",
+    "color": "Cream",
+    "fabric": "Brocade",
+    "description": "Make a grand entrance in this imperial cream sherwani tailored in raw silk brocade. Adorned with delicate sequence work, tilla embroidery, paired with a royal maroon churidar and pocket square.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Grooms Wear",
+      "Wedding",
+      "Royal"
+    ],
+    "variants": [
+      {
+        "id": "a61bf58a-e27e-44ce-8972-778924151a5a",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "c8fc52ad-603b-4822-9e90-58bc76b710b2",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "fed18388-6ab6-4801-8a7a-4f1bd648dcd2",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "46f05b9e-6907-48cd-b97d-a450b8f8adba",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-salwar-01",
-    name: "Emerald Grace Designer Anarkali Suit",
-    category: "Salwar Kameez",
-    price: 149.00,
-    rating: 4.7,
-    reviews: 18,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.17 PM.jpeg",
-    color: "Green",
-    fabric: "Georgette",
-    description: "A classic floor-length emerald green Anarkali suit in fine georgette. Highlights include detailed gold thread embroidery on the yoke and a lightweight matching organza dupatta.",
-    stitchingOptions: ["standard", "custom"],
-    inStock: true,
-    tags: ["Designer", "Party Wear"]
+    "id": "f59891ce-7eb8-416e-96d7-ae90525c1420",
+    "name": "Emerald Grace Designer Anarkali Suit",
+    "category": "Salwar Kameez",
+    "price": 149,
+    "rating": 4.7,
+    "reviews": 18,
+    "image": "/assets/collection/collection-img-04.jpeg",
+    "color": "Green",
+    "fabric": "Georgette",
+    "description": "A classic floor-length emerald green Anarkali suit in fine georgette. Highlights include detailed gold thread embroidery on the yoke and a lightweight matching organza dupatta.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Designer",
+      "Party Wear"
+    ],
+    "variants": [
+      {
+        "id": "c9a43e46-3134-4b1d-ab16-73fa0af2fed2",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "e46956ed-3bc4-419d-9739-cb2487b03422",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "993a9b03-e39d-404e-abbf-1b310d566f3a",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "536d09a2-9910-4243-aeb1-b6a4cb57d77e",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-saree-02",
-    name: "Golden Aura Georgette Lehenga Saree",
-    category: "Saree",
-    price: 219.00,
-    rating: 4.6,
-    reviews: 15,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.18 PM (1).jpeg", // reusing saree.png with style tint in code or simple reuse
-    color: "Gold",
-    fabric: "Georgette",
-    description: "A modern pre-draped lehenga-style saree featuring gold sequin stripes on georgette fabric. Ideal for reception nights and high-profile cocktail parties.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Fusion", "Cocktail"]
+    "id": "4baf082b-913d-48b2-bcd6-7895cc8d410b",
+    "name": "Golden Aura Georgette Lehenga Saree",
+    "category": "Saree",
+    "price": 219,
+    "rating": 4.6,
+    "reviews": 15,
+    "image": "/assets/collection/collection-img-05.jpeg",
+    "color": "Gold",
+    "fabric": "Georgette",
+    "description": "A modern pre-draped lehenga-style saree featuring gold sequin stripes on georgette fabric. Ideal for reception nights and high-profile cocktail parties.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Fusion",
+      "Cocktail"
+    ],
+    "variants": [
+      {
+        "id": "49427fde-eb17-44b2-92d0-238e9265e497",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "90e51311-d256-4662-9075-5aa551da10f1",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "16d1fa31-e7c0-44bb-b8dd-d0734206a764",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "667d25e6-33ed-44eb-be94-2d8003cd2481",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-sherwani-02",
-    name: "Imperial Emerald Velvet Bandhgala Suit",
-    category: "Sherwani",
-    price: 279.00,
-    rating: 4.8,
-    reviews: 22,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.18 PM.jpeg", // reuse sherwani.png
-    color: "Green",
-    fabric: "Velvet",
-    description: "A premium velvet Jodhpuri Bandhgala suit featuring brass buttons and structured shoulder pads. Perfectly blends classic Indian tailoring with a modern silhouette.",
-    stitchingOptions: ["standard", "custom"],
-    inStock: true,
-    tags: ["Jodhpuri", "Classic"]
+    "id": "9f479d63-6304-4e58-9893-4a383454c368",
+    "name": "Imperial Emerald Velvet Bandhgala Suit",
+    "category": "Sherwani",
+    "price": 279,
+    "rating": 4.8,
+    "reviews": 22,
+    "image": "/assets/collection/collection-img-06.jpeg",
+    "color": "Green",
+    "fabric": "Velvet",
+    "description": "A premium velvet Jodhpuri Bandhgala suit featuring brass buttons and structured shoulder pads. Perfectly blends classic Indian tailoring with a modern silhouette.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Jodhpuri",
+      "Classic"
+    ],
+    "variants": [
+      {
+        "id": "984d5a74-25d2-4b36-a3a6-5bb265b513df",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "4383e15f-b244-4202-9d0d-df8f8ab89c53",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "ff12255f-c835-4c25-be4b-667591d69de6",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "c9a38685-b960-47d9-bc5a-c36eba7134f8",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-lehenga-02",
-    name: "Mustard Blossom Georgette Lehenga",
-    category: "Lehenga",
-    price: 239.00,
-    rating: 4.8,
-    reviews: 14,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.19 PM (1).jpeg",
-    color: "Gold",
-    fabric: "Georgette",
-    description: "A stunning mustard yellow georgette lehenga choli embellished with floral thread and zari embroidery. Paired with a delicate matching dupatta.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Haldi", "Wedding", "Festival"]
+    "id": "b7a42c89-02b6-459d-bf50-e4f0a34914aa",
+    "name": "Mustard Blossom Georgette Lehenga",
+    "category": "Lehenga",
+    "price": 239,
+    "rating": 4.8,
+    "reviews": 14,
+    "image": "/assets/collection/collection-img-07.jpeg",
+    "color": "Gold",
+    "fabric": "Georgette",
+    "description": "A stunning mustard yellow georgette lehenga choli embellished with floral thread and zari embroidery. Paired with a delicate matching dupatta.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Haldi",
+      "Wedding",
+      "Festival"
+    ],
+    "variants": [
+      {
+        "id": "82908846-edc5-4355-9a62-797849f0d08f",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "990e9fd6-66cc-412d-9d99-95e81bd8a5b1",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "5ff5654d-d337-4017-ac56-ba18d5a63ad3",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "26638c0a-8aaa-46d3-adb3-e8b68609547d",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-lehenga-03",
-    name: "Olive Blossom Embroidered Lehenga",
-    category: "Lehenga",
-    price: 259.00,
-    rating: 4.7,
-    reviews: 19,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.19 PM (2).jpeg",
-    color: "Green",
-    fabric: "Georgette",
-    description: "An elegant olive green lehenga choli featuring intricate floral embroidery and sequence work on raw silk and georgette.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Mehndi", "Party Wear", "Festival"]
+    "id": "487ae8a4-3ed7-4624-a7e2-1e937b96e84b",
+    "name": "Olive Blossom Embroidered Lehenga",
+    "category": "Lehenga",
+    "price": 259,
+    "rating": 4.7,
+    "reviews": 19,
+    "image": "/assets/collection/collection-img-08.jpeg",
+    "color": "Green",
+    "fabric": "Georgette",
+    "description": "An elegant olive green lehenga choli featuring intricate floral embroidery and sequence work on raw silk and georgette.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Mehndi",
+      "Party Wear",
+      "Festival"
+    ],
+    "variants": [
+      {
+        "id": "0a7a382e-d8bb-40a4-880b-555b94230c1f",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "7516dcf2-8bff-4667-acd6-08ad0fb917af",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "6e546dfa-18bf-4dc1-b14e-19c91a013b48",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "bf3f96ec-7c35-4d72-b6a8-bc8b5bdd71d1",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-lehenga-04",
-    name: "Royal Heritage Red Bridal Lehenga",
-    category: "Lehenga",
-    price: 379.00,
-    rating: 4.9,
-    reviews: 52,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.19 PM.jpeg",
-    color: "Red",
-    fabric: "Silk",
-    description: "Celebrate your big day in this majestic red silk bridal lehenga, adorned with royal gold tilla, zari, and stone embroidery.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Bridal", "Wedding", "Royal"]
+    "id": "025f9f59-1180-45b5-b6ec-10541dc6fe80",
+    "name": "Royal Heritage Red Bridal Lehenga",
+    "category": "Lehenga",
+    "price": 379,
+    "rating": 4.9,
+    "reviews": 52,
+    "image": "/assets/collection/collection-img-09.jpeg",
+    "color": "Red",
+    "fabric": "Silk",
+    "description": "Celebrate your big day in this majestic red silk bridal lehenga, adorned with royal gold tilla, zari, and stone embroidery.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Bridal",
+      "Wedding",
+      "Royal"
+    ],
+    "variants": [
+      {
+        "id": "eec18769-7a1b-42db-9065-e7a6b77844b6",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "f91bb943-838e-448c-8c2b-b7db82b05547",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "f542281a-1d25-498f-b80c-1e73134d5c75",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "ba74ab3d-de13-44f0-b12e-60ac1a08a3a7",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-lehenga-05",
-    name: "Teal Sequins Dazzling Lehenga",
-    category: "Lehenga",
-    price: 289.00,
-    rating: 4.9,
-    reviews: 26,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.20 PM (1).jpeg",
-    color: "Blue",
-    fabric: "Georgette",
-    description: "Turn heads at your Sangeet night in this dazzling teal blue georgette lehenga choli, fully embellished with silver sequins and beadwork.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Sangeet", "Party Wear", "Sequins"]
+    "id": "357dc930-4204-4bef-a891-6f481aede6ab",
+    "name": "Teal Sequins Dazzling Lehenga",
+    "category": "Lehenga",
+    "price": 289,
+    "rating": 4.9,
+    "reviews": 26,
+    "image": "/assets/collection/collection-img-10.jpeg",
+    "color": "Blue",
+    "fabric": "Georgette",
+    "description": "Turn heads at your Sangeet night in this dazzling teal blue georgette lehenga choli, fully embellished with silver sequins and beadwork.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Sangeet",
+      "Party Wear",
+      "Sequins"
+    ],
+    "variants": [
+      {
+        "id": "0cf6beeb-37ad-4969-9f10-086697d00ff0",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "4113b738-e4e9-4c76-a3b6-2a31cdde4ba6",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "72a79c45-cd92-4a91-b677-e63738e79556",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "2d631796-424c-41e3-819b-6196c8530c74",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-saree-03",
-    name: "Imperial Plum Kanjivaram Silk Saree",
-    category: "Saree",
-    price: 199.00,
-    rating: 4.9,
-    reviews: 32,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.20 PM (2).jpeg",
-    color: "Red",
-    fabric: "Silk",
-    description: "A royal plum-colored Kanjivaram silk saree featuring a rich gold zari woven border and elegant paisley motifs on the pallu.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Kanjivaram", "Silk", "Traditional"]
+    "id": "19f5fee2-cfc8-4229-b579-828aef923ecf",
+    "name": "Imperial Plum Kanjivaram Silk Saree",
+    "category": "Saree",
+    "price": 199,
+    "rating": 4.9,
+    "reviews": 32,
+    "image": "/assets/collection/collection-img-11.jpeg",
+    "color": "Red",
+    "fabric": "Silk",
+    "description": "A royal plum-colored Kanjivaram silk saree featuring a rich gold zari woven border and elegant paisley motifs on the pallu.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Kanjivaram",
+      "Silk",
+      "Traditional"
+    ],
+    "variants": [
+      {
+        "id": "1e3589a4-c374-4569-90e6-72472b155a8f",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "939993a4-beeb-4849-adff-3b849be7247b",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "c16c63a3-8395-4a89-a85b-bd041606090f",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "f199f56f-a2bd-4574-8a4d-c45a822c4914",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-saree-04",
-    name: "Fuchsia Grid Katan Silk Saree",
-    category: "Saree",
-    price: 179.00,
-    rating: 4.8,
-    reviews: 21,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.20 PM.jpeg",
-    color: "Red",
-    fabric: "Silk",
-    description: "Drape yourself in elegance with this fuchsia pink Katan silk saree, styled with a checks layout filled with detailed gold zari creepers.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Katan Silk", "Festive", "Elegant"]
+    "id": "47670d0f-b3ea-45de-8671-300e0312d02f",
+    "name": "Fuchsia Grid Katan Silk Saree",
+    "category": "Saree",
+    "price": 179,
+    "rating": 4.8,
+    "reviews": 21,
+    "image": "/assets/collection/collection-img-12.jpeg",
+    "color": "Red",
+    "fabric": "Silk",
+    "description": "Drape yourself in elegance with this fuchsia pink Katan silk saree, styled with a checks layout filled with detailed gold zari creepers.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Katan Silk",
+      "Festive",
+      "Elegant"
+    ],
+    "variants": [
+      {
+        "id": "c3647bbb-d736-46ff-bc5b-1993b8ba826e",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "af636123-98d2-44cd-a533-d8d116032884",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "c9521f11-0d37-4434-bd05-d794d788f529",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "b48d996f-9e76-40bf-a95d-f0eda568ea90",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-saree-05",
-    name: "Scarlet Temple Border Silk Saree",
-    category: "Saree",
-    price: 169.00,
-    rating: 4.9,
-    reviews: 44,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.21 PM (1).jpeg",
-    color: "Red",
-    fabric: "Silk",
-    description: "A classic scarlet red silk saree featuring circular gold zari buttas and a green selvedge running along the traditional temple gold border.",
-    stitchingOptions: ["unstitched", "standard", "custom"],
-    inStock: true,
-    tags: ["Bridal", "Traditional", "Temple Border"]
+    "id": "09cbeed5-6d30-4d41-8c8b-67c1fabd9673",
+    "name": "Scarlet Temple Border Silk Saree",
+    "category": "Saree",
+    "price": 169,
+    "rating": 4.9,
+    "reviews": 44,
+    "image": "/assets/collection/collection-img-13.jpeg",
+    "color": "Red",
+    "fabric": "Silk",
+    "description": "A classic scarlet red silk saree featuring circular gold zari buttas and a green selvedge running along the traditional temple gold border.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Bridal",
+      "Traditional",
+      "Temple Border"
+    ],
+    "variants": [
+      {
+        "id": "1aa66a50-bad9-413b-8c1b-5921148ff91d",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "30fce4ad-8adb-409c-b53d-22e255560f82",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "a746357d-837d-4120-9c70-815403bcb143",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "a581527c-9db2-4ae1-ac82-f95bf9186659",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-sherwani-03",
-    name: "Imperial Navy Blue Velvet Sherwani",
-    category: "Sherwani",
-    price: 359.00,
-    rating: 4.9,
-    reviews: 18,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.21 PM (2).jpeg",
-    color: "Blue",
-    fabric: "Velvet",
-    description: "A luxurious navy blue velvet sherwani decorated with silver zari work, detailed bead embroidery, paired with ivory dhoti pants and a matching safa turban.",
-    stitchingOptions: ["standard", "custom"],
-    inStock: true,
-    tags: ["Grooms Wear", "Velvet", "Royal"]
+    "id": "8860c086-1e60-4e5d-966e-f7b78213886e",
+    "name": "Imperial Navy Blue Velvet Sherwani",
+    "category": "Sherwani",
+    "price": 359,
+    "rating": 4.9,
+    "reviews": 18,
+    "image": "/assets/collection/collection-img-14.jpeg",
+    "color": "Blue",
+    "fabric": "Velvet",
+    "description": "A luxurious navy blue velvet sherwani decorated with silver zari work, detailed bead embroidery, paired with ivory dhoti pants and a matching safa turban.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Grooms Wear",
+      "Velvet",
+      "Royal"
+    ],
+    "variants": [
+      {
+        "id": "89518a64-3693-49fb-bc4d-3002e3b5a98d",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "8b92980f-0ad4-4973-bda8-4d4218757195",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "70d99cad-46cc-41f0-ba1c-e25982163552",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "ebb6eddf-7163-416b-a0a9-3154ccb3a37f",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-sherwani-04",
-    name: "Regal Silver Embroidered Sherwani",
-    category: "Sherwani",
-    price: 329.00,
-    rating: 4.8,
-    reviews: 12,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.21 PM.jpeg",
-    color: "Cream",
-    fabric: "Brocade",
-    description: "Exquisite silver and cream designer sherwani featuring all-over floral thread embroidery and mirror details, perfect for wedding receptions.",
-    stitchingOptions: ["standard", "custom"],
-    inStock: true,
-    tags: ["Designer", "Wedding", "Silver Work"]
+    "id": "93c7d0d9-e1f7-4e86-af15-6da022a89e4e",
+    "name": "Regal Silver Embroidered Sherwani",
+    "category": "Sherwani",
+    "price": 329,
+    "rating": 4.8,
+    "reviews": 12,
+    "image": "/assets/collection/collection-img-15.jpeg",
+    "color": "Cream",
+    "fabric": "Brocade",
+    "description": "Exquisite silver and cream designer sherwani featuring all-over floral thread embroidery and mirror details, perfect for wedding receptions.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Designer",
+      "Wedding",
+      "Silver Work"
+    ],
+    "variants": [
+      {
+        "id": "b152e3a5-b258-4a4f-b307-8591b33da6bc",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "055693c4-9342-44e0-84d1-e29d0b56c8b4",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "3e23d88e-bd56-4de8-b7a3-7939c0fbed21",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "608ce086-3f07-4b40-9fac-27bec5dd2e96",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-sherwani-05",
-    name: "Royal Cream & Pink Indowestern Set",
-    category: "Sherwani",
-    price: 379.00,
-    rating: 4.9,
-    reviews: 24,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.22 PM (2).jpeg",
-    color: "Cream",
-    fabric: "Silk",
-    description: "An elegant indowestern groom sherwani featuring a cream silk jacket, a layered bottom skirt, and a soft pink georgette dupatta drape with gold borders.",
-    stitchingOptions: ["standard", "custom"],
-    inStock: true,
-    tags: ["Indowestern", "Wedding", "Royal"]
+    "id": "30fcf31a-7deb-4b96-a423-2eddb99a89a6",
+    "name": "Royal Cream & Pink Indowestern Set",
+    "category": "Sherwani",
+    "price": 379,
+    "rating": 4.9,
+    "reviews": 24,
+    "image": "/assets/collection/collection-img-16.jpeg",
+    "color": "Cream",
+    "fabric": "Silk",
+    "description": "An elegant indowestern groom sherwani featuring a cream silk jacket, a layered bottom skirt, and a soft pink georgette dupatta drape with gold borders.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Indowestern",
+      "Wedding",
+      "Royal"
+    ],
+    "variants": [
+      {
+        "id": "6fc5bbf3-360c-497d-8a71-24748014d12c",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "81c1a639-c57f-41f6-909b-f0b444ecf528",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "f33cff97-5588-4aee-b181-79890767c7c2",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "b89873ce-9541-4b4a-a79f-57f2bf036823",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-salwar-02",
-    name: "Indigo Floral Anarkali Suit",
-    category: "Salwar Kameez",
-    price: 139.00,
-    rating: 4.8,
-    reviews: 15,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.23 PM (1).jpeg",
-    color: "Blue",
-    fabric: "Georgette",
-    description: "A beautiful indigo blue georgette Anarkali suit featuring traditional floral prints, a matching dupatta, and comfortable bottom pants.",
-    stitchingOptions: ["standard", "custom"],
-    inStock: true,
-    tags: ["Anarkali", "Festive", "Designer"]
+    "id": "2dcb0c75-517d-40b1-8f22-76a7fda06093",
+    "name": "Indigo Floral Anarkali Suit",
+    "category": "Salwar Kameez",
+    "price": 139,
+    "rating": 4.8,
+    "reviews": 15,
+    "image": "/assets/collection/collection-img-17.jpeg",
+    "color": "Blue",
+    "fabric": "Georgette",
+    "description": "A beautiful indigo blue georgette Anarkali suit featuring traditional floral prints, a matching dupatta, and comfortable bottom pants.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Anarkali",
+      "Festive",
+      "Designer"
+    ],
+    "variants": [
+      {
+        "id": "1d9cb1d3-d518-4c00-a914-9c7804d8605e",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "cbb0180a-64f9-4ad7-b674-458526cf49bb",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "e75e99e1-f6ad-41b1-a6c7-4de73c60dbd1",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "9a743063-4e7c-4a79-8881-c99ebb716de5",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   },
   {
-    id: "prod-salwar-03",
-    name: "Imperial Plum Straight Suit",
-    category: "Salwar Kameez",
-    price: 159.00,
-    rating: 4.9,
-    reviews: 29,
-    image: "/assets/collection/WhatsApp Image 2026-07-16 at 5.51.23 PM (2).jpeg",
-    color: "Red",
-    fabric: "Silk",
-    description: "A sleek straight-cut plum maroon silk kurta paired with matching straight pants and a heavy gold zari woven dupatta.",
-    stitchingOptions: ["standard", "custom"],
-    inStock: true,
-    tags: ["Straight Fit", "Traditional", "Festive"]
+    "id": "41d61cf6-f38d-449b-be50-e728f71a3d97",
+    "name": "Imperial Plum Straight Suit",
+    "category": "Salwar Kameez",
+    "price": 159,
+    "rating": 4.9,
+    "reviews": 29,
+    "image": "/assets/collection/collection-img-18.jpeg",
+    "color": "Red",
+    "fabric": "Silk",
+    "description": "A sleek straight-cut plum maroon silk kurta paired with matching straight pants and a heavy gold zari woven dupatta.",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "tags": [
+      "Straight Fit",
+      "Traditional",
+      "Festive"
+    ],
+    "variants": [
+      {
+        "id": "36873b2b-6779-4412-88ba-476fd963ca28",
+        "size": "S",
+        "stockOnHand": 100
+      },
+      {
+        "id": "7cbdad8c-061d-4d26-baf3-291f380d720a",
+        "size": "M",
+        "stockOnHand": 100
+      },
+      {
+        "id": "01088467-9950-4ed5-96fb-0401f9b9256d",
+        "size": "L",
+        "stockOnHand": 100
+      },
+      {
+        "id": "55abbe0b-bfad-4cef-8e2d-8c22918aed0a",
+        "size": "XL",
+        "stockOnHand": 100
+      }
+    ]
   }
 ];
 

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 function Home() {
+  useDocumentTitle('Rajwadi | Premium Ethnic Fashion');
   const navigate = useNavigate();
   return (
     <section id="home-view" className="view-section active">

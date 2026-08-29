@@ -1,13 +1,15 @@
 import { db } from '../../db/index.js';
 import { orders, productVariants, payments, paymentAttempts, webhookEvents, refunds } from '../../db/schema/index.js';
-import { eq, inArray, sql as drizzleSql } from 'drizzle-orm';
-import { Errors } from '../../utils/Errors.js';
+import { eq, inArray, and, sql as drizzleSql } from 'drizzle-orm';
+import { Errors } from '../../utils/errors.js';
 
 export class PaymentsRepository {
   async getOrderForPayment(orderNumber, userId) {
-    const query = db.select().from(orders).where(eq(orders.orderNumber, orderNumber));
+    let query = db.select().from(orders);
     if (userId) {
-      query.where(eq(orders.userId, userId));
+      query = query.where(and(eq(orders.orderNumber, orderNumber), eq(orders.userId, userId)));
+    } else {
+      query = query.where(eq(orders.orderNumber, orderNumber));
     }
     const [order] = await query;
     return order;

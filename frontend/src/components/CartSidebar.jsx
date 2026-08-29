@@ -1,21 +1,24 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
-function CartSidebar({ isOpen, onClose, cart, products, removeFromCart }) {
+function CartSidebar() {
   const navigate = useNavigate();
+  const { isCartSidebarOpen, toggleCartSidebar, cartState, removeItem, updateQuantity } = useCart();
   
-  if (!isOpen) return null;
+  if (!isCartSidebarOpen) return null;
 
-  const cartItems = cart.map(productId => products.find(p => p.id === productId)).filter(Boolean);
-  const cartTotal = cartItems.reduce((total, item) => total + (item.price || 0), 0);
+  const cartItems = cartState?.items || [];
+  // Use cartState.subtotal from backend, or fallback to recalculating it if it's local state
+  const cartTotal = Number(cartState?.subtotal) || cartItems.reduce((acc, item) => acc + ((Number(item.variant?.price) || Number(item.priceAtAdd) || Number(item.price) || 0) * item.quantity), 0);
 
   return (
     <>
-      <div className="cart-drawer-overlay active" onClick={onClose} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1000, transition: 'opacity 0.3s' }}></div>
+      <div className="cart-drawer-overlay active" onClick={toggleCartSidebar} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1000, transition: 'opacity 0.3s' }}></div>
       <div className="cart-drawer active" style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '400px', maxWidth: '100vw', backgroundColor: '#fff', zIndex: 1001, display: 'flex', flexDirection: 'column', boxShadow: '-5px 0 25px rgba(0,0,0,0.15)', transform: 'translateX(0)', transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}>
         <div className="cart-drawer-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '25px', borderBottom: '1px solid #eaeaea', backgroundColor: '#fcf8f0' }}>
           <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#432227', margin: 0, fontWeight: '400' }}>Shopping Bag</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '22px', color: '#432227', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '30px', height: '30px', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>
+          <button onClick={toggleCartSidebar} style={{ background: 'none', border: 'none', fontSize: '22px', color: '#432227', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '30px', height: '30px', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>
             <i className="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -26,7 +29,7 @@ function CartSidebar({ isOpen, onClose, cart, products, removeFromCart }) {
               <i className="fa-solid fa-bag-shopping" style={{ fontSize: '3rem', color: '#e0d6c8', marginBottom: '20px' }}></i>
               <p style={{ fontFamily: 'var(--font-sans)', fontSize: '1.1rem', marginBottom: '25px' }}>Your shopping bag is empty.</p>
               <button 
-                onClick={() => { onClose(); navigate('/catalog'); }}
+                onClick={() => { toggleCartSidebar(); navigate('/catalog'); }}
                 style={{ backgroundColor: '#432227', color: '#fff', border: 'none', padding: '12px 30px', fontFamily: 'var(--font-sans)', fontSize: '0.85rem', letterSpacing: '0.15em', fontWeight: '600', textTransform: 'uppercase', cursor: 'pointer', transition: 'background-color 0.3s ease' }}
                 onMouseOver={(e) => e.target.style.backgroundColor='#2a1518'} 
                 onMouseOut={(e) => e.target.style.backgroundColor='#432227'}
@@ -35,24 +38,35 @@ function CartSidebar({ isOpen, onClose, cart, products, removeFromCart }) {
               </button>
             </div>
           ) : (
-            cartItems.map((product, index) => (
-              <div key={`${product.id}-${index}`} style={{ display: 'flex', gap: '15px', paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid #f0f0f0', position: 'relative' }}>
+            cartItems.map((item) => {
+              const product = item.product || {};
+              const variant = item.variant || {};
+              const price = Number(item.variant?.price || item.priceAtAdd || item.price) || 0;
+              let image = '/assets/images/placeholder.png';
+              if (product.images && product.images.length > 0) {
+                 image = product.images[0].url || product.images[0].imageUrl || image;
+              } else if (product.image) {
+                 image = product.image;
+              }
+
+              return (
+              <div key={item.id} style={{ display: 'flex', gap: '15px', paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid #f0f0f0', position: 'relative' }}>
                 <div 
-                  onClick={() => { onClose(); navigate(`/product/${product.id}`); }} 
+                  onClick={() => { toggleCartSidebar(); navigate(`/product/${product.slug || product.id}`); }} 
                   style={{ width: '90px', height: '120px', flexShrink: 0, cursor: 'pointer', borderRadius: '4px', overflow: 'hidden', border: '1px solid #f0f0f0' }}
                 >
-                  <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 75%', transition: 'transform 0.5s ease' }} onMouseOver={e => e.currentTarget.style.transform='scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform='scale(1)'} />
+                  <img src={image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 75%', transition: 'transform 0.5s ease' }} onMouseOver={e => e.currentTarget.style.transform='scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform='scale(1)'} />
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '5px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <h4 
-                      onClick={() => { onClose(); navigate(`/product/${product.id}`); }} 
+                      onClick={() => { toggleCartSidebar(); navigate(`/product/${product.slug || product.id}`); }} 
                       style={{ margin: '0 0 8px 0', fontFamily: 'var(--font-sans)', fontSize: '14px', fontWeight: '600', color: '#432227', cursor: 'pointer', paddingRight: '25px', lineHeight: '1.4' }}
                     >
                       {product.name}
                     </h4>
                     <button 
-                      onClick={() => removeFromCart(index)} 
+                      onClick={() => removeItem(item.id)} 
                       title="Remove"
                       style={{ position: 'absolute', top: '5px', right: 0, background: 'none', border: 'none', color: '#a0a0a0', cursor: 'pointer', fontSize: '16px', transition: 'color 0.2s' }}
                       onMouseOver={e => e.currentTarget.style.color = '#d9534f'}
@@ -61,14 +75,18 @@ function CartSidebar({ isOpen, onClose, cart, products, removeFromCart }) {
                       <i className="fa-solid fa-xmark"></i>
                     </button>
                   </div>
-                  <span style={{ fontSize: '12px', color: '#888', marginBottom: '12px', fontFamily: 'var(--font-sans)' }}>Size: Standard</span>
+                  <span style={{ fontSize: '12px', color: '#888', marginBottom: '12px', fontFamily: 'var(--font-sans)' }}>Size: {variant.size || variant.sku || 'Standard'}</span>
                   <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#432227' }}>₹{(product.price || 0).toFixed(2)}</span>
-                    <span style={{ fontSize: '12px', color: '#666', border: '1px solid #ddd', padding: '2px 8px', borderRadius: '2px' }}>Qty: 1</span>
+                    <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#432227' }}>₹{price.toFixed(2)}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: '2px', padding: '2px' }}>
+                      <button onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 5px' }}>-</button>
+                      <span style={{ fontSize: '12px', color: '#666', padding: '0 5px' }}>{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 5px' }}>+</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))
+            )})
           )}
         </div>
         
@@ -82,8 +100,8 @@ function CartSidebar({ isOpen, onClose, cart, products, removeFromCart }) {
             <button 
               style={{ width: '100%', padding: '16px', backgroundColor: '#432227', color: '#fff', border: 'none', fontFamily: 'var(--font-sans)', fontSize: '0.9rem', letterSpacing: '0.15em', fontWeight: '600', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.3s ease', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}
               onClick={() => {
-                alert("Proceeding to checkout with " + cartItems.length + " items!");
-                onClose();
+                navigate('/checkout');
+                toggleCartSidebar();
               }}
               onMouseOver={(e) => {e.target.style.backgroundColor='#2a1518'; e.target.style.boxShadow='0 4px 12px rgba(67, 34, 39, 0.2)'}} 
               onMouseOut={(e) => {e.target.style.backgroundColor='#432227'; e.target.style.boxShadow='none'}}

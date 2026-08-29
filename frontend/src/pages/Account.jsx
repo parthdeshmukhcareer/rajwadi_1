@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AddressManager from '../components/AddressManager';
 
 function Account() {
   const [accountTab, setAccountTab] = useState('login');
   const { user, isAuthenticated, login, register, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [toastMessage, setToastMessage] = useState('');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -72,7 +76,7 @@ function Account() {
           </div>
         )}
 
-        <div className="account-card-wrapper" style={{ marginTop: '0px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', overflow: 'hidden', width: '100%', maxWidth: '450px', margin: '0 auto' }}>
+        <div className="account-card-wrapper" style={{ marginTop: '0px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', overflow: 'hidden', width: '100%', maxWidth: isAuthenticated ? '900px' : '450px', margin: '0 auto' }}>
           
           {isLoading ? (
             <div style={{ padding: '40px', textAlign: 'center' }}>Loading session...</div>
@@ -105,7 +109,12 @@ function Account() {
                     </div>
                     <div>
                       <label htmlFor="loginPassword" style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#432227', marginBottom: '8px' }}>Password *</label>
-                      <input type="password" id="loginPassword" required placeholder="••••••••" style={{ width: '100%', padding: '12px 15px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={e => e.target.style.borderColor = '#a48c5a'} onBlur={e => e.target.style.borderColor = '#ddd'} />
+                      <div style={{ position: 'relative' }}>
+                        <input type={showLoginPassword ? "text" : "password"} id="loginPassword" required placeholder="••••••••" style={{ width: '100%', padding: '12px 40px 12px 15px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={e => e.target.style.borderColor = '#a48c5a'} onBlur={e => e.target.style.borderColor = '#ddd'} />
+                        <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: '5px' }}>
+                          <i className={`fa-solid ${showLoginPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                        </button>
+                      </div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
                       <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: '#555' }}>
@@ -136,7 +145,12 @@ function Account() {
                     </div>
                     <div>
                       <label htmlFor="signupPassword" style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#432227', marginBottom: '8px' }}>Password *</label>
-                      <input type="password" id="signupPassword" required placeholder="Create Password" style={{ width: '100%', padding: '12px 15px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={e => e.target.style.borderColor = '#a48c5a'} onBlur={e => e.target.style.borderColor = '#ddd'} />
+                      <div style={{ position: 'relative' }}>
+                        <input type={showSignupPassword ? "text" : "password"} id="signupPassword" required placeholder="Create Password" style={{ width: '100%', padding: '12px 40px 12px 15px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box' }} onFocus={e => e.target.style.borderColor = '#a48c5a'} onBlur={e => e.target.style.borderColor = '#ddd'} />
+                        <button type="button" onClick={() => setShowSignupPassword(!showSignupPassword)} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#888', padding: '5px' }}>
+                          <i className={`fa-solid ${showSignupPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                        </button>
+                      </div>
                     </div>
                     <label style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#555', cursor: 'pointer', alignItems: 'center' }}>
                       <input type="checkbox" required style={{ accentColor: '#a48c5a', width: '16px', height: '16px', cursor: 'pointer' }} /> I agree to the terms and privacy policies.
@@ -171,9 +185,17 @@ function Account() {
               </div>
 
               <div style={{ marginBottom: '30px' }}>
-                <h4 style={{ fontSize: '15px', color: '#432227', borderBottom: '1px solid #eaeaea', paddingBottom: '10px', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}><i className="fa-solid fa-clock-rotate-left"></i> Your Royal Order History</h4>
+                <AddressManager />
+              </div>
+
+              <div style={{ marginBottom: '30px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eaeaea', paddingBottom: '10px', marginBottom: '15px' }}>
+                  <h4 style={{ fontSize: '15px', color: '#432227', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}><i className="fa-solid fa-clock-rotate-left"></i> Your Royal Order History</h4>
+                  <Link to="/account/orders" style={{ fontSize: '13px', color: '#a48c5a', textDecoration: 'none', fontWeight: 'bold' }}>View All Orders &rarr;</Link>
+                </div>
                 <div style={{ padding: '20px', backgroundColor: '#fcfcfc', border: '1px dashed #ddd', borderRadius: '4px', textAlign: 'center' }}>
-                  <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>No orders placed yet. Start exploring the collection!</p>
+                  <p style={{ color: '#888', fontSize: '14px', margin: '0 0 15px 0' }}>Track your purchases, view order details, or manage returns.</p>
+                  <Link to="/account/orders" style={{ display: 'inline-block', backgroundColor: '#fcf8f0', color: '#a48c5a', padding: '10px 20px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', fontSize: '13px', border: '1px solid #a48c5a' }}>Go to My Orders</Link>
                 </div>
               </div>
 
