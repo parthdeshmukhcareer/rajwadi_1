@@ -2,6 +2,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Install Python and build tools for node-gyp (required by argon2)
+RUN apk add --no-cache python3 make g++
+
 # Copy package.json and lock file
 COPY package*.json ./
 
