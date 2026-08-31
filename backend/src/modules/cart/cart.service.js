@@ -123,9 +123,24 @@ export class CartService {
       estimatedTotal -= discount;
     }
 
+    const { env } = await import('../../config/env.js');
+    const settingsObj = await (await import('../admin/admin.settings.service.js')).adminSettingsService.getAllSettings();
+    const freeShippingThreshold = settingsObj.freeShippingThreshold !== undefined ? settingsObj.freeShippingThreshold : Number(env.FREE_SHIPPING_THRESHOLD);
+    const defaultShippingFee = settingsObj.defaultShippingFee !== undefined ? settingsObj.defaultShippingFee : Number(env.DEFAULT_SHIPPING_FEE);
+    
+    let shipping = 0;
+    if (estimatedTotal < freeShippingThreshold && cart.subtotal > 0) {
+      shipping = defaultShippingFee;
+    }
+    
+    estimatedTotal += shipping;
+    
+    // Calculate Tax just for preview if needed, but the original code didn't do it here. We'll leave it as is, or add basic tax preview if frontend expects it (it reads estimatedTotal).
+
     return {
       subtotal: cart.subtotal,
       discount,
+      shipping,
       estimatedTotal,
       cart
     };

@@ -8,9 +8,15 @@
  */
 import { apiRequest, refreshSession, clearAccessToken, setAccessToken } from '../../api/client';
 
+export const adminApiRequest = (endpoint, options = {}, customConfig = {}) => {
+  return apiRequest(endpoint, options, { ...customConfig, sessionType: 'admin' });
+};
+
+export const refreshAdminSession = () => {
+  return refreshSession('admin');
+};
+
 export {
-  apiRequest as adminApiRequest,
-  refreshSession as refreshAdminSession,
   clearAccessToken as clearAdminAccessToken,
   setAccessToken as setAdminAccessToken
 };

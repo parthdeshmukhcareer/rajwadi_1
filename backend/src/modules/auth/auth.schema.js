@@ -11,4 +11,5 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
   email: z.string().email('Invalid email format').transform(e => e.toLowerCase()),
   password: z.string().min(1, 'Password is required'),
+  sessionType: z.enum(['customer', 'admin']).default('customer'),
 });

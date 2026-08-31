@@ -26,6 +26,9 @@ import { adminReportsRoutes } from './modules/admin/admin.reports.routes.js';
 import { paymentRoutes } from './modules/payments/payments.routes.js';
 import { webhookRoutes } from './modules/payments/webhooks.routes.js';
 import { reviewsRoutes } from './modules/reviews/reviews.routes.js';
+import { adminCustomerRoutes } from './modules/admin/admin.customers.routes.js';
+import { adminSettingsRoutes } from './modules/admin/admin.settings.routes.js';
+import { adminPaymentRoutes } from './modules/admin/admin.payments.routes.js';
 import { startOrderExpirationJob, stopOrderExpirationJob } from './jobs/orderExpiration.job.js';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRawBody from 'fastify-raw-body';
@@ -143,7 +146,9 @@ export const buildApp = async () => {
   app.register(reviewsRoutes, { prefix: '/api/v1/products' });
   app.register(paymentRoutes, { prefix: '/api/v1' });
   app.register(webhookRoutes, { prefix: '/api/v1/webhooks' });
-
+  app.register(adminCustomerRoutes, { prefix: '/api/v1/admin/customers' });
+  app.register(adminSettingsRoutes, { prefix: '/api/v1/admin/settings' });
+  app.register(adminPaymentRoutes, { prefix: '/api/v1/admin/payments' });
   app.addHook('onReady', async function () {
     startOrderExpirationJob();
   });

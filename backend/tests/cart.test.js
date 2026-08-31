@@ -191,12 +191,13 @@ describe('Cart & Coupons Endpoints E2E', () => {
     
     expect(bodyFixed.subtotal).toBe(3000);
     expect(bodyFixed.discount).toBe(500);
-    expect(bodyFixed.estimatedTotal).toBe(2500);
+    expect(bodyFixed.estimatedTotal).toBe(12400);
 
     const resPercent = await app.inject({ method: 'POST', url: '/api/v1/cart/preview', headers: { authorization: `Bearer ${customerToken}` }, payload: { couponCode: 'TEST10' } });
     const bodyPercent = JSON.parse(resPercent.payload).data;
     
+    expect(bodyPercent.subtotal).toBe(3000);
     expect(bodyPercent.discount).toBe(300);
-    expect(bodyPercent.estimatedTotal).toBe(2700);
+    expect(bodyPercent.estimatedTotal).toBe(12600);
   });
 });

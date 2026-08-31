@@ -4,7 +4,7 @@ import { useAdminAuth } from '../context/AdminAuthContext';
 
 const AdminProtectedRoute = () => {
   const { isAdminAuthenticated, isLoading } = useAdminAuth();
-
+  
   if (isLoading) {
     return (
       <div className="admin-app" style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center' }}>
@@ -13,7 +13,8 @@ const AdminProtectedRoute = () => {
     );
   }
 
-  return isAdminAuthenticated ? <Outlet /> : <Navigate to="/admin/login" replace />;
+  // Redirect to normal account page if not admin to prevent access to admin login page
+  return isAdminAuthenticated ? <Outlet /> : <Navigate to="/account" replace />;
 };
 
 export default AdminProtectedRoute;

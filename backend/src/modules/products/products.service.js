@@ -89,6 +89,12 @@ export class ProductsService {
     };
   }
 
+  async getAdminProductById(id) {
+    const product = await this.productsRepo.getAdminProductById(id);
+    if (!product) throw Errors.PRODUCT_NOT_FOUND();
+    return product;
+  }
+
   async createProduct(data) {
     const existing = await this.productsRepo.findProductBySlug(data.slug);
     if (existing) throw Errors.SLUG_ALREADY_EXISTS();

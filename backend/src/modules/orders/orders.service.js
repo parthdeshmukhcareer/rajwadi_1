@@ -83,8 +83,9 @@ export class OrdersService {
       });
     }
 
-    const freeShippingThreshold = Number(env.FREE_SHIPPING_THRESHOLD);
-    const defaultShippingFee = Number(env.DEFAULT_SHIPPING_FEE);
+    const settingsObj = await (await import('../admin/admin.settings.service.js')).adminSettingsService.getAllSettings();
+    const freeShippingThreshold = settingsObj.freeShippingThreshold !== undefined ? settingsObj.freeShippingThreshold : Number(env.FREE_SHIPPING_THRESHOLD);
+    const defaultShippingFee = settingsObj.defaultShippingFee !== undefined ? settingsObj.defaultShippingFee : Number(env.DEFAULT_SHIPPING_FEE);
     
     let shippingTotal = 0;
     if (taxableTotal < freeShippingThreshold) {

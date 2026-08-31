@@ -1,8 +1,10 @@
+import { apiRequest } from '../../api/client';
+
 export const paymentService = {
   getPayments: async (page = 1, limit = 24) => {
-    // Backend API for listing payments does not exist.
-    // Throw an error to display properly in the UI.
-    throw new Error('Payment listing API is not currently exposed by the backend.');
+    return apiRequest(`/admin/payments?page=${page}&limit=${limit}`, {
+      method: 'GET'
+    });
   },
 
   getPaymentDetails: async (id) => {

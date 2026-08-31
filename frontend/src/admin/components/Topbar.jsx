@@ -1,7 +1,17 @@
 import React from 'react';
-import { Menu, Search, Bell, User } from 'lucide-react';
+import { Menu, Search, Bell, User, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Topbar = ({ toggleSidebar, isSidebarCollapsed }) => {
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/account');
+  };
+
   return (
     <header className="admin-topbar">
       <div className="admin-topbar-left">
@@ -29,8 +39,17 @@ const Topbar = ({ toggleSidebar, isSidebarCollapsed }) => {
           <div className="admin-avatar">
             <User size={20} />
           </div>
-          <span className="admin-profile-name">Admin User</span>
+          <span className="admin-profile-name">{user?.firstName || 'Admin User'}</span>
         </div>
+
+        <button 
+          onClick={handleLogout} 
+          className="admin-icon-btn" 
+          title="Sign out"
+          style={{ marginLeft: '8px' }}
+        >
+          <LogOut size={20} />
+        </button>
       </div>
     </header>
   );

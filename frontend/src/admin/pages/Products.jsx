@@ -46,7 +46,7 @@ const Products = () => {
       header: 'Product', 
       cell: (row) => {
         // Find main image if variants or images array exist
-        const mainImage = row.images?.[0]?.url || row.imageUrl;
+        const mainImage = row.images?.[0]?.imageUrl || row.imageUrl || row.image;
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {mainImage ? (
@@ -83,8 +83,8 @@ const Products = () => {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
             <button 
               className="admin-icon-btn" 
-              title="View on Store"
-              onClick={() => window.open(`/product/${row.slug}`, '_blank')}
+              title="View Details"
+              onClick={() => navigate(`/admin/products/${row.id}`)}
             >
               <Eye size={18} />
             </button>
@@ -96,7 +96,7 @@ const Products = () => {
             <button 
               className="admin-icon-btn" 
               title="Edit Product"
-              onClick={() => alert('Edit feature is under construction.')}
+              onClick={() => navigate(`/admin/products/${row.id}/edit`)}
             >
               <Edit size={18} />
             </button>

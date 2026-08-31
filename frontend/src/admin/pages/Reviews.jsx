@@ -51,7 +51,7 @@ const Reviews = () => {
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
         >
-          <option value="">All Statuses</option>
+          <option value="">All Status</option>
           <option value="PUBLISHED">Published</option>
           <option value="HIDDEN">Hidden</option>
         </select>

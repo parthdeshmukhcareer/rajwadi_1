@@ -43,6 +43,13 @@
       "when": 1787747616456,
       "tag": "0005_brainy_mongu",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788170837471,
+      "tag": "0006_optimal_the_stranger",
+      "breakpoints": true
     }
   ]
 }

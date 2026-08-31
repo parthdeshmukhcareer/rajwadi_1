@@ -35,7 +35,9 @@ describe('Auth Endpoints E2E', () => {
     expect(body.success).toBe(true);
     expect(body.data.user.email).toBe('test_e2e@rajwadi.local');
     expect(body.data.accessToken).toBeDefined();
-    expect(response.headers['set-cookie']).toBeDefined();
+    const cookies = Array.isArray(response.headers['set-cookie']) ? response.headers['set-cookie'] : [response.headers['set-cookie']];
+    expect(cookies).toBeDefined();
+    expect(cookies.some(c => c && c.includes('customer_refresh_token='))).toBe(true);
   });
 
   it('should login an existing user', async () => {
@@ -52,6 +54,9 @@ describe('Auth Endpoints E2E', () => {
     const body = JSON.parse(response.payload);
     expect(body.success).toBe(true);
     expect(body.data.accessToken).toBeDefined();
+    const cookies = Array.isArray(response.headers['set-cookie']) ? response.headers['set-cookie'] : [response.headers['set-cookie']];
+    expect(cookies).toBeDefined();
+    expect(cookies.some(c => c && c.includes('customer_refresh_token='))).toBe(true);
   });
 
   it('should get current user with access token', async () => {

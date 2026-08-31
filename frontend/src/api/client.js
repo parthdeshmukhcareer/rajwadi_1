@@ -21,14 +21,15 @@ export const setAuthFailureCallback = (callback) => {
 };
 
 // Low-level refresh session bypassing interceptor
-export const refreshSession = async () => {
+export const refreshSession = async (sessionType = 'customer') => {
   if (refreshTokenPromise) {
     return refreshTokenPromise;
   }
 
   refreshTokenPromise = fetch(`${API_BASE_URL}/auth/refresh`, {
     method: 'POST',
-    headers: {},
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionType }),
     credentials: 'include', // Important to send HttpOnly refresh_token cookie
   }).then(async (response) => {
     if (!response.ok) {
@@ -60,7 +61,7 @@ export const refreshSession = async () => {
  * @param {object} customConfig - skipAuthRefresh (boolean) to bypass automatic 401 retries
  */
 export const apiRequest = async (endpoint, options = {}, customConfig = {}) => {
-  const { skipAuthRefresh = false } = customConfig;
+  const { skipAuthRefresh = false, sessionType = 'customer' } = customConfig;
   
   const headers = new Headers(options.headers || {});
   
@@ -84,7 +85,7 @@ export const apiRequest = async (endpoint, options = {}, customConfig = {}) => {
   // If 401 Unauthorized, and we haven't opted out of auto-refresh, and we originally had an access token
   if (response.status === 401 && !skipAuthRefresh && accessToken) {
     try {
-      const refreshData = await refreshSession();
+      const refreshData = await refreshSession(sessionType);
       // Retry original request with new token
       headers.set('Authorization', `Bearer ${refreshData.accessToken}`);
       const retryConfig = {

@@ -218,13 +218,50 @@ export class ProductsRepository {
     const [countResult] = await db.select({ count: sql`count(*)`.mapWith(Number) }).from(products).where(whereClause);
     const total = countResult.count;
 
-    const data = await db.select().from(products).where(whereClause).orderBy(desc(products.createdAt)).limit(limit).offset(offset);
+    const productRows = await db.select().from(products).where(whereClause).orderBy(desc(products.createdAt)).limit(limit).offset(offset);
+    
+    if (productRows.length === 0) return { data: [], total };
+
+    const productIds = productRows.map(p => p.id);
+    const allImages = await db.select().from(productImages)
+      .where(inArray(productImages.productId, productIds))
+      .orderBy(asc(productImages.sortOrder));
+      
+    const allVariants = await db.select().from(productVariants)
+      .where(inArray(productVariants.productId, productIds));
+
+    const data = productRows.map(prod => {
+      const prodImages = allImages.filter(img => img.productId === prod.id);
+      const prodVariants = allVariants.filter(v => v.productId === prod.id);
+      return {
+        ...prod,
+        images: prodImages,
+        variants: prodVariants
+      };
+    });
+
     return { data, total };
   }
 
   async findProductById(id) {
     const [prod] = await db.select().from(products).where(eq(products.id, id)).limit(1);
     return prod;
+  }
+
+  async getAdminProductById(id) {
+    const [product] = await db.select().from(products).where(eq(products.id, id)).limit(1);
+    if (!product) return null;
+    
+    const [category] = await db.select().from(categories).where(eq(categories.id, product.categoryId)).limit(1);
+    const productVars = await db.select().from(productVariants).where(eq(productVariants.productId, product.id));
+    const images = await db.select().from(productImages).where(eq(productImages.productId, product.id)).orderBy(asc(productImages.sortOrder));
+    
+    return {
+      ...product,
+      category,
+      variants: productVars,
+      images,
+    };
   }
 
   async findProductBySlug(slug) {

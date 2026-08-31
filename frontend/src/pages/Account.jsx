@@ -30,12 +30,18 @@ function Account() {
     e.preventDefault();
     const email = e.target.loginEmail.value;
     const password = e.target.loginPassword.value;
+
     try {
-      await login(email, password);
+      const res = await login(email, password);
       showToast('Logged in successfully!');
-      const from = location.state?.from?.pathname || '/account';
-      if (from !== '/account') {
-        navigate(from, { replace: true });
+      
+      if (res?.data?.user?.role === 'ADMIN') {
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        const from = location.state?.from?.pathname || '/account';
+        if (from !== '/account') {
+          navigate(from, { replace: true });
+        }
       }
     } catch (err) {
       showToast(err.message || 'Login failed');

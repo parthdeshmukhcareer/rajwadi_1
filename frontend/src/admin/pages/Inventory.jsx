@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Edit } from 'lucide-react';
+import { Edit, Search } from 'lucide-react';
 import { inventoryService } from '../services/inventory.service';
 
 const Inventory = () => {
@@ -23,7 +23,7 @@ const Inventory = () => {
       // Flatten products into variants for inventory management
       const flattened = [];
       products.forEach(product => {
-        const productMainImage = product.images?.[0]?.url || product.imageUrl;
+        const productMainImage = product.images?.[0]?.imageUrl || product.imageUrl || product.image;
         if (product.variants && product.variants.length > 0) {
           product.variants.forEach((variant, index) => {
             flattened.push({
@@ -114,8 +114,8 @@ const Inventory = () => {
         </div>
       ) 
     },
-    { header: 'Variant', cell: (row) => row.variantLabel },
-    { header: 'SKU', cell: (row) => <span style={{ fontFamily: 'monospace' }}>{row.sku}</span> },
+    { header: 'Variant', cell: (row) => <span style={{ whiteSpace: 'nowrap' }}>{row.variantLabel}</span> },
+    { header: 'SKU', cell: (row) => <span style={{ fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{row.sku}</span> },
     { header: 'Size', cell: (row) => row.size || '-' },
     { header: 'Color', cell: (row) => row.color || '-' },
     { header: 'Stock On Hand', cell: (row) => <strong>{row.stockOnHand}</strong> },
@@ -150,10 +150,40 @@ const Inventory = () => {
     },
   ];
 
+  // Pagination and Search State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Filter and Paginate
+  const filteredVariants = variants.filter(v => 
+    v.productName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (v.sku && v.sku.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (v.size && v.size.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const totalPages = Math.ceil(filteredVariants.length / itemsPerPage);
+  const paginatedVariants = filteredVariants.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
   return (
     <div className="products-page">
       <div className="page-header">
         <h1>Inventory Management</h1>
+        <div className="admin-search-container" style={{ width: '300px', backgroundColor: 'var(--admin-bg-surface)' }}>
+          <Search size={18} className="admin-search-icon" />
+          <input
+            type="text"
+            placeholder="Search by product, SKU, or size..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="admin-search-input"
+          />
+        </div>
       </div>
 
       {successMsg && (
@@ -174,21 +204,53 @@ const Inventory = () => {
             <div style={{ padding: '40px', textAlign: 'center' }}>Loading Inventory...</div>
           ) : variants.length === 0 ? (
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--admin-text-muted)' }}>No inventory variants found.</div>
+          ) : filteredVariants.length === 0 ? (
+             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--admin-text-muted)' }}>No matches found for "{searchQuery}".</div>
           ) : (
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  {columns.map((col, index) => <th key={index}>{col.header}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {variants.map((row, rowIndex) => (
-                  <tr key={rowIndex}>
-                    {columns.map((col, colIndex) => <td key={colIndex}>{col.cell(row)}</td>)}
+            <>
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    {columns.map((col, index) => <th key={index}>{col.header}</th>)}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedVariants.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {columns.map((col, colIndex) => <td key={colIndex}>{col.cell(row)}</td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 0 0', borderTop: '1px solid var(--admin-border)', marginTop: '20px' }}>
+                  <div style={{ color: 'var(--admin-text-muted)', fontSize: '14px' }}>
+                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredVariants.length)} of {filteredVariants.length} entries
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      className="admin-btn admin-btn-outline"
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage(p => p - 1)}
+                    >
+                      Previous
+                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', padding: '0 12px', fontSize: '14px', color: 'var(--admin-text-main)' }}>
+                      Page {currentPage} of {totalPages}
+                    </div>
+                    <button
+                      className="admin-btn admin-btn-outline"
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage(p => p + 1)}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

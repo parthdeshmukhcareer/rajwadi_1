@@ -12,6 +12,8 @@ import './pages/pages.css';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import ProductCreate from './pages/ProductCreate';
+import ProductEdit from './pages/ProductEdit';
+import ProductView from './pages/ProductView';
 import Inventory from './pages/Inventory';
 import Categories from './pages/Categories';
 import Orders from './pages/Orders';
@@ -20,10 +22,9 @@ import Payments from './pages/Payments';
 import Refunds from './pages/Refunds';
 import Coupons from './pages/Coupons';
 import Reviews from './pages/Reviews';
+import Customers from './pages/Customers';
 
-// Placeholders for other pages
-const Customers = () => <div className="page-header"><h1>Customers</h1></div>;
-const Settings = () => <div className="page-header"><h1>Settings</h1></div>;
+import Settings from './pages/Settings';
 
 const AdminApp = () => {
   return (
@@ -37,6 +38,8 @@ const AdminApp = () => {
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="products" element={<Products />} />
+              <Route path="products/:id" element={<ProductView />} />
+              <Route path="products/:id/edit" element={<ProductEdit />} />
               <Route path="products/create" element={<ProductCreate />} />
               <Route path="categories" element={<Categories />} />
               <Route path="inventory" element={<Inventory />} />

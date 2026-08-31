@@ -148,6 +148,7 @@
   border-radius: 100px;
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
 }
 .admin-badge-success { background: #E8F5E9; color: var(--admin-success); }
 .admin-badge-warning { background: #FFF3E0; color: var(--admin-warning); }

@@ -21,6 +21,13 @@
   padding: 20px 0;
   overflow-y: auto;
   flex: 1;
+  /* Hide scrollbar */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.admin-sidebar-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .admin-nav-group {

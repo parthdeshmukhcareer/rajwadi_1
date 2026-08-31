@@ -55,7 +55,7 @@ export const AdminAuthProvider = ({ children }) => {
   const adminLogin = async (email, password) => {
     const res = await adminApiRequest('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password, sessionType: 'admin' })
     }, { skipAuthRefresh: true });
 
     if (res.success) {
@@ -75,7 +75,10 @@ export const AdminAuthProvider = ({ children }) => {
 
   const adminLogout = async () => {
     try {
-      await adminApiRequest('/auth/logout', { method: 'POST' }, { skipAuthRefresh: true });
+      await adminApiRequest('/auth/logout', { 
+        method: 'POST',
+        body: JSON.stringify({ sessionType: 'admin' })
+      }, { skipAuthRefresh: true });
     } catch (error) {
       console.error('Admin backend logout failed', error);
     } finally {

@@ -13,6 +13,7 @@ export async function adminProductRoutes(app) {
   app.addHook('preValidation', requireAdmin);
 
   app.get('/', controller.getProducts);
+  app.get('/:id', controller.getProduct);
   app.post('/', controller.createProduct);
   app.patch('/:id', controller.updateProduct);
   app.patch('/:id/status', controller.updateProductStatus);

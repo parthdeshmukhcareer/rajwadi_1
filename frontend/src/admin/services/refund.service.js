@@ -17,5 +17,10 @@ export const refundService = {
       method: 'POST'
     });
     return response; // Contains .message and .data.refund
+  },
+
+  deleteRefund: async (id) => {
+    const response = await adminApiRequest(`/admin/refunds/${id}`, { method: 'DELETE' });
+    return response.data;
   }
 };

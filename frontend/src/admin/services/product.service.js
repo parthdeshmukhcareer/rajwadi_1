@@ -57,5 +57,23 @@ export const productService = {
       method: 'DELETE'
     });
     return response.data;
+  },
+
+  uploadProductImages: async (productId, files) => {
+    const results = [];
+    
+    // The backend uses req.file() which expects one file per request
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('image', file); // Field name doesn't matter much for req.file() but we'll use 'image'
+      
+      const response = await adminApiRequest(`/admin/uploads/products/${productId}`, {
+        method: 'POST',
+        body: formData
+      });
+      results.push(response.data);
+    }
+    
+    return results;
   }
 };

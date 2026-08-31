@@ -12,6 +12,12 @@ export class AdminProductsController {
     return reply.send({ success: true, ...result });
   }
 
+  getProduct = async (req, reply) => {
+    const { id } = req.params;
+    const product = await this.productsService.getAdminProductById(id);
+    return reply.send({ success: true, data: product });
+  }
+
   createProduct = async (req, reply) => {
     const result = createProductSchema.safeParse(req.body);
     if (!result.success) throw Errors.VALIDATION_ERROR(result.error.issues[0].message);

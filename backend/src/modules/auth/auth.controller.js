@@ -1,7 +1,8 @@
 import { registerSchema, loginSchema } from './auth.schema.js';
 import { Errors } from '../../utils/errors.js';
 
-const COOKIE_NAME = 'refresh_token';
+const CUSTOMER_COOKIE_NAME = 'customer_refresh_token';
+const ADMIN_COOKIE_NAME = 'admin_refresh_token';
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -25,7 +26,7 @@ export class AuthController {
     
     const accessToken = await reply.jwtSign({ sub: user.id, role: user.role });
 
-    reply.setCookie(COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+    reply.setCookie(CUSTOMER_COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
     
     return reply.status(201).send({
       success: true,
@@ -46,7 +47,19 @@ export class AuthController {
     
     const accessToken = await reply.jwtSign({ sub: user.id, role: user.role });
 
-    reply.setCookie(COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+    if (result.data.sessionType === 'admin') {
+      if (user.role !== 'ADMIN') {
+        throw Errors.FORBIDDEN('Admin access required');
+      }
+      reply.setCookie(ADMIN_COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+    } else {
+      if (user.role === 'ADMIN') {
+        reply.setCookie(ADMIN_COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+        reply.setCookie(CUSTOMER_COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+      } else {
+        reply.setCookie(CUSTOMER_COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+      }
+    }
     
     return reply.send({
       success: true,
@@ -67,7 +80,7 @@ export class AuthController {
     
     const accessToken = await reply.jwtSign({ sub: user.id, role: user.role });
 
-    reply.setCookie(COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+    reply.setCookie(CUSTOMER_COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
     
     return reply.send({
       success: true,
@@ -79,16 +92,24 @@ export class AuthController {
   }
 
   refresh = async (req, reply) => {
-    const rawToken = req.cookies[COOKIE_NAME];
+    // Determine session type either from body, query or fallback to customer
+    const sessionType = req.body?.sessionType || req.query?.sessionType || 'customer';
+    const cookieName = sessionType === 'admin' ? ADMIN_COOKIE_NAME : CUSTOMER_COOKIE_NAME;
+    
+    const rawToken = req.cookies[cookieName];
     if (!rawToken) {
       throw Errors.AUTHENTICATION_REQUIRED();
     }
 
     const { user, rawRefreshToken } = await this.authService.refresh(rawToken);
     
+    if (sessionType === 'admin' && user.role !== 'ADMIN') {
+       throw Errors.FORBIDDEN('Admin access required');
+    }
+    
     const accessToken = await reply.jwtSign({ sub: user.id, role: user.role });
 
-    reply.setCookie(COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+    reply.setCookie(cookieName, rawRefreshToken, COOKIE_OPTIONS);
     
     return reply.send({
       success: true,
@@ -100,12 +121,15 @@ export class AuthController {
   }
 
   logout = async (req, reply) => {
-    const rawToken = req.cookies[COOKIE_NAME];
+    const sessionType = req.body?.sessionType || req.query?.sessionType || 'customer';
+    const cookieName = sessionType === 'admin' ? ADMIN_COOKIE_NAME : CUSTOMER_COOKIE_NAME;
+    
+    const rawToken = req.cookies[cookieName];
     if (rawToken) {
       await this.authService.logout(rawToken);
     }
     
-    reply.clearCookie(COOKIE_NAME, { path: '/api/v1/auth' });
+    reply.clearCookie(cookieName, { path: '/api/v1/auth' });
     
     return reply.send({
       success: true,

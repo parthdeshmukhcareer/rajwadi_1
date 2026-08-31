@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import ImageUploader from '../components/ImageUploader';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Save, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { productService } from '../services/product.service';
 import { categoryService } from '../services/category.service';
 
-const ProductCreate = () => {
+const ProductEdit = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState('');
@@ -24,24 +25,41 @@ const ProductCreate = () => {
     gstRate: '18',
     hsnCode: '',
     isActive: true,
-    sku: '',
-    stockOnHand: ''
   });
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
-        const data = await categoryService.getCategories();
-        const cats = Array.isArray(data) ? data : data.data || [];
+        setIsLoading(true);
+        const [catData, productData] = await Promise.all([
+          categoryService.getCategories(),
+          productService.getProduct(id)
+        ]);
+        
+        const cats = Array.isArray(catData) ? catData : catData.data || [];
         setCategories(cats.filter(c => c.isActive !== false));
+        
+        setFormData({
+          name: productData.name || '',
+          description: productData.description || '',
+          categoryId: productData.categoryId || '',
+          basePrice: productData.basePrice || '',
+          compareAtPrice: productData.compareAtPrice || '',
+          fabric: productData.fabric || '',
+          workType: productData.workType || '',
+          occasion: productData.occasion || '',
+          gstRate: productData.gstRate?.toString() || '18',
+          hsnCode: productData.hsnCode || '',
+          isActive: productData.isActive,
+        });
       } catch (err) {
-        console.error('Failed to load categories', err);
+        setError('Failed to load product details');
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchCategories();
-  }, []);
-
-  const [selectedImages, setSelectedImages] = useState([]);
+    if (id) fetchData();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,46 +89,37 @@ const ProductCreate = () => {
         occasion: formData.occasion || undefined,
         gstRate: parseInt(formData.gstRate) || 0,
         hsnCode: formData.hsnCode || undefined,
-        isActive: formData.isActive,
-        variants: [
-          {
-            sku: formData.sku || `SKU-${Date.now()}`,
-            price: parseInt(formData.basePrice) || 0,
-            stockOnHand: parseInt(formData.stockOnHand) || 0,
-            isActive: true
-          }
-        ]
+        isActive: formData.isActive
       };
 
-      const newProduct = await productService.createProduct(payload);
-      
-      if (selectedImages.length > 0) {
-        await productService.uploadProductImages(newProduct.id, selectedImages);
-      }
-
-      setSuccessMsg('Product created successfully!');
-      setTimeout(() => navigate('/admin/products'), 2000);
+      await productService.updateProduct(id, payload);
+      setSuccessMsg('Product updated successfully!');
+      setTimeout(() => navigate(`/admin/products/${id}`), 2000);
     } catch (err) {
-      setError(err.message || 'Failed to create product');
+      setError(err.message || 'Failed to update product');
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return <div className="page-header"><div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div></div>;
+  }
 
   return (
     <div className="product-create-page">
       <form onSubmit={handleSubmit}>
         <div className="page-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button type="button" className="admin-icon-btn" onClick={() => navigate('/admin/products')}>
+            <button type="button" className="admin-icon-btn" onClick={() => navigate(-1)}>
               <ArrowLeft size={24} />
             </button>
-            <h1>Create New Product</h1>
+            <h1>Edit Product</h1>
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button type="button" className="admin-btn admin-btn-outline" onClick={() => navigate('/admin/products')} disabled={isSubmitting}>Cancel</button>
+            <button type="button" className="admin-btn admin-btn-outline" onClick={() => navigate(-1)} disabled={isSubmitting}>Cancel</button>
             <button type="submit" className="admin-btn admin-btn-primary" disabled={isSubmitting}>
-              <Save size={18} /> {isSubmitting ? 'Saving...' : 'Save Product'}
+              <Save size={18} /> {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </div>
@@ -126,19 +135,12 @@ const ProductCreate = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
                 <div>
                   <label className="admin-label">Product Name</label>
-                  <input type="text" name="name" value={formData.name} onChange={handleChange} className="admin-input" placeholder="e.g. Royal Maroon Silk Lehenga" required />
+                  <input type="text" name="name" value={formData.name} onChange={handleChange} className="admin-input" required />
                 </div>
                 <div>
                   <label className="admin-label">Description</label>
-                  <textarea name="description" value={formData.description} onChange={handleChange} className="admin-input" rows={4} placeholder="Detailed product description..."></textarea>
+                  <textarea name="description" value={formData.description} onChange={handleChange} className="admin-input" rows={4}></textarea>
                 </div>
-              </div>
-            </div>
-
-            <div className="admin-card">
-              <h2>Media</h2>
-              <div style={{ marginTop: '16px' }}>
-                <ImageUploader onUpload={(images) => setSelectedImages(images)} />
               </div>
             </div>
 
@@ -147,15 +149,15 @@ const ProductCreate = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
                 <div>
                   <label className="admin-label">Fabric</label>
-                  <input type="text" name="fabric" value={formData.fabric} onChange={handleChange} className="admin-input" placeholder="e.g. Pure Silk" />
+                  <input type="text" name="fabric" value={formData.fabric} onChange={handleChange} className="admin-input" />
                 </div>
                 <div>
                   <label className="admin-label">Work Type</label>
-                  <input type="text" name="workType" value={formData.workType} onChange={handleChange} className="admin-input" placeholder="e.g. Zardosi" />
+                  <input type="text" name="workType" value={formData.workType} onChange={handleChange} className="admin-input" />
                 </div>
                 <div>
                   <label className="admin-label">Occasion</label>
-                  <input type="text" name="occasion" value={formData.occasion} onChange={handleChange} className="admin-input" placeholder="e.g. Bridal" />
+                  <input type="text" name="occasion" value={formData.occasion} onChange={handleChange} className="admin-input" />
                 </div>
               </div>
             </div>
@@ -187,23 +189,15 @@ const ProductCreate = () => {
             </div>
 
             <div className="admin-card">
-              <h2>Inventory & Pricing</h2>
+              <h2>Pricing</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
                 <div>
                   <label className="admin-label">Base Price (₹)</label>
-                  <input type="number" name="basePrice" value={formData.basePrice} onChange={handleChange} className="admin-input" placeholder="0" required />
+                  <input type="number" name="basePrice" value={formData.basePrice} onChange={handleChange} className="admin-input" required />
                 </div>
                 <div>
                   <label className="admin-label">Compare At Price (₹)</label>
-                  <input type="number" name="compareAtPrice" value={formData.compareAtPrice} onChange={handleChange} className="admin-input" placeholder="0" />
-                </div>
-                <div>
-                  <label className="admin-label">SKU (Base Variant)</label>
-                  <input type="text" name="sku" value={formData.sku} onChange={handleChange} className="admin-input" placeholder="e.g. RML-001" required />
-                </div>
-                <div>
-                  <label className="admin-label">Initial Stock</label>
-                  <input type="number" name="stockOnHand" value={formData.stockOnHand} onChange={handleChange} className="admin-input" placeholder="0" required />
+                  <input type="number" name="compareAtPrice" value={formData.compareAtPrice} onChange={handleChange} className="admin-input" />
                 </div>
               </div>
             </div>
@@ -213,7 +207,7 @@ const ProductCreate = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
                 <div>
                   <label className="admin-label">HSN Code</label>
-                  <input type="text" name="hsnCode" value={formData.hsnCode} onChange={handleChange} className="admin-input" placeholder="e.g. 6204" />
+                  <input type="text" name="hsnCode" value={formData.hsnCode} onChange={handleChange} className="admin-input" />
                 </div>
                 <div>
                   <label className="admin-label">GST Rate (%)</label>
@@ -235,4 +229,4 @@ const ProductCreate = () => {
   );
 };
 
-export default ProductCreate;
+export default ProductEdit;

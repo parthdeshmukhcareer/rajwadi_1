@@ -1,7 +1,7 @@
 import { requireAuth } from '../../middleware/auth.middleware.js';
 import { requireAdmin } from '../../middleware/admin.middleware.js';
 import { db } from '../../db/index.js';
-import { refunds } from '../../db/schema/index.js';
+import { refunds, orders } from '../../db/schema/index.js';
 import { desc, ilike, and, eq } from 'drizzle-orm';
 import { OrdersRepository } from '../orders/orders.repository.js';
 import crypto from 'crypto';
@@ -33,12 +33,19 @@ export async function adminRefundRoutes(app) {
     const { orderId } = req.params;
     const adminId = req.user.id;
 
+    let idToUse = orderId;
+    if (orderId.startsWith('RJD-')) {
+      const [orderRec] = await db.select().from(orders).where(eq(orders.orderNumber, orderId)).limit(1);
+      if (!orderRec) throw Errors.ORDER_NOT_FOUND();
+      idToUse = orderRec.id;
+    }
+
     // Fixed idempotency key for this order's refund
-    const idempotencyKey = `ref_order_${orderId}`;
+    const idempotencyKey = `ref_order_${idToUse}`;
 
     let result;
     try {
-      result = await ordersRepo.processPaidCancellationTransaction(orderId, adminId, idempotencyKey);
+      result = await ordersRepo.processPaidCancellationTransaction(idToUse, adminId, idempotencyKey);
     } catch (err) {
       if (err.message === 'ORDER_NOT_FOUND') throw Errors.ORDER_NOT_FOUND();
       if (err.message === 'ORDER_CANNOT_BE_CANCELLED') throw Errors.ORDER_CANNOT_BE_CANCELLED();
@@ -72,9 +79,9 @@ export async function adminRefundRoutes(app) {
       // Call Razorpay API using idempotency key
       const razorpayRefund = await razorpay.payments.refund(capturedPaymentId, {
         amount: claimedRefund.amount,
-        receipt: `rjd_ref_${orderId}`,
-        notes: { orderId: orderId }
-      }, { "X-Refund-Idempotency": claimedRefund.idempotencyKey });
+        receipt: `rjd_ref_${idToUse}`,
+        notes: { orderId: idToUse }
+      });
 
       let newStatus = 'PROCESSING';
       let refundedAt = null;
@@ -105,5 +112,12 @@ export async function adminRefundRoutes(app) {
 
       return reply.send({ success: true, message: 'Cancellation succeeded, but refund provider API returned an error. Review Required.', data: { refund: failedRefund } });
     }
+  });
+
+  app.delete('/:id', async (req, reply) => {
+    const { id } = req.params;
+    const [deletedRefund] = await db.delete(refunds).where(eq(refunds.id, id)).returning();
+    if (!deletedRefund) throw Errors.NOT_FOUND('Refund');
+    return reply.send({ success: true, message: 'Refund record deleted successfully' });
   });
 }

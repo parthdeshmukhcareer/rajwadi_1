@@ -266,6 +266,8 @@ const Dashboard = () => {
                   paddingAngle={5}
                   dataKey="count"
                   nameKey="status"
+                  animationDuration={800}
+                  animationEasing="ease-out"
                 >
                   {(overview?.ordersByStatus || []).map((entry, index) => (
                     <Cell 

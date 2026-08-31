@@ -62,6 +62,16 @@ const Refunds = () => {
 
   const formatCurrency = (amount) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
+  const handleDeleteRefund = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this refund record?')) return;
+    try {
+      await refundService.deleteRefund(id);
+      fetchRefunds();
+    } catch (err) {
+      alert(err.message || 'Failed to delete refund.');
+    }
+  };
+
   const columns = [
     { header: 'Refund ID', cell: (row) => <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>{row.id}</span> },
     { header: 'Order ID', cell: (row) => <span style={{ fontFamily: 'monospace' }}>{row.orderId}</span> },
@@ -80,9 +90,14 @@ const Refunds = () => {
     { 
       header: 'Actions', 
       cell: (row) => (
-        <button className="admin-icon-btn" title="View Details" onClick={() => alert(`Details for Refund: ${row.id}\nProvider ID: ${row.razorpayRefundId || 'N/A'}\nReason: ${row.failureReason || 'None'}`)}>
-          <Eye size={18} />
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button className="admin-icon-btn" title="View Details" onClick={() => alert(`Details for Refund: ${row.id}\nProvider ID: ${row.razorpayRefundId || 'N/A'}\nReason: ${row.failureReason || 'None'}`)}>
+            <Eye size={18} />
+          </button>
+          <button className="admin-icon-btn" title="Delete Refund" onClick={() => handleDeleteRefund(row.id)} style={{ color: '#e74c3c' }}>
+            <i className="fa-solid fa-trash" style={{ fontSize: '16px' }}></i>
+          </button>
+        </div>
       ) 
     },
   ];
@@ -158,7 +173,7 @@ const Refunds = () => {
           <div className="admin-card" style={{ width: '450px', padding: '24px' }}>
             <h2 style={{ marginBottom: '8px' }}>Initiate Refund & Cancellation</h2>
             <p style={{ color: 'var(--admin-text-muted)', marginBottom: '20px', fontSize: '14px' }}>
-              This will cancel the order, restore inventory, and initiate a refund via Razorpay.
+              This will cancel the order, restore inventory, and initiate a refund. Refunds should be done using Razorpay only and online mode only.
             </p>
             
             {initiateError && (
@@ -176,13 +191,13 @@ const Refunds = () => {
             
             <form onSubmit={handleInitiateRefund} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label className="admin-label">Order ID (UUID)</label>
+                <label className="admin-label">Order Number</label>
                 <input 
                   type="text"
                   className="admin-input" 
                   value={initiateOrderId} 
                   onChange={e => setInitiateOrderId(e.target.value)} 
-                  placeholder="e.g. 550e8400-e29b-41d4-a716-446655440000"
+                  placeholder="e.g. RJD-2026-000075"
                   required 
                   disabled={isSubmitting || initiateSuccess}
                 />
@@ -190,8 +205,8 @@ const Refunds = () => {
               
               <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
                 <button type="button" className="admin-btn admin-btn-outline" onClick={() => setIsModalOpen(false)} style={{ flex: 1 }} disabled={isSubmitting}>Close</button>
-                <button type="submit" className="admin-btn admin-btn-danger" style={{ flex: 1 }} disabled={isSubmitting || initiateSuccess}>
-                  {isSubmitting ? 'Processing...' : 'Cancel & Refund Order'}
+                <button type="submit" className="admin-btn admin-btn-danger" style={{ flex: 1, border: '2px solid #a83232' }} disabled={isSubmitting || initiateSuccess}>
+                  {isSubmitting ? 'Processing...' : 'Refund Order'}
                 </button>
               </div>
             </form>
