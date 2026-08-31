@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { adminApiRequest, refreshAdminSession, clearAdminAccessToken, setAdminAccessToken } from '../services/admin.client';
+import { getAccessToken } from '../../api/client';
 
 const AdminAuthContext = createContext();
 
@@ -24,8 +25,13 @@ export const AdminAuthProvider = ({ children }) => {
 
   const bootstrapAdminAuth = async () => {
     try {
-      // 1. Attempt refresh using HttpOnly refresh cookie
-      const token = await refreshAdminSession();
+      let token = getAccessToken();
+      
+      if (!token) {
+        // 1. Attempt refresh using HttpOnly refresh cookie if no token in memory
+        const refreshData = await refreshAdminSession();
+        token = refreshData?.accessToken;
+      }
       
       if (token) {
         // 2. Call current-user endpoint to verify role
