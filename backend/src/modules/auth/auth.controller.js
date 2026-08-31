@@ -5,8 +5,8 @@ const CUSTOMER_COOKIE_NAME = 'customer_refresh_token';
 const ADMIN_COOKIE_NAME = 'admin_refresh_token';
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
+  secure: true, // Must be true when sameSite is 'none'
+  sameSite: 'none', // Crucial for cross-domain cookies (Vercel <-> Render)
   path: '/api/v1/auth',
   maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
 };
