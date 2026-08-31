@@ -127,6 +127,15 @@ export const buildApp = async () => {
     return { status: 'ok', timestamp: new Date().toISOString() };
   });
 
+  app.get('/', async () => {
+    return { 
+      status: 'ok', 
+      message: 'Rajwadi E-commerce API is running successfully!',
+      documentation: '/api/v1',
+      version: '1.0.0'
+    };
+  });
+
   app.register(authRoutes, { prefix: '/api/v1/auth' });
   app.register(userRoutes, { prefix: '/api/v1/users' });
   app.register(addressRoutes, { prefix: '/api/v1/addresses' });
