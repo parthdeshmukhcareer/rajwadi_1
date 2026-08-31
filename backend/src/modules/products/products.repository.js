@@ -110,14 +110,26 @@ export class ProductsRepository {
     return { data, total };
   }
 
-  async getPublicProductBySlug(slug) {
-    const [product] = await db.select().from(products).where(and(eq(products.slug, slug), eq(products.isActive, true))).limit(1);
+  async getPublicProductBySlug(slug, isAdmin = false) {
+    const productCondition = isAdmin 
+      ? eq(products.slug, slug)
+      : and(eq(products.slug, slug), eq(products.isActive, true));
+
+    const [product] = await db.select().from(products).where(productCondition).limit(1);
     if (!product) return null;
 
-    const [category] = await db.select().from(categories).where(and(eq(categories.id, product.categoryId), eq(categories.isActive, true))).limit(1);
+    const categoryCondition = isAdmin 
+      ? eq(categories.id, product.categoryId)
+      : and(eq(categories.id, product.categoryId), eq(categories.isActive, true));
+
+    const [category] = await db.select().from(categories).where(categoryCondition).limit(1);
     if (!category) return null;
 
-    const variants = await db.select().from(productVariants).where(and(eq(productVariants.productId, product.id), eq(productVariants.isActive, true)));
+    const variantsCondition = isAdmin 
+      ? eq(productVariants.productId, product.id)
+      : and(eq(productVariants.productId, product.id), eq(productVariants.isActive, true));
+
+    const variants = await db.select().from(productVariants).where(variantsCondition);
     const images = await db.select().from(productImages).where(eq(productImages.productId, product.id)).orderBy(asc(productImages.sortOrder));
 
     const safeVariants = variants.map(v => {
@@ -262,5 +274,11 @@ export class ProductsRepository {
       const [updated] = await tx.update(productVariants).set({ stockOnHand }).where(eq(productVariants.id, id)).returning();
       return updated;
     });
+  }
+
+  async deleteProduct(id) {
+    // Delete product logic. Cascade deletes should handle variants, images, etc.
+    const [deleted] = await db.delete(products).where(eq(products.id, id)).returning();
+    return deleted;
   }
 }

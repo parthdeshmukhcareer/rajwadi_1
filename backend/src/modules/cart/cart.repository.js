@@ -26,16 +26,22 @@ export class CartRepository {
 
     const productIds = items.map(i => i.product.id);
     let allImages = [];
+    let allVariants = [];
     if (productIds.length > 0) {
       allImages = await db.select().from(productImages)
         .where(inArray(productImages.productId, productIds))
         .orderBy(asc(productImages.sortOrder));
+        
+      allVariants = await db.select().from(productVariants)
+        .where(inArray(productVariants.productId, productIds))
+        .orderBy(asc(productVariants.size));
     }
 
     return {
       cartId: cart.id,
       items: items.map(i => {
         const images = allImages.filter(img => img.productId === i.product.id);
+        const pVariants = allVariants.filter(v => v.productId === i.product.id && v.isActive);
         return {
           id: i.item.id,
           cartId: i.item.cartId,
@@ -44,6 +50,7 @@ export class CartRepository {
           product: {
             ...i.product,
             image: images.length > 0 ? images[0].imageUrl : null,
+            variants: pVariants
           }
         };
       })

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authApi } from '../api/auth.api.js';
+import { usersApi } from '../api/users.api.js';
 import { setAccessToken, setAuthFailureCallback, clearAccessToken } from '../api/client.js';
 
 const AuthContext = createContext();
@@ -30,17 +31,11 @@ export const AuthProvider = ({ children }) => {
   const bootstrapAuth = async () => {
     try {
       // 1. Attempt refresh using HttpOnly refresh cookie
-      const token = await authApi.refreshAccessToken();
+      const data = await authApi.refreshAccessToken();
       
-      if (token) {
-        // 2. Call current-user endpoint
-        const userRes = await authApi.getCurrentUser();
-        if (userRes.success) {
-          setUser(userRes.data);
-          setIsAuthenticated(true);
-        } else {
-          handleAuthFailure();
-        }
+      if (data && data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
       }
     } catch (error) {
       // Refresh failed because user is not logged in or cookie expired
@@ -86,13 +81,35 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (profileData) => {
+    const res = await usersApi.updateProfile(profileData);
+    if (res.success) {
+      setUser(res.data);
+      return res.data;
+    } else {
+      throw new Error(res.error?.message || 'Failed to update profile');
+    }
+  };
+
+  const loginWithGoogle = async (credential) => {
+    const res = await authApi.googleLogin(credential);
+    if (res.success) {
+      setAccessToken(res.data.accessToken);
+      setUser(res.data.user);
+      setIsAuthenticated(true);
+    }
+    return res;
+  };
+
   const value = {
     user,
     isAuthenticated,
     isLoading,
     login,
+    loginWithGoogle,
     register,
     logout,
+    updateProfile,
     refreshSession: bootstrapAuth
   };
 

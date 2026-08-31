@@ -39,6 +39,12 @@ export class AdminProductsController {
     return reply.send({ success: true, data: product });
   }
 
+  deleteProduct = async (req, reply) => {
+    const { id } = req.params;
+    await this.productsService.deleteProduct(id);
+    return reply.send({ success: true, message: 'Product deleted successfully' });
+  }
+
   createVariant = async (req, reply) => {
     const { productId } = req.params;
     const result = createVariantSchema.safeParse(req.body);

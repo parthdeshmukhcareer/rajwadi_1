@@ -1,6 +1,13 @@
 import { apiRequest, refreshSession } from './client.js';
 
 export const authApi = {
+  googleLogin: async (credential) => {
+    return apiRequest('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ credential })
+    }, { skipAuthRefresh: true });
+  },
+
   login: async (email, password) => {
     return apiRequest('/auth/login', {
       method: 'POST',

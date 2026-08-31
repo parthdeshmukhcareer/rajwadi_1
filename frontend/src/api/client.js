@@ -37,7 +37,7 @@ export const refreshSession = async () => {
     const data = await response.json();
     if (data.success && data.data.accessToken) {
       setAccessToken(data.data.accessToken);
-      return data.data.accessToken;
+      return data.data; // Return the full data payload containing user and accessToken
     }
     throw new Error('Invalid refresh response');
   }).catch((err) => {
@@ -84,9 +84,9 @@ export const apiRequest = async (endpoint, options = {}, customConfig = {}) => {
   // If 401 Unauthorized, and we haven't opted out of auto-refresh, and we originally had an access token
   if (response.status === 401 && !skipAuthRefresh && accessToken) {
     try {
-      const newToken = await refreshSession();
+      const refreshData = await refreshSession();
       // Retry original request with new token
-      headers.set('Authorization', `Bearer ${newToken}`);
+      headers.set('Authorization', `Bearer ${refreshData.accessToken}`);
       const retryConfig = {
         ...config,
         headers

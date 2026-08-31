@@ -78,17 +78,67 @@ const Products = () => {
     { 
       header: 'Actions', 
       cell: (row) => (
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button className="admin-icon-btn" title="View"><Eye size={18} /></button>
-          <button className="admin-icon-btn" title="Edit"><Edit size={18} /></button>
-          <button 
-            className="admin-icon-btn" 
-            title={row.isActive ? "Deactivate" : "Activate"} 
-            style={{ color: row.isActive ? 'var(--admin-danger)' : 'var(--admin-success)' }}
-            onClick={() => toggleStatus(row.id, row.isActive)}
-          >
-            {row.isActive ? <XCircle size={18} /> : <CheckCircle size={18} />}
-          </button>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          {/* View Action */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <button 
+              className="admin-icon-btn" 
+              title="View on Store"
+              onClick={() => window.open(`/product/${row.slug}`, '_blank')}
+            >
+              <Eye size={18} />
+            </button>
+            <span style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>View</span>
+          </div>
+
+          {/* Edit Action */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <button 
+              className="admin-icon-btn" 
+              title="Edit Product"
+              onClick={() => alert('Edit feature is under construction.')}
+            >
+              <Edit size={18} />
+            </button>
+            <span style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>Edit</span>
+          </div>
+
+          {/* Delete Action */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <button 
+              className="admin-icon-btn" 
+              title="Delete Product"
+              style={{ color: 'var(--admin-danger)' }}
+              onClick={async () => {
+                if (window.confirm(`Are you sure you want to delete ${row.name}?`)) {
+                  try {
+                    await productService.deleteProduct(row.id);
+                    setSuccessMsg('Product deleted successfully');
+                    fetchProducts();
+                    setTimeout(() => setSuccessMsg(''), 3000);
+                  } catch (err) {
+                    alert('Failed to delete product');
+                  }
+                }
+              }}
+            >
+              <Trash2 size={18} />
+            </button>
+            <span style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>Delete</span>
+          </div>
+
+          {/* Toggle Action */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <button 
+              className="admin-icon-btn" 
+              title={row.isActive ? "Deactivate" : "Activate"} 
+              style={{ color: row.isActive ? 'var(--admin-text-muted)' : 'var(--admin-success)' }}
+              onClick={() => toggleStatus(row.id, row.isActive)}
+            >
+              {row.isActive ? <XCircle size={18} /> : <CheckCircle size={18} />}
+            </button>
+            <span style={{ fontSize: '10px', color: 'var(--admin-text-muted)' }}>{row.isActive ? 'Disable' : 'Enable'}</span>
+          </div>
         </div>
       ) 
     },

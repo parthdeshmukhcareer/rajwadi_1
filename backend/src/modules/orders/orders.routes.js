@@ -22,4 +22,5 @@ export async function orderRoutes(app) {
   app.post('/checkout', controller.checkout);
   app.get('/', controller.getUserOrders);
   app.get('/:orderNumber', controller.getOrderDetails);
+  app.post('/:orderNumber/cancel', controller.cancelOrder);
 }

@@ -14,3 +14,5 @@ export * from './payments.js';
 export * from './webhookEvents.js';
 export * from './refunds.js';
 export * from './reviews.js';
+export * from './user_oauth_accounts.js';
+export * from './email_logs.js';

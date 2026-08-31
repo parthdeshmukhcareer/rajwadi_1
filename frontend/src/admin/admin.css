@@ -89,28 +89,28 @@
   transition: all 0.2s ease;
 }
 
-.admin-btn-primary {
+.admin-btn.admin-btn-primary {
   background-color: var(--admin-primary);
   color: white;
 }
-.admin-btn-primary:hover {
+.admin-btn.admin-btn-primary:hover {
   background-color: var(--admin-primary-hover);
 }
 
-.admin-btn-secondary {
+.admin-btn.admin-btn-secondary {
   background-color: var(--admin-secondary);
   color: var(--admin-text-main);
 }
-.admin-btn-secondary:hover {
+.admin-btn.admin-btn-secondary:hover {
   background-color: var(--admin-secondary-hover);
 }
 
-.admin-btn-outline {
+.admin-btn.admin-btn-outline {
   background-color: transparent;
   border: 1px solid var(--admin-border);
   color: var(--admin-text-main);
 }
-.admin-btn-outline:hover {
+.admin-btn.admin-btn-outline:hover {
   background-color: var(--admin-bg-main);
 }
 
@@ -198,4 +198,31 @@
   overflow-y: auto;
   padding: 32px;
   background-color: var(--admin-bg-main);
+}
+
+@media print {
+  .admin-sidebar, 
+  .admin-topbar, 
+  .admin-sidebar-header,
+  .admin-btn {
+    display: none !important;
+  }
+  .admin-layout,
+  .admin-main-wrapper {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .admin-content {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  body, .admin-app {
+    background-color: white !important;
+  }
+  .admin-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    page-break-inside: avoid;
+  }
 }

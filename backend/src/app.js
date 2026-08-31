@@ -8,6 +8,7 @@ import { env } from './config/env.js';
 import { db } from './db/index.js';
 import { DomainError } from './utils/errors.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
+import { userRoutes } from './modules/users/users.routes.js';
 import { addressRoutes } from './modules/addresses/addresses.routes.js';
 import { uploadRoutes } from './modules/uploads/uploads.routes.js';
 import { publicCategoryRoutes } from './modules/categories/categories.routes.js';
@@ -20,6 +21,8 @@ import { orderRoutes } from './modules/orders/orders.routes.js';
 import { adminOrderRoutes } from './modules/admin/admin.orders.routes.js';
 import { adminRefundRoutes } from './modules/admin/admin.refunds.routes.js';
 import { adminReviewRoutes } from './modules/admin/admin.reviews.routes.js';
+import { adminDashboardRoutes } from './modules/admin/admin.dashboard.routes.js';
+import { adminReportsRoutes } from './modules/admin/admin.reports.routes.js';
 import { paymentRoutes } from './modules/payments/payments.routes.js';
 import { webhookRoutes } from './modules/payments/webhooks.routes.js';
 import { reviewsRoutes } from './modules/reviews/reviews.routes.js';
@@ -48,7 +51,7 @@ export const buildApp = async () => {
   });
 
   await app.register(cors, {
-    origin: env.FRONTEND_URL,
+    origin: [env.FRONTEND_URL, 'http://127.0.0.1:5173', 'http://localhost:5173'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
   });
@@ -122,6 +125,7 @@ export const buildApp = async () => {
   });
 
   app.register(authRoutes, { prefix: '/api/v1/auth' });
+  app.register(userRoutes, { prefix: '/api/v1/users' });
   app.register(addressRoutes, { prefix: '/api/v1/addresses' });
   app.register(uploadRoutes, { prefix: '/api/v1/admin/uploads' });
   app.register(publicCategoryRoutes, { prefix: '/api/v1/categories' });
@@ -134,6 +138,8 @@ export const buildApp = async () => {
   app.register(adminOrderRoutes, { prefix: '/api/v1/admin/orders' });
   app.register(adminRefundRoutes, { prefix: '/api/v1/admin/refunds' });
   app.register(adminReviewRoutes, { prefix: '/api/v1/admin/reviews' });
+  app.register(adminDashboardRoutes, { prefix: '/api/v1/admin/dashboard' });
+  app.register(adminReportsRoutes, { prefix: '/api/v1/admin/reports' });
   app.register(reviewsRoutes, { prefix: '/api/v1/products' });
   app.register(paymentRoutes, { prefix: '/api/v1' });
   app.register(webhookRoutes, { prefix: '/api/v1/webhooks' });

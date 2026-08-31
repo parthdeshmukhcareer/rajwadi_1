@@ -191,8 +191,8 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
 
           <div className="p-detail-price-myntra" style={{ marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
-              <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#432227' }}>₹{(Number(product.basePrice) || 0).toFixed(2)}</span>
-              <span style={{ fontSize: '20px', color: '#888', textDecoration: 'line-through' }}>MRP ₹{(Number(product.basePrice) * 1.5).toFixed(2)}</span>
+              <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#432227' }}>₹{(Number(product.startingPrice || product.basePrice || product.price) || 0).toFixed(2)}</span>
+              <span style={{ fontSize: '20px', color: '#888', textDecoration: 'line-through' }}>MRP ₹{(Number(product.startingPrice || product.basePrice || product.price) * 1.5).toFixed(2)}</span>
               <span style={{ fontSize: '20px', color: '#a48c5a', fontWeight: 'bold' }}>(33% OFF)</span>
             </div>
             <div style={{ color: '#666', fontSize: '14px', marginTop: '5px' }}>inclusive of all taxes</div>

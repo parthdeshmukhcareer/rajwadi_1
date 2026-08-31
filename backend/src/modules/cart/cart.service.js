@@ -30,6 +30,7 @@ export class CartService {
           slug: item.product.slug,
           image: item.product.image,
           gstRate: item.product.gstRate,
+          variants: item.product.variants,
         },
         variant: {
           id: item.variant.id,

@@ -46,26 +46,26 @@ function OrderDetails() {
 
   if (isLoading) {
     return (
-      <section className="view-section active" style={{ paddingTop: '150px', paddingBottom: '100px', backgroundColor: '#fcf8f0', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '50px 0' }}>
         <div style={{ textAlign: 'center', color: '#888' }}>
           <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: '32px', marginBottom: '15px' }}></i>
           <p>Retrieving Order Details...</p>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (error || !order) {
     return (
-      <section className="view-section active" style={{ paddingTop: '150px', paddingBottom: '100px', backgroundColor: '#fcf8f0', minHeight: '100vh' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ backgroundColor: '#fff', padding: '50px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+      <div>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ backgroundColor: '#fff', padding: '50px', borderRadius: '12px' }}>
             <h1 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '28px', marginBottom: '15px' }}>Oops!</h1>
             <p style={{ color: '#e74c3c', marginBottom: '20px' }}>{error || 'Order not found.'}</p>
             <Link to="/account/orders" style={{ display: 'inline-block', backgroundColor: '#432227', color: '#fff', padding: '12px 30px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold' }}>Back to Orders</Link>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
@@ -105,8 +105,8 @@ function OrderDetails() {
   const canCancel = ['PENDING_PAYMENT', 'CONFIRMED'].includes(order.status);
 
   return (
-    <section className="view-section active" style={{ paddingTop: '120px', paddingBottom: '80px', backgroundColor: '#fcf8f0', minHeight: '100vh' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 20px' }}>
+    <div>
+      <div>
         
         <div style={{ marginBottom: '20px' }}>
           <Link to="/account/orders" style={{ color: '#a48c5a', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>&larr; Back to All Orders</Link>
@@ -114,7 +114,7 @@ function OrderDetails() {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' }}>
           <div>
-            <h1 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '32px', margin: '0 0 5px 0' }}>Order #{order.orderNumber}</h1>
+            <h1 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '32px', margin: '0 0 5px 0' }}>Order Details</h1>
             <p style={{ color: '#888', margin: 0, fontSize: '14px' }}>Placed on {formattedDate}</p>
           </div>
           
@@ -165,8 +165,11 @@ function OrderDetails() {
                 This order has been cancelled.
               </div>
             ) : order.status === 'PENDING_PAYMENT' ? (
-               <div style={{ padding: '20px', backgroundColor: '#fff8e5', color: '#f39c12', borderRadius: '8px', textAlign: 'center', fontWeight: 'bold' }}>
-                Awaiting Payment Completion.
+               <div style={{ padding: '20px', backgroundColor: '#fff8e5', color: '#f39c12', borderRadius: '8px', textAlign: 'center' }}>
+                <strong style={{ display: 'block', marginBottom: '10px' }}>Awaiting Payment Completion.</strong>
+                <Link to={`/payment/${order.orderNumber}`} style={{ display: 'inline-block', backgroundColor: '#432227', color: '#fff', padding: '10px 20px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', textTransform: 'uppercase' }}>
+                  Pay Now
+                </Link>
               </div>
             ) : (
               <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', margin: '30px 0 20px 0' }}>
@@ -271,7 +274,6 @@ function OrderDetails() {
                 </div>
               )}
               
-              {/* 
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', color: '#555' }}>
                 <span>Tax (GST)</span>
                 <span>₹{Number(order.taxTotal).toFixed(2)}</span>
@@ -281,7 +283,6 @@ function OrderDetails() {
                 <span>Shipping</span>
                 <span>{Number(order.shippingTotal) === 0 ? 'FREE' : `₹${Number(order.shippingTotal).toFixed(2)}`}</span>
               </div>
-              */}
 
               <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '15px', borderTop: '1px solid #ddd', fontSize: '18px', color: '#432227', fontWeight: 'bold' }}>
                 <span>Grand Total</span>
@@ -292,7 +293,7 @@ function OrderDetails() {
         </div>
 
       </div>
-    </section>
+    </div>
   );
 }
 

@@ -19,6 +19,7 @@ export const CartProvider = ({ children }) => {
   const [isCartLoading, setIsCartLoading] = useState(false);
   const [cartError, setCartError] = useState(null);
   const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
+  const [cartToastMessage, setCartToastMessage] = useState('');
 
   const [localCartItems, setLocalCartItems] = useState([]);
 
@@ -99,12 +100,14 @@ export const CartProvider = ({ children }) => {
                  name: productData?.name || 'Mock Product',
                  price: productData?.price || 0,
                  images: productData?.images ? productData.images.map(url => ({ url })) : [{ url: productData?.image }],
+                 variants: productData?.variants || []
              },
-             variant: { size: size.toUpperCase() }
+             variant: { id: variantId, size: size.toUpperCase() }
           }];
         });
       }
-      setIsCartSidebarOpen(true);
+      setCartToastMessage('Item added to cart');
+      setTimeout(() => setCartToastMessage(''), 3000);
     } catch (err) {
       console.error('Failed to add to cart', err);
       // Fallback to local if UUID error
@@ -121,11 +124,13 @@ export const CartProvider = ({ children }) => {
                    name: productData?.name || 'Mock Product',
                    price: productData?.price || 0,
                    images: productData?.images ? productData.images.map(url => ({ url })) : [{ url: productData?.image }],
+                   variants: productData?.variants || []
                },
-               variant: { size: size.toUpperCase() }
+               variant: { id: variantId, size: size.toUpperCase() }
             }];
          });
-         setIsCartSidebarOpen(true);
+         setCartToastMessage('Item added to cart');
+         setTimeout(() => setCartToastMessage(''), 3000);
       } else {
          throw err;
       }
@@ -170,6 +175,27 @@ export const CartProvider = ({ children }) => {
 
   const toggleCartSidebar = () => setIsCartSidebarOpen(!isCartSidebarOpen);
 
+  const changeSize = async (oldItemId, newVariantId, quantity) => {
+    try {
+      setIsCartLoading(true);
+      if (oldItemId.toString().startsWith('local-')) {
+        setLocalCartItems(prev => prev.filter(item => item.id !== oldItemId));
+        await addToCart(newVariantId, quantity);
+        return;
+      }
+      await cartService.removeCartItem(oldItemId);
+      await cartService.addToCart(newVariantId, quantity);
+      await fetchCart();
+      setCartToastMessage('Size updated');
+      setTimeout(() => setCartToastMessage(''), 3000);
+    } catch (err) {
+      console.error('Failed to change size', err);
+      throw err;
+    } finally {
+      setIsCartLoading(false);
+    }
+  };
+
   // Merge backend cart items with local items
   const backendItems = cartState?.items || [];
   const mergedItems = [...backendItems, ...localCartItems];
@@ -185,9 +211,11 @@ export const CartProvider = ({ children }) => {
     cartError,
     cartItemCount,
     isCartSidebarOpen,
+    cartToastMessage,
     toggleCartSidebar,
     addToCart,
     updateQuantity,
+    changeSize,
     removeItem,
     refreshCart: fetchCart,
   };

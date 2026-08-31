@@ -36,12 +36,24 @@ const AdminLogin = () => {
       height: '100vh', 
       alignItems: 'center', 
       justifyContent: 'center',
-      backgroundColor: 'var(--admin-bg-main)'
+      backgroundColor: '#fcf8f0', // Premium warm fallback
+      backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/assets/images/6cb46412-3aba-426b-b370-0b00c61525fe.png')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'left center',
+      backgroundRepeat: 'no-repeat'
     }}>
-      <div className="admin-card" style={{ width: '100%', maxWidth: '400px', padding: '40px 32px' }}>
+      <div className="admin-card" style={{ 
+        width: '100%', 
+        maxWidth: '420px', 
+        padding: '50px 40px', 
+        backgroundColor: '#fff', 
+        borderRadius: '12px', 
+        boxShadow: '0 10px 40px rgba(67, 34, 39, 0.08)',
+        border: '1px solid #eaeaea'
+      }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '28px', letterSpacing: '2px', marginBottom: '8px' }}>RAJWADI</h1>
-          <h2 style={{ fontSize: '14px', color: 'var(--admin-text-muted)', fontFamily: 'var(--admin-font-body)', fontWeight: 400 }}>Admin Portal</h2>
+          <h1 style={{ fontSize: '32px', letterSpacing: '4px', marginBottom: '8px', color: '#432227', fontFamily: 'var(--font-serif)' }}>RAJWADI</h1>
+          <h2 style={{ fontSize: '13px', color: '#a48c5a', fontFamily: 'var(--admin-font-body)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '2px' }}>Admin Portal</h2>
         </div>
 
         {error && (
@@ -57,24 +69,24 @@ const AdminLogin = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div>
-            <label className="admin-label">Email Address</label>
+            <label className="admin-label" style={{ color: '#432227', fontWeight: 'bold' }}>Email Address</label>
             <input 
               type="email" 
               className="admin-input" 
-              placeholder="admin@rajwadi.com"
+              style={{ padding: '12px', border: '1px solid #d4c5b0', borderRadius: '4px', backgroundColor: '#fdfdfc' }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div>
-            <label className="admin-label">Password</label>
+            <label className="admin-label" style={{ color: '#432227', fontWeight: 'bold' }}>Password</label>
             <input 
               type="password" 
               className="admin-input" 
-              placeholder="••••••••"
+              style={{ padding: '12px', border: '1px solid #d4c5b0', borderRadius: '4px', backgroundColor: '#fdfdfc' }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -83,8 +95,10 @@ const AdminLogin = () => {
           <button 
             type="submit" 
             className="admin-btn admin-btn-primary" 
-            style={{ width: '100%', padding: '12px', marginTop: '8px', fontSize: '15px' }}
+            style={{ width: '100%', padding: '14px', marginTop: '10px', fontSize: '15px', backgroundColor: '#432227', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', transition: 'background-color 0.2s' }}
             disabled={isSubmitting}
+            onMouseOver={e => !isSubmitting && (e.currentTarget.style.backgroundColor = '#5a3036')}
+            onMouseOut={e => !isSubmitting && (e.currentTarget.style.backgroundColor = '#432227')}
           >
             {isSubmitting ? 'Authenticating...' : 'Sign In'}
           </button>

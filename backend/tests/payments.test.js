@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { db } from '../src/db/index.js';
-import { users, categories, products, productVariants, addresses, carts, cartItems, orders, orderItems, payments, paymentAttempts, webhookEvents } from '../src/db/schema/index.js';
+import { users, categories, products, productVariants, addresses, carts, cartItems, orders, orderItems, payments, paymentAttempts, webhookEvents, refunds } from '../src/db/schema/index.js';
 import { eq } from 'drizzle-orm';
 import Fastify from 'fastify';
 import { buildApp } from '../src/app.js';
 import { razorpay } from '../src/config/razorpay.js';
 import crypto from 'crypto';
 import { env } from '../src/config/env.js';
+import { EmailService } from '../src/services/email.service.js';
 
 describe('Payments E2E', () => {
   let app;
@@ -21,7 +22,16 @@ describe('Payments E2E', () => {
     app = await buildApp();
     await app.ready();
 
-    await db.delete(users).where(eq(users.email, 'paytest@test.com'));
+    const userObj = await db.select().from(users).where(eq(users.email, 'paytest@test.com')).limit(1);
+    if (userObj.length > 0) {
+      const uId = userObj[0].id;
+      await db.delete(refunds);
+      await db.delete(paymentAttempts);
+      await db.delete(payments);
+      await db.delete(orders).where(eq(orders.userId, uId));
+      await db.delete(carts).where(eq(carts.userId, uId));
+      await db.delete(users).where(eq(users.id, uId));
+    }
 
     const [user] = await db.insert(users).values({
       email: 'paytest@test.com',
@@ -33,8 +43,20 @@ describe('Payments E2E', () => {
     userToken = app.jwt.sign({ sub: user.id, role: 'CUSTOMER' });
 
     const [addr] = await db.insert(addresses).values({
-      userId, fullName: 'A', phone: '1', addressLine1: 'A', city: 'C', state: 'S', postalCode: '1', country: 'I', isDefault: true
+      userId: user.id,
+      fullName: 'Test User',
+      phone: '9999999999',
+      addressLine1: '123 Test St',
+      city: 'Testville',
+      state: 'TS',
+      postalCode: '123456',
+      country: 'India',
+      addressType: 'HOME'
     }).returning();
+
+    // Clean up category if exists
+    await db.delete(products).where(eq(products.slug, 'pay-prod'));
+    await db.delete(categories).where(eq(categories.slug, 'pay-cat'));
 
     const [cat] = await db.insert(categories).values({ name: 'Pay Cat', slug: 'pay-cat' }).returning();
     const [prod] = await db.insert(products).values({ categoryId: cat.id, name: 'Pay Prod', slug: 'pay-prod', basePrice: 112000, gstRate: 12 }).returning();
@@ -60,29 +82,43 @@ describe('Payments E2E', () => {
     orderId = body.data.id;
 
     // Mock Razorpay SDK
-    vi.spyOn(razorpay.orders, 'create').mockResolvedValue({ id: 'order_rzp_mock123', amount: body.data.grandTotal, currency: 'INR' });
-    vi.spyOn(razorpay.payments, 'fetch').mockResolvedValue({ 
+    let mockedAmount = body.data.grandTotal;
+    vi.spyOn(razorpay.orders, 'create').mockImplementation(async (options) => {
+      mockedAmount = options.amount;
+      return { id: 'order_rzp_mock123', amount: options.amount, currency: options.currency };
+    });
+    vi.spyOn(razorpay.payments, 'fetch').mockImplementation(async () => ({ 
       id: 'pay_rzp_mock123', 
-      amount: body.data.grandTotal, 
+      amount: mockedAmount, 
       currency: 'INR', 
       status: 'captured', 
       method: 'card', 
       order_id: 'order_rzp_mock123' 
-    });
+    }));
+
+    // Mock Email Service
+    vi.spyOn(EmailService.prototype, 'sendEmail').mockResolvedValue({ success: true, messageId: 'test_email_message_id' });
   });
 
   afterAll(async () => {
+    await db.delete(refunds);
     await db.delete(paymentAttempts);
     await db.delete(payments);
     await db.delete(webhookEvents);
     await db.delete(orderItems);
     await db.delete(orders).where(eq(orders.userId, userId));
     await db.delete(carts).where(eq(carts.userId, userId));
-    await db.delete(productVariants).where(eq(productVariants.id, variantId));
-    await db.delete(products);
-    await db.delete(categories);
-    await db.delete(addresses);
-    await db.delete(users).where(eq(users.id, userId));
+    
+    if (variantId) {
+      await db.delete(productVariants).where(eq(productVariants.id, variantId));
+    }
+    await db.delete(products).where(eq(products.slug, 'pay-prod'));
+    await db.delete(categories).where(eq(categories.slug, 'pay-cat'));
+    
+    if (userId) {
+      await db.delete(addresses).where(eq(addresses.userId, userId));
+      await db.delete(users).where(eq(users.id, userId));
+    }
     await app.close();
     vi.restoreAllMocks();
   });
@@ -114,6 +150,10 @@ describe('Payments E2E', () => {
       headers: { authorization: `Bearer ${userToken}` },
       payload: { razorpayOrderId, razorpayPaymentId, razorpaySignature }
     });
+    
+    if (res.statusCode !== 200) {
+      console.log("TEST 2 ERROR:", res.payload);
+    }
 
     expect(res.statusCode).toBe(200);
     
@@ -126,7 +166,7 @@ describe('Payments E2E', () => {
     const [order] = await db.select().from(orders).where(eq(orders.id, orderId));
     expect(order.status).toBe('CONFIRMED');
     expect(order.paymentStatus).toBe('PAID');
-  });
+  }, 10000);
 
   it('3. webhook order.paid should be idempotent (no double deduction)', async () => {
     const payloadObj = {

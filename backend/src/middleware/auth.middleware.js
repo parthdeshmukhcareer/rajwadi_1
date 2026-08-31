@@ -7,3 +7,11 @@ export const requireAuth = async (req, reply) => {
     throw Errors.AUTHENTICATION_REQUIRED();
   }
 };
+
+export const optionalAuth = async (req, reply) => {
+  try {
+    await req.jwtVerify();
+  } catch (err) {
+    // Ignore verification failure; req.user will just be undefined.
+  }
+};

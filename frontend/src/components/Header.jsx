@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar }) {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,7 +83,25 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
               .user-dropdown-item:hover { background: #fcf8f0; color: #a48c5a; }
             `}</style>
             <Link to="/account" className="action-icon-btn account-btn" title="Account" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', padding: '10px 0' }}>
-              <i className="fa-regular fa-user" style={{ color: '#d4c098', fontSize: '20px' }}></i>
+              {isAuthenticated && user ? (
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  backgroundColor: '#d4c098',
+                  color: '#432227',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase'
+                }}>
+                  {(user.firstName && user.firstName[0]) || (user.email && user.email[0]) || 'U'}
+                </div>
+              ) : (
+                <i className="fa-regular fa-user" style={{ color: '#d4c098', fontSize: '20px' }}></i>
+              )}
             </Link>
             <div className="user-dropdown-menu">
               {isAuthenticated ? (

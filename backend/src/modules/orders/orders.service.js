@@ -3,7 +3,8 @@ import { db } from '../../db/index.js';
 import { addresses } from '../../db/schema/index.js';
 import { eq } from 'drizzle-orm';
 import { env } from '../../config/env.js';
-
+import { emailService } from '../../services/email.service.js';
+import { users } from '../../db/schema/index.js';
 export class OrdersService {
   constructor(ordersRepo, cartService, couponsService) {
     this.ordersRepo = ordersRepo;
@@ -95,9 +96,11 @@ export class OrdersService {
 
     const expiresAt = new Date(Date.now() + env.ORDER_EXPIRATION_MINUTES * 60000);
 
+    const isCOD = checkoutData.paymentMethod === 'COD';
+    
     const orderData = {
-      status: 'PENDING_PAYMENT',
-      paymentStatus: 'PENDING',
+      status: isCOD ? 'CONFIRMED' : 'PENDING_PAYMENT',
+      paymentStatus: isCOD ? 'COD' : 'PENDING',
       subtotal,
       discountTotal,
       taxTotal,
@@ -110,6 +113,20 @@ export class OrdersService {
 
     try {
       const order = await this.ordersRepo.processCheckoutTransaction(userId, orderData, itemSnapshots, variantUpdates, cart.id);
+      
+      if (isCOD) {
+        const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+        if (user) {
+          const emailItems = itemSnapshots.map(item => ({
+            quantity: item.quantity,
+            price: item.unitPrice,
+            size: item.size,
+            productName: item.productName
+          }));
+          emailService.sendOrderConfirmation(order, user, emailItems, order.shippingAddress).catch(console.error);
+        }
+      }
+      
       return order;
     } catch (error) {
       if (error.message.includes('Insufficient stock')) {
@@ -130,10 +147,26 @@ export class OrdersService {
   async getOrderDetails(userId, orderNumber) {
     const result = await this.ordersRepo.getOrderWithItems(userId, orderNumber);
     if (!result) throw Errors.ORDER_NOT_FOUND();
-    
-    // We can just return result because getOrderWithItems returns the order row.
-    // However, if we need to filter internal things we can do it here. 
-    // The order row already contains trackingNumber, shippingCarrier, etc.
     return result;
+  }
+
+  async cancelOrder(userId, orderNumber) {
+    const result = await this.ordersRepo.getOrderWithItems(userId, orderNumber);
+    if (!result) throw Errors.ORDER_NOT_FOUND();
+    
+    const { order } = result;
+    
+    if (order.status !== 'PENDING_PAYMENT' && order.status !== 'CONFIRMED') {
+      throw new Error('Order cannot be cancelled at this stage.');
+    }
+    
+    if (order.paymentStatus === 'PAID') {
+      // Need idempotency key. Can generate one or use order number for simplicity
+      await this.ordersRepo.processPaidCancellationTransaction(order.id, userId, `cancel_${order.id}`);
+    } else {
+      await this.ordersRepo.processUnpaidCancellationTransaction(order.id);
+    }
+    
+    return { success: true };
   }
 }

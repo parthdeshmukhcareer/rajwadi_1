@@ -28,14 +28,23 @@ export class OrdersRepository {
         }
       }
 
-      // 4. Update reserved_stock
+      // 4. Update stock
       for (const update of variantUpdates) {
-        await tx.update(productVariants)
-          .set({ 
-            reservedStock: sql`${productVariants.reservedStock} + ${update.quantity}`,
-            updatedAt: new Date()
-          })
-          .where(eq(productVariants.id, update.id));
+        if (orderData.paymentStatus === 'COD') {
+          await tx.update(productVariants)
+            .set({ 
+              stockOnHand: sql`${productVariants.stockOnHand} - ${update.quantity}`,
+              updatedAt: new Date()
+            })
+            .where(eq(productVariants.id, update.id));
+        } else {
+          await tx.update(productVariants)
+            .set({ 
+              reservedStock: sql`${productVariants.reservedStock} + ${update.quantity}`,
+              updatedAt: new Date()
+            })
+            .where(eq(productVariants.id, update.id));
+        }
       }
 
       // 5. Generate Order Number
@@ -91,6 +100,37 @@ export class OrdersRepository {
       }
 
       await tx.update(orders).set({ status: 'EXPIRED', updatedAt: new Date() }).where(eq(orders.id, orderId));
+      return true;
+    });
+  }
+
+  async processUnpaidCancellationTransaction(orderId) {
+    return await db.transaction(async (tx) => {
+      const [order] = await tx.select().from(orders).where(eq(orders.id, orderId)).for('update');
+      if (order.status !== 'PENDING_PAYMENT' && order.paymentStatus !== 'PENDING') throw new Error('Cannot cancel unpaid order in this state');
+      
+      const items = await tx.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+      
+      const variantMap = new Map();
+      items.forEach(item => {
+        const qty = variantMap.get(item.variantId) || 0;
+        variantMap.set(item.variantId, qty + item.quantity);
+      });
+      
+      const variantIds = Array.from(variantMap.keys()).sort();
+      if (variantIds.length > 0) {
+        await tx.select().from(productVariants).where(inArray(productVariants.id, variantIds)).for('update');
+        for (const [vId, qty] of variantMap.entries()) {
+          await tx.update(productVariants)
+            .set({ 
+              reservedStock: sql`GREATEST(${productVariants.reservedStock} - ${qty}, 0)`,
+              updatedAt: new Date()
+            })
+            .where(eq(productVariants.id, vId));
+        }
+      }
+
+      await tx.update(orders).set({ status: 'CANCELLED', updatedAt: new Date() }).where(eq(orders.id, orderId));
       return true;
     });
   }
@@ -170,7 +210,7 @@ export class OrdersRepository {
       )).limit(1);
 
       if (!paymentAttempt) throw new Error('NO_CAPTURED_PAYMENT_ATTEMPT');
-      if (paymentAttempt.amount !== order.grandTotal) throw new Error('PAYMENT_AMOUNT_MISMATCH');
+      if (paymentAttempt.amount !== Math.round(order.grandTotal * 100)) throw new Error('PAYMENT_AMOUNT_MISMATCH');
       if (paymentAttempt.currency !== 'INR') throw new Error('INVALID_CURRENCY');
 
       const items = await tx.select().from(orderItems).where(eq(orderItems.orderId, orderId));

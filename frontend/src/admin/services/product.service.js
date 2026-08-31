@@ -50,5 +50,12 @@ export const productService = {
       body: JSON.stringify({ isActive })
     });
     return response.data;
+  },
+
+  deleteProduct: async (id) => {
+    const response = await adminApiRequest(`/admin/products/${id}`, {
+      method: 'DELETE'
+    });
+    return response.data;
   }
 };

@@ -267,13 +267,13 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
                       >
                         <i className={`${wishlist.includes(product.id) ? 'fa-solid' : 'fa-regular'} fa-heart`} style={{ color: wishlist.includes(product.id) ? '#ff3f6c' : '#535766', fontSize: '18px' }}></i>
                       </button>
-                      <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+                      <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} loading="lazy" />
                     </div>
                     <div className="product-details-summary" onClick={() => navigate(`/product/${product.slug || product.id}`)}>
                       <h3 className="product-brand">{product.brand || 'RAJWADI'}</h3>
                       <p className="product-title-myntra" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</p>
                       <div className="product-price-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-                        <span className="product-price" style={{ fontSize: '16px', fontWeight: 'bold', color: '#3a1a20' }}>Rs. {product.basePrice}</span>
+                        <span className="product-price" style={{ fontSize: '16px', fontWeight: 'bold', color: '#3a1a20' }}>Rs. {product.startingPrice || product.basePrice || product.price}</span>
                         <div style={{ display: 'flex', gap: '8px' }}>
                           <button 
                             style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#fff', color: '#432227', border: '1px solid #432227', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}

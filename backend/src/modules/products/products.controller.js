@@ -10,7 +10,7 @@ export class ProductsController {
 
   getProduct = async (req, reply) => {
     const { slug } = req.params;
-    const product = await this.productsService.getProductBySlug(slug);
+    const product = await this.productsService.getProductBySlug(slug, req.user);
     return reply.send({ success: true, data: product });
   }
 

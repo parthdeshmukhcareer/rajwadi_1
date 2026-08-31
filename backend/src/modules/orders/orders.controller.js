@@ -27,4 +27,11 @@ export class OrdersController {
     const data = await this.ordersService.getOrderDetails(userId, orderNumber);
     return reply.send({ success: true, data });
   }
+
+  cancelOrder = async (req, reply) => {
+    const userId = req.user.sub;
+    const { orderNumber } = req.params;
+    const result = await this.ordersService.cancelOrder(userId, orderNumber);
+    return reply.send(result);
+  }
 }

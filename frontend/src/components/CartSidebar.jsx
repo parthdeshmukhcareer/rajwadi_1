@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 
 function CartSidebar() {
   const navigate = useNavigate();
-  const { isCartSidebarOpen, toggleCartSidebar, cartState, removeItem, updateQuantity } = useCart();
+  const { isCartSidebarOpen, toggleCartSidebar, cartState, removeItem, updateQuantity, changeSize } = useCart();
   
   if (!isCartSidebarOpen) return null;
 
@@ -75,7 +75,22 @@ function CartSidebar() {
                       <i className="fa-solid fa-xmark"></i>
                     </button>
                   </div>
-                  <span style={{ fontSize: '12px', color: '#888', marginBottom: '12px', fontFamily: 'var(--font-sans)' }}>Size: {variant.size || variant.sku || 'Standard'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                    <span style={{ fontSize: '12px', color: '#888', fontFamily: 'var(--font-sans)', marginRight: '8px' }}>Size:</span>
+                    {product.variants && product.variants.length > 0 ? (
+                      <select 
+                        value={variant.id || ''}
+                        onChange={(e) => changeSize(item.id, e.target.value, item.quantity)}
+                        style={{ fontSize: '12px', padding: '2px 5px', borderRadius: '4px', border: '1px solid #ddd', color: '#432227', outline: 'none', cursor: 'pointer' }}
+                      >
+                        {product.variants.map(v => (
+                          <option key={v.id} value={v.id}>{v.size}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span style={{ fontSize: '12px', color: '#432227', fontFamily: 'var(--font-sans)', fontWeight: 'bold' }}>{variant.size || variant.sku || 'Standard'}</span>
+                    )}
+                  </div>
                   <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#432227' }}>₹{price.toFixed(2)}</span>
                     <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: '2px', padding: '2px' }}>

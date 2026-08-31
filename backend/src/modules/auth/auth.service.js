@@ -1,14 +1,17 @@
 import crypto from 'crypto';
+import { OAuth2Client } from 'google-auth-library';
 import { db } from '../../db/index.js';
-import { refreshTokens } from '../../db/schema/index.js';
-import { eq } from 'drizzle-orm';
+import { refreshTokens, users, userOauthAccounts } from '../../db/schema/index.js';
+import { eq, and } from 'drizzle-orm';
 import { Errors } from '../../utils/errors.js';
 import { PasswordUtil } from '../../utils/password.util.js';
+import { env } from '../../config/env.js';
 
 export class AuthService {
   constructor(usersRepo, authRepo) {
     this.usersRepo = usersRepo;
     this.authRepo = authRepo;
+    this.googleClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
   }
 
   getSafeUser(user) {
@@ -18,7 +21,11 @@ export class AuthService {
       lastName: user.lastName,
       email: user.email,
       phone: user.phone,
+      gender: user.gender,
+      dateOfBirth: user.dateOfBirth,
       role: user.role,
+      avatarUrl: user.avatarUrl,
+      emailVerified: user.emailVerified,
       createdAt: user.createdAt,
     };
   }
@@ -27,6 +34,86 @@ export class AuthService {
     const raw = crypto.randomBytes(40).toString('hex');
     const hash = crypto.createHash('sha256').update(raw).digest('hex');
     return { raw, hash };
+  }
+
+  async googleLogin(credential) {
+    try {
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken: credential,
+        audience: env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+
+      if (!payload.email) {
+        throw Errors.VALIDATION_ERROR('Google email is missing');
+      }
+      if (!payload.email_verified) {
+        throw Errors.VALIDATION_ERROR('Google email is not verified');
+      }
+
+      return await db.transaction(async (tx) => {
+        let user = await this.usersRepo.findByEmail(payload.email);
+        
+        if (user) {
+          const [oauthAccount] = await tx.select().from(userOauthAccounts)
+            .where(and(
+              eq(userOauthAccounts.provider, 'google'),
+              eq(userOauthAccounts.providerAccountId, payload.sub)
+            )).limit(1);
+
+          if (!oauthAccount) {
+            await tx.insert(userOauthAccounts).values({
+              userId: user.id,
+              provider: 'google',
+              providerAccountId: payload.sub,
+              email: payload.email,
+            });
+          }
+        } else {
+          const [newUser] = await tx.insert(users).values({
+            firstName: payload.given_name || 'User',
+            lastName: payload.family_name || '',
+            email: payload.email,
+            role: 'CUSTOMER',
+            avatarUrl: payload.picture || null,
+            emailVerified: true,
+          }).returning();
+
+          user = newUser;
+
+          await tx.insert(userOauthAccounts).values({
+            userId: user.id,
+            provider: 'google',
+            providerAccountId: payload.sub,
+            email: payload.email,
+          });
+        }
+
+        if (!user.isActive) throw Errors.USER_INACTIVE();
+
+        const tokenData = this.generateRefreshToken();
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 7);
+
+        await tx.insert(refreshTokens).values({
+          userId: user.id,
+          tokenHash: tokenData.hash,
+          expiresAt,
+        });
+
+        return {
+          user: this.getSafeUser(user),
+          rawRefreshToken: tokenData.raw,
+        };
+      });
+    } catch (err) {
+      if (err.name === 'Error' && err.message.includes('Token used too late')) {
+        throw Errors.VALIDATION_ERROR('Google token expired');
+      }
+      if (err.statusCode) throw err;
+      console.error('Google verification failed:', err);
+      throw Errors.VALIDATION_ERROR('Invalid Google credential');
+    }
   }
 
   async register(data) {

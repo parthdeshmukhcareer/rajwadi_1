@@ -28,6 +28,8 @@ const envSchema = z.object({
   RAZORPAY_KEY_ID: z.string().default('rzp_test_dummykey'),
   RAZORPAY_KEY_SECRET: z.string().default('dummysecret'),
   RAZORPAY_WEBHOOK_SECRET: z.string().default('dummywebhooksecret'),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
 });
 
 const _env = envSchema.safeParse(process.env);

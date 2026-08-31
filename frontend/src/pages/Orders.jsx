@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { orderService } from '../services/order.service';
 
@@ -7,6 +8,8 @@ function Orders() {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [orderToCancel, setOrderToCancel] = useState(null);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -23,6 +26,38 @@ function Orders() {
     };
     fetchOrders();
   }, []);
+
+  useEffect(() => {
+    if (orderToCancel) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [orderToCancel]);
+
+  const handleCancelClick = (e, orderNumber) => {
+    e.stopPropagation();
+    setOrderToCancel(orderNumber);
+  };
+
+  const confirmCancelOrder = async () => {
+    if (!orderToCancel) return;
+    setIsCancelling(true);
+    try {
+      await orderService.cancelOrder(orderToCancel);
+      // Refresh orders
+      const res = await orderService.getOrders();
+      setOrders(Array.isArray(res) ? res : (res?.data || []));
+      setOrderToCancel(null);
+    } catch (err) {
+      setError(err.message || 'Failed to cancel the order.');
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -47,12 +82,11 @@ function Orders() {
   };
 
   return (
-    <section className="view-section active" style={{ paddingTop: '120px', paddingBottom: '80px', backgroundColor: '#fcf8f0', minHeight: '100vh' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 20px' }}>
+    <div>
+      <div>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-          <h1 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '32px', margin: 0 }}>My Orders</h1>
-          <Link to="/account" style={{ color: '#a48c5a', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px' }}>&larr; Back to Account</Link>
+          <h1 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '24px', margin: 0 }}>My Orders</h1>
         </div>
 
         {error && (
@@ -92,10 +126,6 @@ function Orders() {
                   onMouseOver={(e) => { e.currentTarget.style.borderColor = '#a48c5a'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                   onMouseOut={(e) => { e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
-                  <div style={{ flex: '1 1 200px' }}>
-                    <span style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>Order Number</span>
-                    <strong style={{ fontSize: '18px', color: '#432227' }}>#{order.orderNumber}</strong>
-                  </div>
                   
                   <div style={{ flex: '1 1 150px' }}>
                     <span style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>Date</span>
@@ -112,6 +142,14 @@ function Orders() {
                     <span style={{ fontSize: '12px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>Status</span>
                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                       <span style={{ backgroundColor: getStatusColor(order.status) + '20', color: getStatusColor(order.status), padding: '4px 10px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>{order.status}</span>
+                      {['PENDING_PAYMENT', 'CONFIRMED'].includes(order.status) && (
+                        <button 
+                          onClick={(e) => handleCancelClick(e, order.orderNumber)}
+                          style={{ backgroundColor: '#e74c3c', border: 'none', color: '#fff', padding: '4px 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', textTransform: 'uppercase', transition: 'background-color 0.2s' }}
+                        >
+                          Cancel
+                        </button>
+                      )}
                     </div>
                   </div>
                   
@@ -125,7 +163,35 @@ function Orders() {
         )}
 
       </div>
-    </section>
+
+      {/* Cancel Modal */}
+      {orderToCancel && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 99999 }}>
+          <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', maxWidth: '400px', width: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
+            <h3 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '22px', marginTop: 0, marginBottom: '15px' }}>Cancel Order</h3>
+            <p style={{ color: '#555', marginBottom: '25px', lineHeight: '1.5' }}>Are you sure you want to cancel this order? This action cannot be undone.</p>
+            
+            <div style={{ display: 'flex', gap: '15px', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setOrderToCancel(null)}
+                disabled={isCancelling}
+                style={{ padding: '10px 20px', backgroundColor: '#f5f5f5', color: '#555', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                No, Keep It
+              </button>
+              <button 
+                onClick={confirmCancelOrder}
+                disabled={isCancelling}
+                style={{ padding: '10px 20px', backgroundColor: '#e74c3c', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                {isCancelling ? 'Cancelling...' : 'Yes, Cancel Order'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </div>
   );
 }
 

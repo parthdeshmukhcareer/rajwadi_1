@@ -3,6 +3,10 @@ import { PaymentsRepository } from './payments.repository.js';
 import { Errors } from '../../utils/errors.js';
 import { env } from '../../config/env.js';
 import crypto from 'crypto';
+import { emailService } from '../../services/email.service.js';
+import { db } from '../../db/index.js';
+import { users, addresses, orderItems, productVariants, products } from '../../db/schema/index.js';
+import { eq } from 'drizzle-orm';
 
 export class PaymentsService {
   constructor() {
@@ -32,7 +36,7 @@ export class PaymentsService {
       };
     }
 
-    const amount = order.grandTotal;
+    const amount = Math.round(order.grandTotal * 100); // Razorpay expects amount in subunits (paise)
 
     // Create Razorpay Order
     let rzpOrder;
@@ -144,6 +148,11 @@ export class PaymentsService {
     if (res.latePayment) {
        throw Errors.LATE_PAYMENT();
     }
+
+    if (!res.alreadyPaid && res.order) {
+      this._triggerOrderConfirmationEmail(order.id).catch(console.error);
+    }
+
     return { success: true, alreadyPaid: !!res.alreadyPaid };
   }
 
@@ -216,7 +225,10 @@ export class PaymentsService {
               currency,
               paymentMethod: method
            };
-           await this.repo.confirmPaidOrderTransaction(payment.orderId, attemptData);
+           const res = await this.repo.confirmPaidOrderTransaction(payment.orderId, attemptData);
+           if (res && res.order && !res.alreadyPaid) {
+              this._triggerOrderConfirmationEmail(payment.orderId).catch(console.error);
+           }
         } else if (status === 'failed') {
            await this.repo.recordPaymentAttempt({
              paymentId: payment.id,
@@ -276,5 +288,30 @@ export class PaymentsService {
       status: 'PROCESSED',
       processedAt: new Date()
     });
+  }
+
+  async _triggerOrderConfirmationEmail(orderId) {
+    try {
+      const order = await this.repo.getOrderById(orderId);
+      if (!order || order.status !== 'CONFIRMED') return;
+
+      const [user] = await db.select().from(users).where(eq(users.id, order.userId)).limit(1);
+      if (!user) return;
+
+      let shippingAddress = order.shippingAddress || null;
+      
+      const items = await db.select({
+        quantity: orderItems.quantity,
+        price: orderItems.unitPrice,
+        size: orderItems.size,
+        productName: orderItems.productName
+      })
+      .from(orderItems)
+      .where(eq(orderItems.orderId, orderId));
+
+      await emailService.sendOrderConfirmation(order, user, items, shippingAddress);
+    } catch (err) {
+      console.error('Failed to trigger order confirmation email:', err);
+    }
   }
 }

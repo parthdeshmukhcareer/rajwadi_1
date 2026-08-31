@@ -1,5 +1,9 @@
 import { Errors } from '../../utils/errors.js';
 
+// Simple in-memory cache for products
+const productsCache = new Map();
+const CACHE_TTL = 60 * 1000; // 1 minute
+
 export class ProductsService {
   constructor(productsRepo) {
     this.productsRepo = productsRepo;
@@ -23,8 +27,19 @@ export class ProductsService {
       sort: query.sort,
     };
 
+    const cacheKey = JSON.stringify(params);
+    if (productsCache.has(cacheKey)) {
+      const cached = productsCache.get(cacheKey);
+      if (Date.now() - cached.timestamp < CACHE_TTL) {
+        return cached.data;
+      } else {
+        productsCache.delete(cacheKey);
+      }
+    }
+
     const { data, total } = await this.productsRepo.getProducts(params);
-    return {
+    
+    const response = {
       data,
       pagination: {
         page,
@@ -33,16 +48,30 @@ export class ProductsService {
         pages: Math.ceil(total / limit),
       }
     };
+    
+    productsCache.set(cacheKey, { data: response, timestamp: Date.now() });
+    
+    return response;
   }
 
-  async getProductBySlug(slug) {
-    const product = await this.productsRepo.getPublicProductBySlug(slug);
+  async getProductBySlug(slug, user) {
+    const isAdmin = user?.role === 'ADMIN';
+    const product = await this.productsRepo.getPublicProductBySlug(slug, isAdmin);
     if (!product) throw Errors.PRODUCT_NOT_FOUND();
     return product;
   }
   
   async getProductsByCategory(categorySlug) {
-    return this.productsRepo.getProductsByCategory(categorySlug);
+    const cacheKey = `category_${categorySlug}`;
+    if (productsCache.has(cacheKey)) {
+      const cached = productsCache.get(cacheKey);
+      if (Date.now() - cached.timestamp < CACHE_TTL) {
+        return cached.data;
+      }
+    }
+    const data = await this.productsRepo.getProductsByCategory(categorySlug);
+    productsCache.set(cacheKey, { data, timestamp: Date.now() });
+    return data;
   }
 
   // Admin Methods
@@ -63,6 +92,7 @@ export class ProductsService {
   async createProduct(data) {
     const existing = await this.productsRepo.findProductBySlug(data.slug);
     if (existing) throw Errors.SLUG_ALREADY_EXISTS();
+    productsCache.clear();
     return this.productsRepo.createProduct(data);
   }
 
@@ -74,12 +104,14 @@ export class ProductsService {
       const existing = await this.productsRepo.findProductBySlug(data.slug);
       if (existing) throw Errors.SLUG_ALREADY_EXISTS();
     }
+    productsCache.clear();
     return this.productsRepo.updateProduct(id, data);
   }
 
   async updateProductStatus(id, isActive) {
     const product = await this.productsRepo.findProductById(id);
     if (!product) throw Errors.PRODUCT_NOT_FOUND();
+    productsCache.clear();
     return this.productsRepo.updateProduct(id, { isActive });
   }
 
@@ -90,6 +122,7 @@ export class ProductsService {
     const existingSku = await this.productsRepo.findVariantBySku(data.sku);
     if (existingSku) throw Errors.SKU_ALREADY_EXISTS();
 
+    productsCache.clear();
     return this.productsRepo.createVariant({ ...data, productId });
   }
 
@@ -97,15 +130,28 @@ export class ProductsService {
     const variant = await this.productsRepo.findVariantById(id);
     if (!variant) throw Errors.VARIANT_NOT_FOUND();
 
+    productsCache.clear();
     return this.productsRepo.updateVariant(id, data);
   }
 
   async updateVariantStock(id, stockOnHand) {
     try {
-      return await this.productsRepo.updateVariantStock(id, stockOnHand);
+      const result = await this.productsRepo.updateVariantStock(id, stockOnHand);
+      productsCache.clear();
+      return result;
     } catch (error) {
       if (error.message === 'Variant not found') throw Errors.VARIANT_NOT_FOUND();
       throw Errors.INVALID_STOCK(error.message);
     }
+  }
+
+  async deleteProduct(id) {
+    const product = await this.productsRepo.findProductById(id);
+    if (!product) throw Errors.PRODUCT_NOT_FOUND();
+    
+    // Check if it has any orders associated with it? 
+    // Drizzle will handle onDelete: 'cascade' or 'restrict' based on schema.
+    productsCache.clear();
+    return this.productsRepo.deleteProduct(id);
   }
 }

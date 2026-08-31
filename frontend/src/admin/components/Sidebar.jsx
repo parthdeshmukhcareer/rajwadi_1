@@ -50,10 +50,23 @@ const Sidebar = ({ isCollapsed }) => {
 
   return (
     <aside className={`admin-sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-      <div className="admin-sidebar-header">
-        <h2 className="admin-logo-text">
-          {isCollapsed ? 'R' : 'RAJWADI'}
-        </h2>
+      <div className="admin-sidebar-header" style={{ padding: '0 20px' }}>
+        <NavLink to="/admin/dashboard" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', width: '100%', justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
+          {isCollapsed ? (
+            <span style={{ color: 'var(--admin-secondary)', fontSize: '24px', fontWeight: 'bold', fontFamily: 'var(--admin-font-heading)' }}>R</span>
+          ) : (
+            <img 
+              src="https://www.rajwadi.com/static/version1780378735/frontend/Aureatelabs/rajwadi/en_US/images/logo.svg" 
+              alt="Rajwadi Admin Logo" 
+              style={{ 
+                height: '35px', 
+                width: 'auto', 
+                maxWidth: '100%',
+                filter: 'brightness(0) invert(0.95) sepia(0.3) hue-rotate(345deg) saturate(1.2)'
+              }} 
+            />
+          )}
+        </NavLink>
       </div>
       
       <nav className="admin-sidebar-nav">

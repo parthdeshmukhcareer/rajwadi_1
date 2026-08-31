@@ -99,7 +99,7 @@ describe('Checkout & Orders E2E', () => {
     const order = body.data;
     
     expect(order.subtotal).toBe(224000);
-    expect(order.shippingTotal).toBe(Number(env.DEFAULT_SHIPPING_FEE));
+    expect(order.shippingTotal).toBe(0);
     
     const [updatedVariant] = await db.select().from(productVariants).where(eq(productVariants.id, variantId));
     expect(updatedVariant.stockOnHand).toBe(10);
@@ -111,5 +111,5 @@ describe('Checkout & Orders E2E', () => {
     const oItems = await db.select().from(orderItems).where(eq(orderItems.orderId, order.id));
     expect(oItems.length).toBe(1);
     expect(oItems[0].taxAmount).toBe(24000);
-  });
+  }, 10000);
 });

@@ -57,6 +57,27 @@ export class AuthController {
     });
   }
 
+  googleLogin = async (req, reply) => {
+    const { credential } = req.body;
+    if (!credential) {
+      throw Errors.VALIDATION_ERROR('Google credential is required');
+    }
+
+    const { user, rawRefreshToken } = await this.authService.googleLogin(credential);
+    
+    const accessToken = await reply.jwtSign({ sub: user.id, role: user.role });
+
+    reply.setCookie(COOKIE_NAME, rawRefreshToken, COOKIE_OPTIONS);
+    
+    return reply.send({
+      success: true,
+      data: {
+        user,
+        accessToken
+      }
+    });
+  }
+
   refresh = async (req, reply) => {
     const rawToken = req.cookies[COOKIE_NAME];
     if (!rawToken) {
@@ -72,6 +93,7 @@ export class AuthController {
     return reply.send({
       success: true,
       data: {
+        user,
         accessToken
       }
     });

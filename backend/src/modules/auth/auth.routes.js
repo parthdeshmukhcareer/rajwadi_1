@@ -39,5 +39,7 @@ export async function authRoutes(app) {
 
   app.post('/logout', authController.logout);
 
+  app.post('/google', authController.googleLogin);
+
   app.get('/me', { preValidation: [requireAuth] }, authController.me);
 }
