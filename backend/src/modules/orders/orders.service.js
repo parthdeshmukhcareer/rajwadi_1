@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { env } from '../../config/env.js';
 import { emailService } from '../../services/email.service.js';
 import { users } from '../../db/schema/index.js';
+import { whatsappService } from '../../services/whatsapp.service.js';
 export class OrdersService {
   constructor(ordersRepo, cartService, couponsService) {
     this.ordersRepo = ordersRepo;
@@ -125,6 +126,18 @@ export class OrdersService {
             productName: item.productName
           }));
           emailService.sendOrderConfirmation(order, user, emailItems, order.shippingAddress).catch(console.error);
+          whatsappService.sendOwnerWhatsAppNotification({
+            type: 'ORDER_PLACED',
+            orderId: order.id,
+            orderNumber: order.orderNumber,
+            customerName: `${user.firstName} ${user.lastName}`,
+            customerPhone: order.shippingAddress?.phone || 'N/A',
+            customerEmail: user.email,
+            totalAmount: order.grandTotal,
+            orderStatus: order.status,
+            paymentStatus: order.paymentStatus,
+            items: emailItems
+          }).catch(console.error);
         }
       }
       
@@ -168,6 +181,22 @@ export class OrdersService {
       await this.ordersRepo.processUnpaidCancellationTransaction(order.id);
     }
     
+    // Fetch user for details
+    const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    const customerName = user ? `${user.firstName} ${user.lastName}` : 'Customer';
+
+    whatsappService.sendOwnerWhatsAppNotification({
+      type: 'ORDER_CANCELLED',
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      customerName: customerName,
+      customerPhone: 'N/A',
+      customerEmail: user?.email || 'N/A',
+      totalAmount: order.grandTotal,
+      orderStatus: 'CANCELLED',
+      paymentStatus: order.paymentStatus
+    }).catch(console.error);
+
     return { success: true };
   }
 }

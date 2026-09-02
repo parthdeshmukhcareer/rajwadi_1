@@ -48,6 +48,10 @@ function CartSidebar() {
               } else if (product.image) {
                  image = product.image;
               }
+              
+              if (image && !image.startsWith('http') && !image.startsWith('/')) {
+                image = '/' + image;
+              }
 
               return (
               <div key={item.id} style={{ display: 'flex', gap: '15px', paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid #f0f0f0', position: 'relative' }}>
@@ -88,7 +92,7 @@ function CartSidebar() {
                         ))}
                       </select>
                     ) : (
-                      <span style={{ fontSize: '12px', color: '#432227', fontFamily: 'var(--font-sans)', fontWeight: 'bold' }}>{variant.size || variant.sku || 'Standard'}</span>
+                      <span style={{ fontSize: '12px', color: '#432227', fontFamily: 'var(--font-sans)', fontWeight: 'bold' }}>{variant.size || variant.sku || 'Size unavailable'}</span>
                     )}
                   </div>
                   <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

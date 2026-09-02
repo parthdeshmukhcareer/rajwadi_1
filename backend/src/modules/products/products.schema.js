@@ -24,10 +24,10 @@ export const updateProductSchema = createProductSchema.partial();
 
 export const createVariantSchema = z.object({
   sku: z.string().min(1).max(100).transform(s => s.trim().toUpperCase()),
-  size: z.string().max(50).optional(),
+  size: z.enum(['S', 'M', 'L', 'XL']),
   color: z.string().max(50).optional(),
   price: z.number().int().min(0),
-  compareAtPrice: z.number().int().min(0).optional(),
+  compareAtPrice: z.number().int().min(0).optional().nullable(),
   stockOnHand: z.number().int().min(0).default(0),
   weightGrams: z.number().int().min(0).optional(),
   isActive: z.boolean().default(true),

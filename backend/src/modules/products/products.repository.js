@@ -1,5 +1,5 @@
 import { db } from '../../db/index.js';
-import { products, productVariants, productImages, categories, reviews } from '../../db/schema/index.js';
+import { products, productVariants, productImages, categories, reviews, orderItems } from '../../db/schema/index.js';
 import { eq, and, or, ilike, asc, desc, sql, inArray } from 'drizzle-orm';
 
 export class ProductsRepository {
@@ -20,9 +20,13 @@ export class ProductsRepository {
     }
 
     if (category) {
-      const [cat] = await db.select().from(categories).where(or(eq(categories.slug, category), eq(categories.name, category))).limit(1);
-      if (cat) {
-        conditions.push(eq(products.categoryId, cat.id));
+      const categoryNames = category.split(',');
+      const cats = await db.select().from(categories).where(or(
+         inArray(categories.slug, categoryNames),
+         inArray(categories.name, categoryNames)
+      ));
+      if (cats.length > 0) {
+        conditions.push(inArray(products.categoryId, cats.map(c => c.id)));
       } else {
         return { data: [], total: 0 };
       }
@@ -93,6 +97,12 @@ export class ProductsRepository {
     const data = productRows.map(prod => {
       const vars = allVariants.filter(v => v.productId === prod.id);
       const startingPrice = vars.length > 0 ? Math.min(...vars.map(v => v.price)) : prod.basePrice;
+      
+      const compareAtPriceArray = vars.map(v => v.compareAtPrice).filter(p => p != null);
+      const startingComparePrice = compareAtPriceArray.length > 0 ? Math.min(...compareAtPriceArray) : prod.compareAtPrice;
+      
+      const totalStock = vars.length > 0 ? vars.reduce((acc, v) => acc + Math.max(0, (v.stockOnHand || 0) - (v.reservedStock || 0)), 0) : 100; // If no variants, assume in stock for now
+
       const images = allImages.filter(img => img.productId === prod.id);
       const stats = allReviewsStats.find(s => s.productId === prod.id) || { averageRating: 0, reviewCount: 0 };
       const firstVariantId = vars.length > 0 ? vars[0].id : null;
@@ -100,10 +110,13 @@ export class ProductsRepository {
       return {
         ...prod,
         startingPrice,
+        startingComparePrice,
+        totalStock: vars.length === 0 ? 0 : totalStock, // If no variants, it's out of stock
         image: images.length > 0 ? images[0].imageUrl : null,
         averageRating: stats.averageRating,
         reviewCount: stats.reviewCount,
-        defaultVariantId: firstVariantId
+        defaultVariantId: firstVariantId,
+        variantsCount: vars.length
       };
     });
 
@@ -111,9 +124,27 @@ export class ProductsRepository {
   }
 
   async getPublicProductBySlug(slug, isAdmin = false) {
+    // Basic UUID validation regex
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+    
+    let targetProductId = slug;
+    
+    if (isUuid) {
+      // Check if it's a variant ID first
+      const [variant] = await db.select({ productId: productVariants.productId })
+        .from(productVariants).where(eq(productVariants.id, slug)).limit(1);
+      if (variant) {
+        targetProductId = variant.productId;
+      }
+    }
+
+    const slugOrIdCond = isUuid 
+      ? or(eq(products.slug, slug), eq(products.id, targetProductId))
+      : eq(products.slug, slug);
+
     const productCondition = isAdmin 
-      ? eq(products.slug, slug)
-      : and(eq(products.slug, slug), eq(products.isActive, true));
+      ? slugOrIdCond
+      : and(slugOrIdCond, eq(products.isActive, true));
 
     const [product] = await db.select().from(products).where(productCondition).limit(1);
     if (!product) return null;
@@ -311,6 +342,21 @@ export class ProductsRepository {
       const [updated] = await tx.update(productVariants).set({ stockOnHand }).where(eq(productVariants.id, id)).returning();
       return updated;
     });
+  }
+
+  async deleteVariantSafely(id) {
+    // Check if used in any orders
+    const [usage] = await db.select().from(orderItems).where(eq(orderItems.variantId, id)).limit(1);
+    
+    if (usage) {
+      // Used in order: Soft delete (deactivate)
+      await db.update(productVariants).set({ isActive: false }).where(eq(productVariants.id, id));
+      return { deleted: false, deactivated: true };
+    } else {
+      // Safe to delete
+      await db.delete(productVariants).where(eq(productVariants.id, id));
+      return { deleted: true, deactivated: false };
+    }
   }
 
   async deleteProduct(id) {

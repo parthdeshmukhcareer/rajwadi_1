@@ -36,4 +36,27 @@ export class UploadsController {
     await this.uploadsService.deleteProductImage(id);
     return reply.send({ success: true, data: { message: 'Image deleted successfully' } });
   }
+
+  uploadGenericImage = async (req, reply) => {
+    try {
+      const data = await req.file();
+      if (!data) {
+        throw Errors.VALIDATION_ERROR('No file uploaded');
+      }
+
+      const fileBuffer = await data.toBuffer();
+      const mimeType = data.mimetype;
+      const filename = data.filename;
+
+      const result = await this.uploadsService.uploadGenericImage(
+        fileBuffer,
+        mimeType,
+        filename
+      );
+
+      return reply.send({ success: true, data: result });
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -30,4 +30,14 @@ export class CategoriesRepository {
     const [category] = await db.update(categories).set(data).where(eq(categories.id, id)).returning();
     return category;
   }
+
+  async hasProducts(id) {
+    const { products } = await import('../../db/schema/index.js');
+    const [product] = await db.select().from(products).where(eq(products.categoryId, id)).limit(1);
+    return !!product;
+  }
+
+  async delete(id) {
+    await db.delete(categories).where(eq(categories.id, id));
+  }
 }

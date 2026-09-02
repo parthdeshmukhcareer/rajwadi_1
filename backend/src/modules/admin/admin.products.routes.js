@@ -22,4 +22,5 @@ export async function adminProductRoutes(app) {
   app.post('/:productId/variants', controller.createVariant);
   app.patch('/variants/:id', controller.updateVariant);
   app.patch('/variants/:id/stock', controller.updateVariantStock);
+  app.delete('/variants/:id', controller.deleteVariant);
 }

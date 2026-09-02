@@ -25,7 +25,8 @@ const ProductCreate = () => {
     hsnCode: '',
     isActive: true,
     sku: '',
-    stockOnHand: ''
+    stockOnHand: '',
+    stitchedType: 'UNSTITCHED'
   });
 
   useEffect(() => {
@@ -71,6 +72,7 @@ const ProductCreate = () => {
         occasion: formData.occasion || undefined,
         gstRate: parseInt(formData.gstRate) || 0,
         hsnCode: formData.hsnCode || undefined,
+        stitchedType: formData.stitchedType,
         isActive: formData.isActive,
         variants: [
           {
@@ -181,6 +183,13 @@ const ProductCreate = () => {
                   <select name="isActive" value={formData.isActive ? "true" : "false"} onChange={e => setFormData({...formData, isActive: e.target.value === "true"})} className="admin-input">
                     <option value="false">Draft</option>
                     <option value="true">Active</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="admin-label">Stitched Type</label>
+                  <select name="stitchedType" value={formData.stitchedType} onChange={handleChange} className="admin-input">
+                    <option value="UNSTITCHED">Unstitched</option>
+                    <option value="STITCHED">Stitched</option>
                   </select>
                 </div>
               </div>

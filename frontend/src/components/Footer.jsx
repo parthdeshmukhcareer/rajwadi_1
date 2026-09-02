@@ -4,134 +4,69 @@ import { Link } from 'react-router-dom';
 function Footer() {
   return (
 <footer className="main-footer" style={{backgroundColor: '#17100e', position: 'relative', overflow: 'hidden', padding: '0', color: '#e5d1b3'}}>
-
-
-    {/*  Floral Backgrounds Removed  */}
-
     {/*  Main Footer Area  */}
-    <div style={{maxWidth: '1400px', margin: '0 auto', padding: '40px 40px 20px', display: 'flex', justifyContent: 'space-between', position: 'relative', zIndex: '2', alignItems: 'stretch'}}>
+    <div style={{maxWidth: '1400px', margin: '0 auto', padding: '60px 40px 40px', display: 'flex', flexWrap: 'wrap', gap: '50px', justifyContent: 'space-between', position: 'relative', zIndex: '2', alignItems: 'flex-start'}}>
        
        {/*  Column 1 (Brand)  */}
-       <div style={{flex: '1.2', textAlign: 'center', paddingRight: '60px', transform: 'translateX(-15px)'}}>
+       <div style={{flex: '1.5 1 300px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
           {/*  Logo  */}
-          <div style={{width: '110px', height: '110px', borderRadius: '50%', backgroundColor: 'transparent', border: '2px solid #b59c68', margin: '0 auto 15px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative'}}>
-             <span style={{color: '#b59c68', fontFamily: 'var(--font-serif)', fontSize: '1.8rem', fontWeight: '500'}}>Rajwadi</span>
-             <span style={{position: 'absolute', bottom: '20px', fontSize: '0.45rem', color: '#b59c68', letterSpacing: '0.1em', textTransform: 'uppercase'}}>Since 1967</span>
+          <div style={{width: '90px', height: '90px', borderRadius: '50%', backgroundColor: 'transparent', border: '2px solid #b59c68', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative'}}>
+             <span style={{color: '#b59c68', fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontWeight: '500'}}>Rajwadi</span>
+             <span style={{position: 'absolute', bottom: '15px', fontSize: '0.4rem', color: '#b59c68', letterSpacing: '0.1em', textTransform: 'uppercase'}}>Since 1967</span>
           </div>
-          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.7rem', color: '#f4eee6', fontWeight: '400', marginBottom: '12px', letterSpacing: '0.02em'}}>Rajwadi Collections</h3>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '15px', opacity: '0.7'}}>
-             <div style={{width: '20px', height: '1px', backgroundColor: '#b59c68'}}></div>
-             <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68" style={{margin: '0 8px'}}><path d="M12 2l2.4 7.6H22l-6.2 4.5 2.4 7.6-6.2-4.5-6.2 4.5 2.4-7.6L2 9.6h7.6z"/></svg>
-             <div style={{width: '20px', height: '1px', backgroundColor: '#b59c68'}}></div>
-          </div>
-          <p style={{fontFamily: 'var(--font-sans)', fontSize: '0.95rem', color: '#e5d1b3', lineHeight: '1.8', marginBottom: '20px', opacity: '0.85'}}>Bringing authentic Rajputi Poshakhs, exquisite jewellery, and premium accessories right to your doorstep.</p>
+          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.5rem', color: '#f4eee6', fontWeight: '400', marginBottom: '15px', letterSpacing: '0.02em'}}>Rajwadi Collections</h3>
+          <p style={{fontFamily: 'var(--font-sans)', fontSize: '0.9rem', color: '#e5d1b3', lineHeight: '1.6', marginBottom: '25px', opacity: '0.85', maxWidth: '350px'}}>Bringing authentic Rajputi Poshaks, exquisite jewellery, and premium accessories right to your doorstep.</p>
           
           {/*  Socials  */}
-          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px'}}>
-             <a href="#" style={{width: '38px', height: '38px', borderRadius: '50%', border: '1px solid rgba(181, 156, 104, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b59c68', textDecoration: 'none', fontSize: '15px', transition: 'border-color 0.3s'}} onMouseOver={() => {this.style.borderColor='#b59c68'}} onMouseOut={() => {this.style.borderColor='rgba(181, 156, 104, 0.4)'}}><i className="fa-brands fa-facebook-f"></i></a>
-             <a href="#" style={{width: '38px', height: '38px', borderRadius: '50%', border: '1px solid rgba(181, 156, 104, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b59c68', textDecoration: 'none', fontSize: '15px', transition: 'border-color 0.3s'}} onMouseOver={() => {this.style.borderColor='#b59c68'}} onMouseOut={() => {this.style.borderColor='rgba(181, 156, 104, 0.4)'}}><i className="fa-brands fa-instagram"></i></a>
-             <a href="#" style={{width: '38px', height: '38px', borderRadius: '50%', border: '1px solid rgba(181, 156, 104, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b59c68', textDecoration: 'none', fontSize: '15px', transition: 'border-color 0.3s'}} onMouseOver={() => {this.style.borderColor='#b59c68'}} onMouseOut={() => {this.style.borderColor='rgba(181, 156, 104, 0.4)'}}><i className="fa-brands fa-pinterest-p"></i></a>
-             <a href="#" style={{width: '38px', height: '38px', borderRadius: '50%', border: '1px solid rgba(181, 156, 104, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b59c68', textDecoration: 'none', fontSize: '15px', transition: 'border-color 0.3s'}} onMouseOver={() => {this.style.borderColor='#b59c68'}} onMouseOut={() => {this.style.borderColor='rgba(181, 156, 104, 0.4)'}}><i className="fa-brands fa-youtube"></i></a>
+          <div style={{display: 'flex', gap: '12px'}}>
+             <a href="#" style={{width: '38px', height: '38px', borderRadius: '50%', border: '1px solid rgba(181, 156, 104, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b59c68', textDecoration: 'none', fontSize: '14px', transition: 'all 0.3s'}} onMouseOver={(e) => {e.currentTarget.style.borderColor='#b59c68'; e.currentTarget.style.backgroundColor='rgba(181, 156, 104, 0.1)'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='rgba(181, 156, 104, 0.4)'; e.currentTarget.style.backgroundColor='transparent'}}><i className="fa-brands fa-facebook-f"></i></a>
+             <a href="#" style={{width: '38px', height: '38px', borderRadius: '50%', border: '1px solid rgba(181, 156, 104, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b59c68', textDecoration: 'none', fontSize: '14px', transition: 'all 0.3s'}} onMouseOver={(e) => {e.currentTarget.style.borderColor='#b59c68'; e.currentTarget.style.backgroundColor='rgba(181, 156, 104, 0.1)'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='rgba(181, 156, 104, 0.4)'; e.currentTarget.style.backgroundColor='transparent'}}><i className="fa-brands fa-instagram"></i></a>
+             <a href="#" style={{width: '38px', height: '38px', borderRadius: '50%', border: '1px solid rgba(181, 156, 104, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b59c68', textDecoration: 'none', fontSize: '14px', transition: 'all 0.3s'}} onMouseOver={(e) => {e.currentTarget.style.borderColor='#b59c68'; e.currentTarget.style.backgroundColor='rgba(181, 156, 104, 0.1)'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='rgba(181, 156, 104, 0.4)'; e.currentTarget.style.backgroundColor='transparent'}}><i className="fa-brands fa-pinterest-p"></i></a>
+             <a href="#" style={{width: '38px', height: '38px', borderRadius: '50%', border: '1px solid rgba(181, 156, 104, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b59c68', textDecoration: 'none', fontSize: '14px', transition: 'all 0.3s'}} onMouseOver={(e) => {e.currentTarget.style.borderColor='#b59c68'; e.currentTarget.style.backgroundColor='rgba(181, 156, 104, 0.1)'}} onMouseOut={(e) => {e.currentTarget.style.borderColor='rgba(181, 156, 104, 0.4)'; e.currentTarget.style.backgroundColor='transparent'}}><i className="fa-brands fa-youtube"></i></a>
           </div>
        </div>
 
-       {/*  Vertical Divider  */}
-       <div style={{width: '1px', background: 'linear-gradient(to bottom, transparent, rgba(181, 156, 104, 0.3) 20%, rgba(181, 156, 104, 0.3) 80%, transparent)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <div style={{width: '8px', height: '8px', border: '1px solid #b59c68', transform: 'rotate(45deg)', backgroundColor: '#17100e', marginTop: '-30px'}}><div style={{width: '2px', height: '2px', backgroundColor: '#b59c68', margin: '2px'}}></div></div>
-       </div>
-
-       {/*  Column 2 (Categories)  */}
-       <div style={{flex: '1', textAlign: 'center', padding: '0 40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#b59c68', fontWeight: '400', marginBottom: '12px', letterSpacing: '0.02em'}}>Categories</h3>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', opacity: '0.7'}}>
-             <div style={{width: '15px', height: '1px', backgroundColor: '#b59c68'}}></div>
-             <svg width="12" height="12" viewBox="0 0 24 24" fill="#b59c68" style={{margin: '0 6px'}}><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-             <div style={{width: '15px', height: '1px', backgroundColor: '#b59c68'}}></div>
-          </div>
-          <ul style={{listStyle: 'none', padding: '0', margin: '0', textAlign: 'left', display: 'inline-block'}}>
-             <li style={{marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}} onClick={() => {filterByCategory('Rajputi Poshakh')}}>Rajputi Poshakh</a>
-             </li>
-             <li style={{marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}} onClick={() => {filterByCategory('Accessories')}}>Accessories</a>
-             </li>
-             <li style={{marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}} onClick={() => {filterByCategory('Jewellery')}}>Jewellery</a>
-             </li>
-             <li style={{display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}} onClick={() => {showView('catalog')}}>New Arrivals</a>
-             </li>
+       {/*  Column 2 (Quick Links & Categories)  */}
+       <div style={{flex: '1 1 200px'}}>
+          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: '#b59c68', fontWeight: '400', marginBottom: '25px', letterSpacing: '0.02em'}}>Categories</h3>
+          <ul style={{listStyle: 'none', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '15px'}}>
+             <li><Link to="/catalog?category=Rajputi Poshak" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Rajputi Poshak</Link></li>
+             <li><Link to="/catalog?category=Accessories" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Accessories</Link></li>
+             <li><Link to="/catalog?category=Jewellery" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Jewellery</Link></li>
+             <li><Link to="/catalog" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>New Arrivals</Link></li>
+             <li><Link to="/about" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>About Us</Link></li>
+             <li><Link to="/blog" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Blog</Link></li>
           </ul>
        </div>
 
-       {/*  Vertical Divider  */}
-       <div style={{width: '1px', background: 'linear-gradient(to bottom, transparent, rgba(181, 156, 104, 0.3) 20%, rgba(181, 156, 104, 0.3) 80%, transparent)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <div style={{width: '8px', height: '8px', border: '1px solid #b59c68', transform: 'rotate(45deg)', backgroundColor: '#17100e', marginTop: '-30px'}}><div style={{width: '2px', height: '2px', backgroundColor: '#b59c68', margin: '2px'}}></div></div>
-       </div>
-
-       {/*  Column 3 (Customer Care)  */}
-       <div style={{flex: '1', textAlign: 'center', padding: '0 40px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#b59c68', fontWeight: '400', marginBottom: '12px', letterSpacing: '0.02em'}}>Customer Care</h3>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', opacity: '0.7'}}>
-             <div style={{width: '15px', height: '1px', backgroundColor: '#b59c68'}}></div>
-             <svg width="12" height="12" viewBox="0 0 24 24" fill="#b59c68" style={{margin: '0 6px'}}><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-             <div style={{width: '15px', height: '1px', backgroundColor: '#b59c68'}}></div>
-          </div>
-          <ul style={{listStyle: 'none', padding: '0', margin: '0', textAlign: 'left', display: 'inline-block'}}>
-             <li style={{marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}}>Contact Us</a>
-             </li>
-             <li style={{marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}}>Shipping Policy</a>
-             </li>
-             <li style={{marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}}>Custom Stitching Guide</a>
-             </li>
-             <li style={{marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}}>Return & Exchanges</a>
-             </li>
-             <li style={{display: 'flex', alignItems: 'center', gap: '15px', fontFamily: 'var(--font-sans)', fontSize: '0.95rem'}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#b59c68"><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-                <a href="#" style={{color: '#e5d1b3', textDecoration: 'none'}}>FAQs</a>
-             </li>
+       {/*  Column 3 (Customer Care & Policies)  */}
+       <div style={{flex: '1 1 200px'}}>
+          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: '#b59c68', fontWeight: '400', marginBottom: '25px', letterSpacing: '0.02em'}}>Customer Care</h3>
+          <ul style={{listStyle: 'none', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '15px'}}>
+             <li><Link to="/customer-support" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Contact Us</Link></li>
+             <li><Link to="/shipping-policy" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Shipping Policy</Link></li>
+             <li><Link to="/terms-and-conditions" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Terms & Conditions</Link></li>
+             <li><Link to="/no-refund-policy" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Refund Policy</Link></li>
+             <li><Link to="#" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Custom Stitching</Link></li>
+             <li><Link to="#" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>FAQs</Link></li>
           </ul>
-       </div>
-
-       {/*  Vertical Divider  */}
-       <div style={{width: '1px', background: 'linear-gradient(to bottom, transparent, rgba(181, 156, 104, 0.3) 20%, rgba(181, 156, 104, 0.3) 80%, transparent)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <div style={{width: '8px', height: '8px', border: '1px solid #b59c68', transform: 'rotate(45deg)', backgroundColor: '#17100e', marginTop: '-30px'}}><div style={{width: '2px', height: '2px', backgroundColor: '#b59c68', margin: '2px'}}></div></div>
        </div>
 
        {/*  Column 4 (Newsletter)  */}
-       <div style={{flex: '1', textAlign: 'left', paddingLeft: '40px', display: 'flex', flexDirection: 'column'}}>
-          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#b59c68', fontWeight: '400', marginBottom: '12px', letterSpacing: '0.02em'}}>Newsletter</h3>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginBottom: '20px', opacity: '0.7'}}>
-             <div style={{width: '15px', height: '1px', backgroundColor: '#b59c68'}}></div>
-             <svg width="12" height="12" viewBox="0 0 24 24" fill="#b59c68" style={{margin: '0 6px'}}><polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9"/></svg>
-             <div style={{width: '15px', height: '1px', backgroundColor: '#b59c68'}}></div>
-          </div>
-          <p style={{fontFamily: 'var(--font-sans)', fontSize: '0.95rem', color: '#e5d1b3', lineHeight: '1.7', marginBottom: '15px', opacity: '0.85'}}>Subscribe to get early notifications of seasonal collections and royal sales.</p>
-          <form style={{display: 'flex', border: '1px solid rgba(181, 156, 104, 0.3)', padding: '0', marginBottom: '20px'}}>
-             <input type="email" placeholder="Your Email" style={{flex: '1', background: 'transparent', border: 'none', padding: '12px 15px', fontFamily: 'var(--font-sans)', fontSize: '0.9rem', color: '#e5d1b3', outline: 'none'}} />
-             <button type="submit" style={{backgroundColor: '#b59c68', color: '#17100e', border: 'none', padding: '0 35px', fontFamily: 'var(--font-sans)', fontSize: '0.85rem', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer'}}>JOIN</button>
+       <div style={{flex: '1.5 1 280px', display: 'flex', flexDirection: 'column'}}>
+          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: '#b59c68', fontWeight: '400', marginBottom: '25px', letterSpacing: '0.02em'}}>Newsletter</h3>
+          <p style={{fontFamily: 'var(--font-sans)', fontSize: '0.9rem', color: '#e5d1b3', lineHeight: '1.6', marginBottom: '20px', opacity: '0.85'}}>Subscribe to get early notifications of seasonal collections and royal sales.</p>
+          <form style={{display: 'flex', border: '1px solid rgba(181, 156, 104, 0.4)', padding: '0', borderRadius: '4px', overflow: 'hidden'}}>
+             <input type="email" placeholder="Your Email" style={{flex: '1', background: 'rgba(255,255,255,0.03)', border: 'none', padding: '14px 15px', fontFamily: 'var(--font-sans)', fontSize: '0.9rem', color: '#e5d1b3', outline: 'none'}} />
+             <button type="submit" style={{backgroundColor: '#b59c68', color: '#17100e', border: 'none', padding: '0 25px', fontFamily: 'var(--font-sans)', fontSize: '0.85rem', fontWeight: '600', letterSpacing: '0.05em', textTransform: 'uppercase', cursor: 'pointer', transition: 'background-color 0.3s'}} onMouseOver={(e)=>e.currentTarget.style.backgroundColor='#d1b782'} onMouseOut={(e)=>e.currentTarget.style.backgroundColor='#b59c68'}>JOIN</button>
           </form>
        </div>
 
     </div>
 
-    {/*  Bottom Ornament & Copyright  */}
-    <div style={{backgroundColor: '#110a08', padding: '15px 0 10px', textAlign: 'center', position: 'relative'}}>
-       
-
-       <p style={{fontFamily: 'var(--font-sans)', fontSize: '0.85rem', color: 'rgba(229, 209, 179, 0.6)', margin: '0', marginTop: '15px'}}>Developed and managed by Bizleap.in</p>
+    {/*  Bottom Copyright  */}
+    <div style={{backgroundColor: '#110a08', padding: '18px 0', textAlign: 'center', borderTop: '1px solid rgba(181, 156, 104, 0.15)'}}>
+       <p style={{fontFamily: 'var(--font-sans)', fontSize: '0.8rem', color: 'rgba(229, 209, 179, 0.5)', margin: '0'}}>Developed and managed by Bizleap.in</p>
     </div>
   </footer>
   );

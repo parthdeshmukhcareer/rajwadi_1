@@ -29,6 +29,7 @@ import { reviewsRoutes } from './modules/reviews/reviews.routes.js';
 import { adminCustomerRoutes } from './modules/admin/admin.customers.routes.js';
 import { adminSettingsRoutes } from './modules/admin/admin.settings.routes.js';
 import { adminPaymentRoutes } from './modules/admin/admin.payments.routes.js';
+import supportRoutes from './modules/support/support.routes.js';
 import { startOrderExpirationJob, stopOrderExpirationJob } from './jobs/orderExpiration.job.js';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRawBody from 'fastify-raw-body';
@@ -54,7 +55,7 @@ export const buildApp = async () => {
   });
 
   await app.register(cors, {
-    origin: [env.FRONTEND_URL, 'http://127.0.0.1:5173', 'http://localhost:5173'],
+    origin: true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
   });
@@ -158,6 +159,7 @@ export const buildApp = async () => {
   app.register(adminCustomerRoutes, { prefix: '/api/v1/admin/customers' });
   app.register(adminSettingsRoutes, { prefix: '/api/v1/admin/settings' });
   app.register(adminPaymentRoutes, { prefix: '/api/v1/admin/payments' });
+  app.register(supportRoutes, { prefix: '/api/v1/support' });
   app.addHook('onReady', async function () {
     startOrderExpirationJob();
   });

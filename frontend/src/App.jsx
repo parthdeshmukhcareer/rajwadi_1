@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import localProducts from './data/products'
@@ -10,7 +10,10 @@ import About from './pages/About'
 import Story from './pages/Story'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
-import Contact from './pages/Contact'
+import CustomerSupport from './pages/CustomerSupport'
+import TermsAndConditions from './pages/TermsAndConditions'
+import NoRefundPolicy from './pages/NoRefundPolicy'
+import ShippingPolicy from './pages/ShippingPolicy'
 import Account from './pages/Account'
 import ProductDetail from './pages/ProductDetail'
 import Footer from './components/Footer'
@@ -70,7 +73,11 @@ function App() {
           <Route path="/catalog" element={<Catalog products={products} wishlist={wishlist} toggleWishlist={toggleWishlist} addToCart={addToCart} />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogPost />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/customer-support" element={<CustomerSupport />} />
+          <Route path="/contact" element={<Navigate to="/customer-support" replace />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/no-refund-policy" element={<NoRefundPolicy />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
           <Route path="/checkout" element={<Checkout products={products} />} />
           <Route path="/payment/:orderNumber" element={<Payment />} />
           <Route path="/invoice" element={<Invoice />} />

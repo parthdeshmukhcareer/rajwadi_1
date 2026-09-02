@@ -17,3 +17,5 @@ export * from './reviews.js';
 export * from './user_oauth_accounts.js';
 export * from './email_logs.js';
 export * from './settings.js';
+export * from './support_queries.js';
+export * from './notification_logs.js';

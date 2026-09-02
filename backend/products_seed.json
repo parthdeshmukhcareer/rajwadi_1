@@ -1,7 +1,7 @@
 [
   {
     "id": "013d3a8a-7446-4913-b5d4-544c4f332a6e",
-    "name": "poshakh 1",
+    "name": "Poshak 1",
     "category": "Lehenga",
     "price": 349,
     "rating": 4.9,
@@ -12,7 +12,7 @@
     ],
     "color": "Green",
     "fabric": "Georgette",
-    "description": "A traditional Rajputi Poshakh featuring an elegant green lehenga paired with a contrasting pink odhani. Adorned with intricate gota patti and zari work, this ensemble perfectly captures the royal heritage of Rajasthan.",
+    "description": "A traditional Rajputi Poshak featuring an elegant green lehenga paired with a contrasting pink odhani. Adorned with intricate gota patti and zari work, this ensemble perfectly captures the royal heritage of Rajasthan.",
     "sizes": [
       "S",
       "M",
@@ -827,4 +827,4 @@
       }
     ]
   }
-];
+]

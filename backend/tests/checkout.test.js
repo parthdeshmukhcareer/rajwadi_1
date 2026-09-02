@@ -46,13 +46,14 @@ describe('Checkout & Orders E2E', () => {
     }).returning();
     addressId = addr.id;
 
-    const [cat] = await db.insert(categories).values({ name: 'Checkout Cat', slug: 'checkout-cat' }).returning();
+    const suffix = Date.now().toString();
+    const [cat] = await db.insert(categories).values({ name: 'Checkout Cat', slug: `checkout-cat-${suffix}` }).returning();
     categoryId = cat.id;
 
     const [prod] = await db.insert(products).values({
       categoryId,
       name: 'Checkout Product',
-      slug: 'checkout-product',
+      slug: `checkout-product-${suffix}`,
       basePrice: 112000,
       gstRate: 12
     }).returning();
@@ -75,13 +76,13 @@ describe('Checkout & Orders E2E', () => {
   });
 
   afterAll(async () => {
-    await db.delete(orders).where(eq(orders.userId, userId));
-    await db.delete(carts).where(eq(carts.userId, userId));
-    await db.delete(productVariants).where(eq(productVariants.id, variantId));
-    await db.delete(products).where(eq(products.id, productId));
-    await db.delete(categories).where(eq(categories.id, categoryId));
-    await db.delete(addresses).where(eq(addresses.id, addressId));
-    await db.delete(users).where(eq(users.id, userId));
+    if (userId) await db.delete(orders).where(eq(orders.userId, userId));
+    if (userId) await db.delete(carts).where(eq(carts.userId, userId));
+    if (variantId) await db.delete(productVariants).where(eq(productVariants.id, variantId));
+    if (productId) await db.delete(products).where(eq(products.id, productId));
+    if (categoryId) await db.delete(categories).where(eq(categories.id, categoryId));
+    if (addressId) await db.delete(addresses).where(eq(addresses.id, addressId));
+    if (userId) await db.delete(users).where(eq(users.id, userId));
     await app.close();
   });
 

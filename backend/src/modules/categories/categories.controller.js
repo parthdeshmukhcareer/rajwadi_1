@@ -44,4 +44,10 @@ export class CategoriesController {
     const category = await this.categoriesService.updateStatus(id, result.data.isActive);
     return reply.send({ success: true, data: category });
   }
+
+  deleteCategory = async (req, reply) => {
+    const { id } = req.params;
+    await this.categoriesService.deleteCategory(id);
+    return reply.send({ success: true, message: 'Category deleted successfully.' });
+  }
 }

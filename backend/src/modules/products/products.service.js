@@ -151,6 +151,14 @@ export class ProductsService {
     }
   }
 
+  async deleteVariant(id) {
+    const variant = await this.productsRepo.findVariantById(id);
+    if (!variant) throw Errors.VARIANT_NOT_FOUND();
+    
+    productsCache.clear();
+    return this.productsRepo.deleteVariantSafely(id);
+  }
+
   async deleteProduct(id) {
     const product = await this.productsRepo.findProductById(id);
     if (!product) throw Errors.PRODUCT_NOT_FOUND();

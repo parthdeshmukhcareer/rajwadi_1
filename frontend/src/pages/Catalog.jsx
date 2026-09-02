@@ -14,6 +14,7 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
     categories: [],
     colors: [],
     fabrics: [],
+    stitchedTypes: [],
     priceRange: 'all'
   });
   const [sortBy, setSortBy] = useState('default');
@@ -43,15 +44,18 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
         setIsLoading(true);
         const params = { page, limit: 12 };
         if (searchQuery) params.search = searchQuery;
-        if (filters.categories.length > 0) params.category = filters.categories[0];
-        if (filters.colors.length > 0) params.color = filters.colors[0];
-        if (filters.fabrics.length > 0) params.fabric = filters.fabrics[0];
+        if (filters.categories.length > 0) params.category = filters.categories.join(',');
+        if (filters.stitchedTypes.length > 0) params.stitchedType = filters.stitchedTypes.join(',');
         if (filters.priceRange !== 'all') {
-          if (filters.priceRange === 'under200') params.maxPrice = 20000;
-          if (filters.priceRange === '200-300') { params.minPrice = 20000; params.maxPrice = 300000; }
-          if (filters.priceRange === 'over300') params.minPrice = 300000;
+          if (filters.priceRange === 'under200') params.maxPrice = 200;
+          if (filters.priceRange === '200-500') { params.minPrice = 200; params.maxPrice = 500; }
+          if (filters.priceRange === 'over500') params.minPrice = 500;
         }
-        if (sortBy && sortBy !== 'default') params.sort = sortBy;
+        
+        let sortParam = sortBy;
+        if (sortBy === 'price-low') sortParam = 'price_low_to_high';
+        if (sortBy === 'price-high') sortParam = 'price_high_to_low';
+        if (sortBy && sortBy !== 'default') params.sort = sortParam;
 
         const { data, pagination } = await productService.getProducts(params);
         if (data && data.length > 0) {
@@ -70,21 +74,21 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
         if (filters.categories.length > 0) {
           local = local.filter(p => filters.categories.includes(p.category));
         }
-        if (filters.colors.length > 0) {
-          local = local.filter(p => filters.colors.includes(p.color));
-        }
-        if (filters.fabrics.length > 0) {
-          local = local.filter(p => filters.fabrics.includes(p.fabric));
+        if (filters.stitchedTypes.length > 0) {
+          local = local.filter(p => filters.stitchedTypes.includes(p.stitchedType || 'UNSTITCHED'));
         }
         if (filters.priceRange !== 'all') {
           local = local.filter(p => {
             const pr = Number(p.price || p.basePrice || 0);
-            if (filters.priceRange === 'under200') return pr < 20000;
-            if (filters.priceRange === '200-300') return pr >= 20000 && pr <= 300000;
-            if (filters.priceRange === 'over300') return pr > 300000;
+            if (filters.priceRange === 'under200') return pr < 200;
+            if (filters.priceRange === '200-500') return pr >= 200 && pr <= 500;
+            if (filters.priceRange === 'over500') return pr > 500;
             return true;
           });
         }
+        
+        if (sortBy === 'price-low') local.sort((a, b) => (a.startingPrice || a.basePrice || a.price) - (b.startingPrice || b.basePrice || b.price));
+        if (sortBy === 'price-high') local.sort((a, b) => (b.startingPrice || b.basePrice || b.price) - (a.startingPrice || a.basePrice || a.price));
         setFilteredProducts(local);
         setError(null);
       } finally {
@@ -112,7 +116,7 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
           <div className="filter-group" style={{ marginBottom: '20px' }}>
             <h4 className="filter-group-title" style={{ marginBottom: '10px', fontSize: '15px' }}>Category</h4>
             <div className="filter-options" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {['Lehenga', 'Saree', 'Sherwani', 'Salwar Kameez'].map(cat => (
+              {['Pure Poshak', 'Semi Pure Poshak'].map(cat => (
                 <label className="filter-checkbox-label" key={cat} style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input 
                     type="checkbox" 
@@ -126,25 +130,24 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
             </div>
           </div>
 
-          {/* Color Filter */}
+
+          {/* Stitched Type Filter */}
           <div className="filter-group" style={{ marginBottom: '20px' }}>
-            <h4 className="filter-group-title" style={{ marginBottom: '10px', fontSize: '15px' }}>Color</h4>
+            <h4 className="filter-group-title" style={{ marginBottom: '10px', fontSize: '15px' }}>Type</h4>
             <div className="filter-options" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {['Red', 'Cream', 'Green', 'Gold', 'Blue'].map(col => (
-                <label className="filter-checkbox-label" key={col} style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {['UNSTITCHED', 'STITCHED'].map(type => (
+                <label className="filter-checkbox-label" key={type} style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input 
                     type="checkbox" 
-                    className="color-filter-check" 
-                    value={col}
-                    checked={filters.colors.includes(col)}
-                    onChange={() => handleCheckboxChange('colors', col)}
-                  /> {col}
+                    className="stitched-filter-check" 
+                    value={type}
+                    checked={filters.stitchedTypes.includes(type)}
+                    onChange={() => handleCheckboxChange('stitchedTypes', type)}
+                  /> {type === 'UNSTITCHED' ? 'Unstitched' : 'Stitched'}
                 </label>
               ))}
             </div>
           </div>
-
-
 
           {/* Price Filter */}
           <div className="filter-group" style={{ marginBottom: '10px' }}>
@@ -166,25 +169,25 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
                   value="under200"
                   checked={filters.priceRange === 'under200'}
                   onChange={() => setFilters(p => ({ ...p, priceRange: 'under200' }))}
-                /> Under 20000
+                /> Under Rs. 200
               </label>
               <label className="filter-checkbox-label" style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input 
                   type="radio" 
                   name="price-filter" 
-                  value="200-300"
-                  checked={filters.priceRange === '200-300'}
-                  onChange={() => setFilters(p => ({ ...p, priceRange: '200-300' }))}
-                /> 20000 - 300000
+                  value="200-500"
+                  checked={filters.priceRange === '200-500'}
+                  onChange={() => setFilters(p => ({ ...p, priceRange: '200-500' }))}
+                /> Rs. 200 - Rs. 500
               </label>
               <label className="filter-checkbox-label" style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input 
                   type="radio" 
                   name="price-filter" 
-                  value="over300"
-                  checked={filters.priceRange === 'over300'}
-                  onChange={() => setFilters(p => ({ ...p, priceRange: 'over300' }))}
-                /> Over 300000
+                  value="over500"
+                  checked={filters.priceRange === 'over500'}
+                  onChange={() => setFilters(p => ({ ...p, priceRange: 'over500' }))}
+                /> Over Rs. 500
               </label>
             </div>
           </div>
@@ -194,7 +197,7 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
         <div className="catalog-content">
           <div className="catalog-content-header">
               <h2 className="catalog-title" style={{ fontFamily: 'var(--font-serif)', fontSize: '2.5rem', margin: 0, color: '#3a1a20' }}>
-                {searchQuery ? `Search Results for "${searchQuery}"` : "Rajputi Poshakh Collections"}
+                {searchQuery ? `Search Results for "${searchQuery}"` : "Rajputi Poshak Collections"}
               </h2>
             <div className="catalog-actions-row">
               <button className="mobile-filter-btn" onClick={() => setIsMobileFilterOpen(true)}>
@@ -254,7 +257,13 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
                 if (product.image) {
                   imageUrl = product.image;
                 } else if (product.images && product.images.length > 0) {
-                  imageUrl = product.images[0].url || product.images[0] || imageUrl;
+                  const img = product.images[0];
+                  imageUrl = img.imageUrl || img.url || (typeof img === 'string' ? img : imageUrl);
+                }
+                
+                // Ensure local paths start with a slash
+                if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                  imageUrl = '/' + imageUrl;
                 }
 
                 return (
@@ -267,28 +276,56 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
                       >
                         <i className={`${wishlist.includes(product.id) ? 'fa-solid' : 'fa-regular'} fa-heart`} style={{ color: wishlist.includes(product.id) ? '#ff3f6c' : '#535766', fontSize: '18px' }}></i>
                       </button>
-                      <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} loading="lazy" />
+                      <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: product.name === 'testing' ? 'top center' : (product.name === 'Mustard Blossom Georgette Lehenga' ? 'center 10%' : 'center 25%'), opacity: product.totalStock === 0 ? '0.5' : '1' }} loading="lazy" />
+                      {product.totalStock === 0 && (
+                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', padding: '5px 15px', fontWeight: 'bold', letterSpacing: '2px', fontSize: '12px' }}>
+                          SOLD OUT
+                        </div>
+                      )}
                     </div>
                     <div className="product-details-summary" onClick={() => navigate(`/product/${product.slug || product.id}`)}>
                       <h3 className="product-brand">{product.brand || 'RAJWADI'}</h3>
                       <p className="product-title-myntra" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</p>
                       <div className="product-price-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-                        <span className="product-price" style={{ fontSize: '16px', fontWeight: 'bold', color: '#3a1a20' }}>Rs. {product.startingPrice || product.basePrice || product.price}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span className="product-price" style={{ fontSize: '16px', fontWeight: 'bold', color: '#3a1a20' }}>Rs. {product.startingPrice || product.basePrice || product.price}</span>
+                          {(product.startingComparePrice || product.compareAtPrice) > (product.startingPrice || product.basePrice || product.price) && (
+                            <span style={{ fontSize: '13px', textDecoration: 'line-through', color: '#949494' }}>Rs. {product.startingComparePrice || product.compareAtPrice}</span>
+                          )}
+                        </div>
                         <div style={{ display: 'flex', gap: '8px' }}>
                           <button 
-                            style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#fff', color: '#432227', border: '1px solid #432227', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+                            style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#fff', color: product.totalStock === 0 ? '#ccc' : '#432227', border: `1px solid ${product.totalStock === 0 ? '#ccc' : '#432227'}`, cursor: product.totalStock === 0 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
                             title="Add to Cart"
-                            onMouseOver={e => { e.currentTarget.style.backgroundColor = '#432227'; e.currentTarget.style.color = '#fff'; }}
-                            onMouseOut={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#432227'; }}
-                            onClick={(e) => { e.stopPropagation(); addToCart(product.defaultVariantId || product.id); }}
+                            disabled={product.totalStock === 0}
+                            onMouseOver={e => { if(product.totalStock !== 0) { e.currentTarget.style.backgroundColor = '#432227'; e.currentTarget.style.color = '#fff'; } }}
+                            onMouseOut={e => { if(product.totalStock !== 0) { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#432227'; } }}
+                            onClick={(e) => { 
+                              e.stopPropagation(); 
+                              if (product.defaultVariantId) {
+                                addToCart(product.defaultVariantId); 
+                              } else {
+                                // If no variants exist at all, prevent adding random fallback.
+                                alert("No variants available for this product.");
+                              }
+                            }}
                           >
                             <i className="fa-solid fa-cart-shopping"></i>
                           </button>
                           <button 
-                            style={{ padding: '0 12px', height: '32px', borderRadius: '4px', backgroundColor: '#432227', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', transition: 'background-color 0.2s' }}
-                            onMouseOver={e => e.currentTarget.style.backgroundColor = '#2a1518'}
-                            onMouseOut={e => e.currentTarget.style.backgroundColor = '#432227'}
-                            onClick={(e) => { e.stopPropagation(); addToCart(product.defaultVariantId || product.id); navigate('/checkout'); }}
+                            style={{ padding: '0 12px', height: '32px', borderRadius: '4px', backgroundColor: product.totalStock === 0 ? '#ccc' : '#432227', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: '11px', cursor: product.totalStock === 0 ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s' }}
+                            disabled={product.totalStock === 0}
+                            onMouseOver={e => { if(product.totalStock !== 0) e.currentTarget.style.backgroundColor = '#2a1518' }}
+                            onMouseOut={e => { if(product.totalStock !== 0) e.currentTarget.style.backgroundColor = '#432227' }}
+                            onClick={(e) => { 
+                              e.stopPropagation(); 
+                              if (product.defaultVariantId) {
+                                addToCart(product.defaultVariantId); 
+                                navigate('/checkout'); 
+                              } else {
+                                alert("No variants available for this product.");
+                              }
+                            }}
                           >
                             BUY NOW
                           </button>

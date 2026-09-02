@@ -36,4 +36,17 @@ export class CategoriesService {
     if (!category) throw Errors.CATEGORY_NOT_FOUND();
     return this.categoriesRepo.update(id, { isActive });
   }
+
+  async deleteCategory(id) {
+    const category = await this.categoriesRepo.findById(id);
+    if (!category) throw Errors.CATEGORY_NOT_FOUND();
+    
+    const hasProducts = await this.categoriesRepo.hasProducts(id);
+    if (hasProducts) {
+      const { DomainError } = await import('../../utils/errors.js');
+      throw new DomainError('CONFLICT', 'Cannot delete category because products are assigned to it.', 409);
+    }
+    
+    await this.categoriesRepo.delete(id);
+  }
 }

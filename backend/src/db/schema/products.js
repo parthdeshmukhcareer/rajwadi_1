@@ -16,6 +16,7 @@ export const products = pgTable('products', {
   occasion: varchar('occasion', { length: 255 }),
   careInstruction: text('care_instruction'),
   hsnCode: varchar('hsn_code', { length: 20 }),
+  stitchedType: varchar('stitched_type', { length: 20 }).default('UNSTITCHED'),
   gstRate: integer('gst_rate').notNull(),
   isFeatured: boolean('is_featured').default(false).notNull(),
   isActive: boolean('is_active').default(true).notNull(),

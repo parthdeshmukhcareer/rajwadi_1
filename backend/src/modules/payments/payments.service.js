@@ -310,6 +310,20 @@ export class PaymentsService {
       .where(eq(orderItems.orderId, orderId));
 
       await emailService.sendOrderConfirmation(order, user, items, shippingAddress);
+
+      const { whatsappService } = await import('../../services/whatsapp.service.js');
+      whatsappService.sendOwnerWhatsAppNotification({
+        type: 'ORDER_PLACED',
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        customerName: `${user.firstName} ${user.lastName}`,
+        customerPhone: shippingAddress?.phone || 'N/A',
+        customerEmail: user.email,
+        totalAmount: order.grandTotal,
+        orderStatus: order.status,
+        paymentStatus: order.paymentStatus,
+        items: items
+      }).catch(console.error);
     } catch (err) {
       console.error('Failed to trigger order confirmation email:', err);
     }

@@ -16,6 +16,7 @@ describe('Payments E2E', () => {
   let orderNumber;
   let orderId;
   let variantId;
+  let catIdToClean;
 
   beforeAll(async () => {
     process.env.DISABLE_JOBS = 'true';
@@ -54,12 +55,12 @@ describe('Payments E2E', () => {
       addressType: 'HOME'
     }).returning();
 
-    // Clean up category if exists
-    await db.delete(products).where(eq(products.slug, 'pay-prod'));
-    await db.delete(categories).where(eq(categories.slug, 'pay-cat'));
-
-    const [cat] = await db.insert(categories).values({ name: 'Pay Cat', slug: 'pay-cat' }).returning();
-    const [prod] = await db.insert(products).values({ categoryId: cat.id, name: 'Pay Prod', slug: 'pay-prod', basePrice: 112000, gstRate: 12 }).returning();
+    // We don't need to delete by hardcoded slug since we will use unique.
+    
+    const suffix = Date.now().toString();
+    const [cat] = await db.insert(categories).values({ name: 'Pay Cat', slug: `pay-cat-${suffix}` }).returning();
+    catIdToClean = cat.id;
+    const [prod] = await db.insert(products).values({ categoryId: cat.id, name: 'Pay Prod', slug: `pay-prod-${suffix}`, basePrice: 112000, gstRate: 12 }).returning();
     
     const [variant] = await db.insert(productVariants).values({
       productId: prod.id, sku: 'PAY-SKU', size: 'M', color: 'R', price: 112000, stockOnHand: 10, reservedStock: 0
@@ -110,11 +111,16 @@ describe('Payments E2E', () => {
     await db.delete(carts).where(eq(carts.userId, userId));
     
     if (variantId) {
-      await db.delete(productVariants).where(eq(productVariants.id, variantId));
+      const [v] = await db.select().from(productVariants).where(eq(productVariants.id, variantId));
+      if (v) {
+        await db.delete(productVariants).where(eq(productVariants.id, variantId));
+        await db.delete(products).where(eq(products.id, v.productId));
+      }
     }
-    await db.delete(products).where(eq(products.slug, 'pay-prod'));
-    await db.delete(categories).where(eq(categories.slug, 'pay-cat'));
-    
+    if (catIdToClean) {
+        await db.delete(categories).where(eq(categories.id, catIdToClean));
+    }
+    // Also try to cleanup category if we stored its ID
     if (userId) {
       await db.delete(addresses).where(eq(addresses.userId, userId));
       await db.delete(users).where(eq(users.id, userId));

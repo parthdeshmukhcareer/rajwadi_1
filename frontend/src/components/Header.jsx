@@ -30,7 +30,7 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
 
   return (
     <header className="main-header" style={{ width: '100%', zIndex: 1000, position: 'relative', backgroundColor: '#1c120f' }}>
-      <div className="header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', height: '50px', padding: '0 30px 0 10px', boxSizing: 'border-box' }}>
+      <div className="header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', height: '50px', padding: '0 0 0 10px', boxSizing: 'border-box' }}>
         
         {/* Left side: Mobile Menu Toggle & Logo */}
         <div style={{ display: 'flex', alignItems: 'center', flex: 1, justifyContent: 'flex-start' }}>
@@ -54,12 +54,12 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
               <span style={{color: '#dfceab', fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: '400', letterSpacing: '0.05em'}}>Rajwadi</span>
             </div>
           </div>
-          <ul className="nav-menu" style={{ display: 'flex', gap: '35px', listStyle: 'none', margin: 0, padding: 0 }}>
-            <li className="nav-item"><Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>HOME</Link></li>
-            <li className="nav-item"><Link to="/catalog" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>COLLECTION</Link></li>
-            <li className="nav-item"><Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>ABOUT US</Link></li>
-            <li className="nav-item"><Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>BLOG</Link></li>
-            <li className="nav-item"><Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>CONTACT US</Link></li>
+          <ul className="nav-menu" style={{ display: 'flex', gap: '40px', listStyle: 'none', margin: 0, padding: 0, marginRight: '30px' }}>
+            <li className="nav-item"><Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>HOME</Link></li>
+            <li className="nav-item"><Link to="/catalog" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>COLLECTION</Link></li>
+            <li className="nav-item"><Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>ABOUT US</Link></li>
+            <li className="nav-item"><Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>BLOG</Link></li>
+            <li className="nav-item"><Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>CUSTOMER SUPPORT</Link></li>
           </ul>
         </nav>
         
@@ -67,23 +67,10 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
         <div className={`mobile-menu-overlay ${isMobileMenuOpen ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}></div>
 
         {/* Right side: Actions */}
-        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '25px', flex: 1, justifyContent: 'flex-end' }}>
-          <button className="action-icon-btn" onClick={toggleWishlistSidebar} title="Wishlist" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-            <i className="fa-regular fa-heart" style={{ color: '#d4c098', fontSize: '20px' }}></i>
-            <span className="cart-badge" style={{ position: 'absolute', top: '-8px', right: '-12px', background: '#d4c098', color: '#2b161c', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>{wishlistCount || 0}</span>
-          </button>
-          
-          <div style={{ position: 'relative' }} className="user-dropdown-container">
-            <style>{`
-              .user-dropdown-container:hover .user-dropdown-menu { display: block; }
-              .user-dropdown-menu { display: none; position: absolute; top: 100%; right: -20px; background: white; border: 1px solid #eaeaea; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 10px 0; min-width: 180px; z-index: 1001; }
-              .user-dropdown-menu::before { content: ''; position: absolute; top: -6px; right: 26px; width: 10px; height: 10px; background: white; border-top: 1px solid #eaeaea; border-left: 1px solid #eaeaea; transform: rotate(45deg); }
-              .user-dropdown-menu::after { content: ''; position: absolute; top: -20px; left: 0; right: 0; height: 20px; background: transparent; }
-              .user-dropdown-item { display: block; padding: 10px 20px; color: #432227; text-decoration: none; font-size: 14px; font-weight: bold; transition: background 0.2s; cursor: pointer; }
-              .user-dropdown-item:hover { background: #fcf8f0; color: #a48c5a; }
-            `}</style>
-            <Link to="/account" className="action-icon-btn account-btn" title="Account" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', padding: '10px 0' }}>
-              {isAuthenticated && user ? (
+        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '25px', flex: 1, justifyContent: 'flex-end', marginRight: '-15px' }}>
+          <Link to="/account" className="action-icon-btn account-btn" title="Account" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: '8px', cursor: 'pointer', background: 'none', border: 'none', padding: '10px 0', marginRight: '15px' }}>
+            {isAuthenticated && user ? (
+              <>
                 <div style={{
                   width: '24px',
                   height: '24px',
@@ -99,25 +86,23 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
                 }}>
                   {(user.firstName && user.firstName[0]) || (user.email && user.email[0]) || 'U'}
                 </div>
-              ) : (
+                <span style={{ color: '#d4c098', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', marginTop: '2px' }}>
+                  {user.firstName || 'Account'}
+                </span>
+              </>
+            ) : (
+              <>
                 <i className="fa-regular fa-user" style={{ color: '#d4c098', fontSize: '20px' }}></i>
-              )}
-            </Link>
-            <div className="user-dropdown-menu">
-              {isAuthenticated ? (
-                <>
-                  <Link to="/account" className="user-dropdown-item">My Account</Link>
-                  <Link to="/account/orders" className="user-dropdown-item">My Orders</Link>
-                  <button onClick={() => { logout(); navigate('/account'); }} className="user-dropdown-item" style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none' }}>Sign Out</button>
-                </>
-              ) : (
-                <>
-                  <Link to="/account" className="user-dropdown-item">Sign In / Register</Link>
-                </>
-              )}
-            </div>
-          </div>
+                <span style={{ color: '#d4c098', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', textTransform: 'uppercase', marginTop: '3px' }}>Login</span>
+              </>
+            )}
+          </Link>
 
+          <button className="action-icon-btn" onClick={toggleWishlistSidebar} title="Wishlist" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <i className="fa-regular fa-heart" style={{ color: '#d4c098', fontSize: '20px' }}></i>
+            <span className="cart-badge" style={{ position: 'absolute', top: '-8px', right: '-12px', background: '#d4c098', color: '#2b161c', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>{wishlistCount || 0}</span>
+          </button>
+          
           <button className="action-icon-btn" onClick={toggleCart} title="Shopping Cart" style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <i className="fa-solid fa-bag-shopping" style={{ color: '#d4c098', fontSize: '20px' }}></i>
             <span className="cart-badge" style={{ position: 'absolute', top: '-8px', right: '-12px', background: '#d4c098', color: '#2b161c', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>{cartCount || 0}</span>
@@ -131,7 +116,7 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
             type="text" 
             id="searchInput" 
             className="search-overlay-input"
-            placeholder="Search for Rajputi Poshakh, Accessories, Jewellery..."
+            placeholder="Search for Rajputi Poshak, Accessories, Jewellery..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {

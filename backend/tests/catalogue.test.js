@@ -36,7 +36,9 @@ describe('Catalogue Endpoints E2E', () => {
     // Clean DB
     await db.delete(users).where(eq(users.email, 'admin_cat@test.com'));
     await db.delete(users).where(eq(users.email, 'cust_cat@test.com'));
-    await db.delete(categories).where(eq(categories.slug, 'test-category'));
+    const suffix = Date.now().toString();
+    // Clean DB for specific slug not needed if we use dynamic slug
+    // But leaving a cleanup for any dangling test categories if needed.
 
     // Create Admin
     const adminPass = await PasswordUtil.hash('Admin123!');
@@ -58,9 +60,14 @@ describe('Catalogue Endpoints E2E', () => {
   afterAll(async () => {
     await db.delete(users).where(eq(users.id, adminId));
     await db.delete(users).where(eq(users.id, customerId));
-    await db.delete(productVariants).where(eq(productVariants.productId, testProductId));
-    await db.delete(products).where(eq(products.id, testProductId));
-    await db.delete(categories).where(eq(categories.id, testCategoryId));
+    if (testCategoryId) {
+      const prods = await db.select().from(products).where(eq(products.categoryId, testCategoryId));
+      for (const p of prods) {
+        await db.delete(productVariants).where(eq(productVariants.productId, p.id));
+      }
+      await db.delete(products).where(eq(products.categoryId, testCategoryId));
+      await db.delete(categories).where(eq(categories.id, testCategoryId));
+    }
     await app.close();
   });
 
@@ -71,15 +78,16 @@ describe('Catalogue Endpoints E2E', () => {
   });
 
   it('should allow admin to create category', async () => {
-    const res = await app.inject({ method: 'POST', url: '/api/v1/admin/categories', headers: { authorization: `Bearer ${adminToken}` }, payload: { name: 'Test Category', slug: 'test-category' } });
+    const res = await app.inject({ method: 'POST', url: '/api/v1/admin/categories', headers: { authorization: `Bearer ${adminToken}` }, payload: { name: 'Test Category', slug: `test-category-${Date.now()}` } });
     expect(res.statusCode).toBe(201);
     testCategoryId = JSON.parse(res.payload).data.id;
   });
 
   // 5. Duplicate slug rejected (Category)
   it('should reject duplicate category slug', async () => {
-    const res = await app.inject({ method: 'POST', url: '/api/v1/admin/categories', headers: { authorization: `Bearer ${adminToken}` }, payload: { name: 'Test Category 2', slug: 'test-category' } });
-    expect(res.statusCode).toBe(409);
+    const res = await app.inject({ method: 'POST', url: '/api/v1/admin/categories', headers: { authorization: `Bearer ${adminToken}` }, payload: { name: 'Test Category', slug: `test-category-${Date.now()}` } });
+    const resDup = await app.inject({ method: 'POST', url: '/api/v1/admin/categories', headers: { authorization: `Bearer ${adminToken}` }, payload: { name: 'Test Category 2', slug: JSON.parse(res.payload).data.slug } });
+    expect(resDup.statusCode).toBe(409);
   });
 
   // 3 & 4. Admin vs Customer Product creation
@@ -89,15 +97,16 @@ describe('Catalogue Endpoints E2E', () => {
   });
 
   it('should allow admin to create product', async () => {
-    const res = await app.inject({ method: 'POST', url: '/api/v1/admin/products', headers: { authorization: `Bearer ${adminToken}` }, payload: { categoryId: testCategoryId, name: 'Test Product', slug: 'test-product', basePrice: 50000, gstRate: 12, fabric: 'Cotton', occasion: 'Wedding' } });
+    const res = await app.inject({ method: 'POST', url: '/api/v1/admin/products', headers: { authorization: `Bearer ${adminToken}` }, payload: { categoryId: testCategoryId, name: 'Test Product', slug: `test-product-${Date.now()}`, basePrice: 50000, gstRate: 12, fabric: 'Cotton', occasion: 'Wedding' } });
     expect(res.statusCode).toBe(201);
     testProductId = JSON.parse(res.payload).data.id;
   });
 
   // 5. Duplicate slug rejected (Product)
   it('should reject duplicate product slug', async () => {
-    const res = await app.inject({ method: 'POST', url: '/api/v1/admin/products', headers: { authorization: `Bearer ${adminToken}` }, payload: { categoryId: testCategoryId, name: 'Test Product 2', slug: 'test-product', basePrice: 50000, gstRate: 12 } });
-    expect(res.statusCode).toBe(409);
+    const res = await app.inject({ method: 'POST', url: '/api/v1/admin/products', headers: { authorization: `Bearer ${adminToken}` }, payload: { categoryId: testCategoryId, name: 'Test Product 3', slug: `test-product-${Date.now()}`, basePrice: 50000, gstRate: 12 } });
+    const resDup = await app.inject({ method: 'POST', url: '/api/v1/admin/products', headers: { authorization: `Bearer ${adminToken}` }, payload: { categoryId: testCategoryId, name: 'Test Product 4', slug: JSON.parse(res.payload).data.slug, basePrice: 50000, gstRate: 12 } });
+    expect(resDup.statusCode).toBe(409);
   });
 
   // 6 & 7. Variants and Duplicate SKU
@@ -111,7 +120,7 @@ describe('Catalogue Endpoints E2E', () => {
   });
 
   it('should reject duplicate SKU', async () => {
-    const res = await app.inject({ method: 'POST', url: `/api/v1/admin/products/${testProductId}/variants`, headers: { authorization: `Bearer ${adminToken}` }, payload: { sku: 'TEST-SKU-1', price: 50000 } });
+    const res = await app.inject({ method: 'POST', url: `/api/v1/admin/products/${testProductId}/variants`, headers: { authorization: `Bearer ${adminToken}` }, payload: { sku: 'TEST-SKU-1', size: 'M', price: 50000 } });
     expect(res.statusCode).toBe(409);
   });
 
@@ -132,7 +141,8 @@ describe('Catalogue Endpoints E2E', () => {
 
   // 10, 11, 24, 25. Public Product List & Details
   it('should calculate availableStock correctly and not expose reserved_stock publicly', async () => {
-    const res = await app.inject({ method: 'GET', url: '/api/v1/products/test-product' });
+    const prodObj = await db.select().from(products).where(eq(products.id, testProductId));
+    const res = await app.inject({ method: 'GET', url: `/api/v1/products/${prodObj[0].slug}` });
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.payload).data;
     
@@ -143,11 +153,13 @@ describe('Catalogue Endpoints E2E', () => {
   });
 
   it('should filter by category and other attributes', async () => {
-    const res = await app.inject({ method: 'GET', url: '/api/v1/products?category=test-category&color=Red&fabric=Cotton' });
+    const catObj = await db.select().from(categories).where(eq(categories.id, testCategoryId));
+    const prodObj = await db.select().from(products).where(eq(products.id, testProductId));
+    const res = await app.inject({ method: 'GET', url: `/api/v1/products?category=${catObj[0].slug}&color=Red&fabric=Cotton` });
     expect(res.statusCode).toBe(200);
     const body = JSON.parse(res.payload);
     expect(body.data.length).toBeGreaterThan(0);
-    expect(body.data[0].slug).toBe('test-product');
+    expect(body.data[0].slug).toBe(prodObj[0].slug);
     expect(body.data[0].startingPrice).toBe(50000); // the minimum price among active variants
   });
 

@@ -1,8 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { productService } from '../services/product.service';
 
 function WishlistSidebar({ isOpen, onClose, wishlist, products, toggleWishlist }) {
   const navigate = useNavigate();
+  const [wishlistItems, setWishlistItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchWishlistData = async () => {
+      if (!isOpen || wishlist.length === 0) {
+        if (wishlist.length === 0) setWishlistItems([]);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const items = await Promise.all(
+          wishlist.map(async (id) => {
+            try {
+              // Try to fetch from backend
+              const data = await productService.getProductBySlug(id);
+              return data;
+            } catch (err) {
+              // Fallback to local mock products if not found in DB
+              return products.find(p => p.id === id);
+            }
+          })
+        );
+        setWishlistItems(items.filter(Boolean));
+      } catch (err) {
+        console.error("Failed to fetch wishlist items:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWishlistData();
+  }, [isOpen, wishlist, products]);
   
   if (!isOpen) return null;
 
@@ -31,41 +65,60 @@ function WishlistSidebar({ isOpen, onClose, wishlist, products, toggleWishlist }
                 Explore Collection
               </button>
             </div>
+          ) : isLoading ? (
+            <div style={{ padding: '40px', textAlign: 'center' }}>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '1.1rem' }}>Loading your wishlist...</p>
+            </div>
           ) : (
-            wishlist.map(productId => {
-              const product = products.find(p => p.id === productId);
+            wishlistItems.map(product => {
               if (!product) return null;
+              
+              let imageUrl = '/assets/images/placeholder.png';
+              if (product.image) {
+                imageUrl = product.image;
+              } else if (product.images && product.images.length > 0) {
+                const img = product.images[0];
+                imageUrl = img.imageUrl || img.url || (typeof img === 'string' ? img : imageUrl);
+              }
+              if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                imageUrl = '/' + imageUrl;
+              }
 
               return (
-                <div key={productId} style={{ display: 'flex', gap: '15px', paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid #f0f0f0', position: 'relative' }}>
-                  <div 
-                    onClick={() => { onClose(); navigate(`/product/${product.id}`); }} 
-                    style={{ width: '90px', height: '120px', flexShrink: 0, cursor: 'pointer', borderRadius: '4px', overflow: 'hidden', border: '1px solid #f0f0f0' }}
-                  >
-                    <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 75%', transition: 'transform 0.5s ease' }} onMouseOver={e => e.currentTarget.style.transform='scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform='scale(1)'} />
-                  </div>
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '5px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <h4 
-                        onClick={() => { onClose(); navigate(`/product/${product.id}`); }} 
-                        style={{ margin: '0 0 8px 0', fontFamily: 'var(--font-sans)', fontSize: '14px', fontWeight: '600', color: '#432227', cursor: 'pointer', paddingRight: '25px', lineHeight: '1.4' }}
-                      >
-                        {product.name}
-                      </h4>
-                      <button 
-                        onClick={() => toggleWishlist(productId)} 
-                        title="Remove"
-                        style={{ position: 'absolute', top: '5px', right: 0, background: 'none', border: 'none', color: '#a0a0a0', cursor: 'pointer', fontSize: '16px', transition: 'color 0.2s' }}
-                        onMouseOver={e => e.currentTarget.style.color = '#d9534f'}
-                        onMouseOut={e => e.currentTarget.style.color = '#a0a0a0'}
-                      >
-                        <i className="fa-solid fa-xmark"></i>
-                      </button>
+                <div key={product.id} style={{ display: 'flex', gap: '15px', paddingBottom: '20px', marginBottom: '20px', borderBottom: '1px solid #f0f0f0', position: 'relative' }}>
+                    <div 
+                      onClick={() => { onClose(); navigate(`/product/${product.slug || product.id}`); }} 
+                      style={{ width: '90px', height: '120px', flexShrink: 0, cursor: 'pointer', borderRadius: '4px', overflow: 'hidden', border: '1px solid #f0f0f0' }}
+                    >
+                      <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 75%', transition: 'transform 0.5s ease' }} onMouseOver={e => e.currentTarget.style.transform='scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform='scale(1)'} />
                     </div>
-                    <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#432227' }}>₹{(product.price || 0).toFixed(2)}</span>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingTop: '5px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <h4 
+                          onClick={() => { onClose(); navigate(`/product/${product.slug || product.id}`); }} 
+                          style={{ margin: '0 0 5px 0', fontSize: '0.95rem', fontWeight: '500', color: '#432227', cursor: 'pointer', paddingRight: '15px' }}
+                        >
+                          {product.name}
+                        </h4>
+                        <button 
+                          onClick={() => toggleWishlist(product.id)} 
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999', fontSize: '16px', position: 'absolute', top: '5px', right: '0', transition: 'color 0.2s' }}
+                          onMouseOver={e => e.currentTarget.style.color = '#ff3f6c'}
+                          onMouseOut={e => e.currentTarget.style.color = '#999'}
+                        >
+                          <i className="fa-solid fa-trash-can"></i>
+                        </button>
+                      </div>
+                      
+                      <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontWeight: '600', color: '#3a1a20' }}>Rs. {product.startingPrice || product.basePrice || product.price}</span>
+                          {(product.startingComparePrice || product.compareAtPrice) > (product.startingPrice || product.basePrice || product.price) && (
+                            <span style={{ fontSize: '12px', textDecoration: 'line-through', color: '#999' }}>Rs. {product.startingComparePrice || product.compareAtPrice}</span>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
                 </div>
               );
             })

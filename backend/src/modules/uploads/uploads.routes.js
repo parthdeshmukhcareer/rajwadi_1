@@ -11,5 +11,6 @@ export async function uploadRoutes(app) {
   app.addHook('preValidation', requireAdmin);
 
   app.post('/products/:productId', controller.uploadImage);
+  app.post('/image', controller.uploadGenericImage);
   app.delete('/images/:id', controller.deleteImage);
 }

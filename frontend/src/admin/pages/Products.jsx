@@ -50,7 +50,7 @@ const Products = () => {
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {mainImage ? (
-              <img src={mainImage} alt={row.name} style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} />
+              <img src={mainImage.startsWith('http') || mainImage.startsWith('/') ? mainImage : `/${mainImage}`} alt={row.name} style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} />
             ) : (
               <div style={{ width: '40px', height: '40px', borderRadius: '4px', backgroundColor: 'var(--admin-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <span style={{ fontSize: '10px' }}>No Img</span>

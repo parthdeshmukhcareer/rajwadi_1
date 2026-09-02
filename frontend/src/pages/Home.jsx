@@ -11,10 +11,16 @@ function Home() {
       {/*  Hero Carousel  */}
       {/*  Hero Section (Static Image)  */}
       <div className="static-hero-image" style={{width: '100%', position: 'relative', height: '100vh', overflow: 'hidden', background: '#000'}}>
-        <img src="assets/images/rajwadi 1.png" alt="Rajwadi Hero" className="hero-bg-img" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%', display: 'block', position: 'absolute', inset: '0', zIndex: '0'}} />
+        {/* Seamless reflection trick to fill the top gap perfectly without blur or black lines */}
+        <div style={{position: 'absolute', top: 0, left: '-2%', width: '104%', height: '90px', overflow: 'hidden', zIndex: 0}}>
+           <img src="assets/images/eec54ddf-9a5f-4e61-ae42-8ab880568471.png" alt="Reflection" style={{width: '100%', height: '100vh', objectFit: 'cover', objectPosition: '100% 0%', position: 'absolute', top: '90px', left: 0, transform: 'rotateX(180deg)', transformOrigin: 'top center'}} />
+        </div>
         
-        {/*  Dark gradient overlay for text readability  */}
-        <div className="custom-hero-overlay" style={{background: 'linear-gradient(to right, rgba(15,10,10,0.9) 0%, rgba(15,10,10,0.4) 50%, rgba(15,10,10,0) 100%)', position: 'absolute', inset: '0', zIndex: '1'}}></div>
+        {/* Main image shifted down and left, with no weird zooming */}
+        <img src="assets/images/eec54ddf-9a5f-4e61-ae42-8ab880568471.png" alt="Rajwadi Hero" className="hero-bg-img" style={{width: '104%', height: '100vh', objectFit: 'cover', objectPosition: '100% 0%', display: 'block', position: 'absolute', top: '90px', left: '-2%', zIndex: '1'}} />
+        
+        {/*  Dark gradient overlay for text readability - REMOVED per user request  */}
+        {/* <div className="custom-hero-overlay" style={{background: 'linear-gradient(to right, rgba(15,10,10,0.9) 0%, rgba(15,10,10,0.4) 50%, rgba(15,10,10,0) 100%)', position: 'absolute', inset: '0', zIndex: '1'}}></div> */}
         
         <div className="custom-hero-content-wrapper">
           <div className="custom-hero-content">
@@ -62,12 +68,12 @@ function Home() {
           
           <div className="premium-stores-carousel" id="premiumCategoriesScroll" style={{display: 'flex', justifyContent: 'center', gap: '20px', overflowX: 'auto', scrollbarWidth: 'none', padding: '15px 5px', scrollBehavior: 'smooth'}}>
             
-            {/*  Card 1: Rajputi Poshakh  */}
-            <div className="premium-store-card" style={{flex: '0 0 calc(33.333% - 15px)', minWidth: '280px', height: '380px', borderRadius: '8px', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 25px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => {navigate('/catalog?category=Rajputi Poshakh')}}>
+            {/*  Card 1: Rajputi Poshak  */}
+            <div className="premium-store-card" style={{flex: '0 0 calc(33.333% - 15px)', minWidth: '280px', height: '380px', borderRadius: '8px', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 25px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => {navigate('/catalog?category=Rajputi Poshak')}}>
               <img src="assets/images/c448f31266ab16343b17a56cca813e6e.jpg" style={{ objectPosition: 'top center' }} />
               <div className="store-card-overlay" style={{position: 'absolute', inset: '0', background: 'linear-gradient(to top, rgba(15,5,5,0.95) 0%, rgba(15,5,5,0.4) 45%, transparent 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '30px 15px'}}>
                 <i className="fa-solid fa-crown" style={{color: '#dfceab', fontSize: '1.6rem', marginBottom: '12px'}}></i>
-                <h3 style={{fontFamily: 'var(--font-serif)', color: '#fcfbf9', fontSize: '1.3rem', letterSpacing: '0.15em', marginBottom: '12px', fontWeight: '300'}}>RAJPUTI POSHAKH</h3>
+                <h3 style={{fontFamily: 'var(--font-serif)', color: '#fcfbf9', fontSize: '1.3rem', letterSpacing: '0.15em', marginBottom: '12px', fontWeight: '300'}}>RAJPUTI POSHAK</h3>
                 <span className="explore-text" style={{fontFamily: 'var(--font-sans)', color: '#a48c5a', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px'}}>Explore Collection <i className="fa-solid fa-arrow-right" style={{fontSize: '9px'}}></i></span>
               </div>
             </div>
@@ -124,7 +130,7 @@ function Home() {
             </a>
             
             <div className="elegant-main-img-wrapper" style={{flexGrow: '1', position: 'relative', marginRight: '40px', minHeight: '400px'}}>
-              <img src="assets/images/rajputi poshakh.jpg" alt="Elegant Moments Main" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%', position: 'absolute', inset: '0'}} />
+              <img src="assets/images/elegant_moments_rajputi.jpg" alt="Elegant Moments Main" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 40%', position: 'absolute', inset: '0'}} />
             </div>
           </div>
 
@@ -135,11 +141,11 @@ function Home() {
             <div className="elegant-list-item" style={{display: 'flex', flex: '1', minHeight: '440px', borderBottom: '1px solid rgba(164, 140, 90, 0.2)', position: 'relative', overflow: 'hidden', cursor: 'pointer'}} onClick={() => {navigate('/catalog')}}>
                <div className="elegant-item-content" style={{flex: '1', padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', zIndex: '2'}}>
                   <span className="elegant-item-num" style={{fontFamily: 'var(--font-sans)', fontSize: '0.8rem', color: '#a48c5a', marginBottom: '15px', display: 'flex', flexDirection: 'column', gap: '10px'}}>01 <span style={{display: 'inline-block', width: '20px', height: '1px', backgroundColor: '#a48c5a'}}></span></span>
-                  <h3 className="elegant-item-title" style={{fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '1.8rem', fontWeight: '400', marginBottom: '20px'}}>The Bridal Edit</h3>
+                  <h3 className="elegant-item-title" style={{fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '1.8rem', fontWeight: '400', marginBottom: '20px'}}>Stitched Poshak</h3>
                   <span className="elegant-item-link" style={{fontFamily: 'var(--font-sans)', fontSize: '0.75rem', letterSpacing: '0.15em', color: '#a48c5a', textTransform: 'uppercase', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '8px'}}>EXPLORE <i className="fa-solid fa-arrow-right-long"></i></span>
                </div>
                <div className="elegant-item-img-container" style={{width: '60%', position: 'absolute', right: '0', top: '0', bottom: '0', zIndex: '1', clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0 100%)', overflow: 'hidden'}}>
-                  <img src="assets/images/bridal.jpg" alt="Bridal Edit" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', transition: 'transform 0.6s ease'}} className="elegant-item-img" />
+                  <img src="assets/images/stitched_poshak.jpg" alt="Bridal Edit" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', transition: 'transform 0.6s ease'}} className="elegant-item-img" />
                </div>
             </div>
 
@@ -147,11 +153,11 @@ function Home() {
             <div className="elegant-list-item" style={{display: 'flex', flex: '1', minHeight: '440px', position: 'relative', overflow: 'hidden', cursor: 'pointer'}} onClick={() => {navigate('/catalog')}}>
                <div className="elegant-item-content" style={{flex: '1', padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', zIndex: '2'}}>
                   <span className="elegant-item-num" style={{fontFamily: 'var(--font-sans)', fontSize: '0.8rem', color: '#a48c5a', marginBottom: '15px', display: 'flex', flexDirection: 'column', gap: '10px'}}>02 <span style={{display: 'inline-block', width: '20px', height: '1px', backgroundColor: '#a48c5a'}}></span></span>
-                  <h3 className="elegant-item-title" style={{fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '1.8rem', fontWeight: '400', marginBottom: '20px'}}>The Outsider Edit</h3>
+                  <h3 className="elegant-item-title" style={{fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '1.8rem', fontWeight: '400', marginBottom: '20px'}}>Unstitched Poshak</h3>
                   <span className="elegant-item-link" style={{fontFamily: 'var(--font-sans)', fontSize: '0.75rem', letterSpacing: '0.15em', color: '#a48c5a', textTransform: 'uppercase', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '8px'}}>EXPLORE <i className="fa-solid fa-arrow-right-long"></i></span>
                </div>
                <div className="elegant-item-img-container" style={{width: '60%', position: 'absolute', right: '0', top: '0', bottom: '0', zIndex: '1', clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0 100%)', overflow: 'hidden'}}>
-                  <img src="assets/images/outsider look.jpg" alt="Outsider Edit" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', transition: 'transform 0.6s ease'}} className="elegant-item-img" />
+                  <img src="assets/images/unstitched_poshak.jpg" alt="Unstitched Poshak" style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', transition: 'transform 0.6s ease'}} className="elegant-item-img" />
                </div>
             </div>
 
@@ -175,7 +181,7 @@ function Home() {
             A fully custom made outfit crafted specially for you! Come and explore the exotic ethnic collection with Rajwadi.
           </p>
           
-          <button style={{backgroundColor: '#432227', color: '#fff', border: '1px solid #432227', padding: '15px 40px', fontFamily: 'var(--font-sans)', fontSize: '0.85rem', letterSpacing: '0.15em', fontWeight: '600', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: '10px', cursor: 'pointer', transition: 'background-color 0.3s ease', boxShadow: '0 0 0 4px rgba(67, 34, 39, 0.1)'}} onClick={() => {navigate('/catalog?category=Rajputi Poshakh')}} onMouseOver={() => {this.style.backgroundColor='#2a1518'}} onMouseOut={() => {this.style.backgroundColor='#432227'}}>
+          <button style={{backgroundColor: '#432227', color: '#fff', border: '1px solid #432227', padding: '15px 40px', fontFamily: 'var(--font-sans)', fontSize: '0.85rem', letterSpacing: '0.15em', fontWeight: '600', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: '10px', cursor: 'pointer', transition: 'background-color 0.3s ease', boxShadow: '0 0 0 4px rgba(67, 34, 39, 0.1)'}} onClick={() => {navigate('/catalog?category=Rajputi Poshak')}} onMouseOver={(e) => {e.currentTarget.style.backgroundColor='#2a1518'}} onMouseOut={(e) => {e.currentTarget.style.backgroundColor='#432227'}}>
             SHOP NOW <i className="fa-solid fa-arrow-right-long"></i>
           </button>
           

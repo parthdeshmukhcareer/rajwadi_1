@@ -77,4 +77,13 @@ export class AdminProductsController {
     const variant = await this.productsService.updateVariantStock(id, result.data.stockOnHand);
     return reply.send({ success: true, data: variant });
   }
+
+  deleteVariant = async (req, reply) => {
+    const { id } = req.params;
+    const result = await this.productsService.deleteVariant(id);
+    if (result.deactivated) {
+      return reply.send({ success: true, message: 'Variant deactivated because it is used in orders', data: result });
+    }
+    return reply.send({ success: true, message: 'Variant deleted successfully', data: result });
+  }
 }

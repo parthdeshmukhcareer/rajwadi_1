@@ -44,6 +44,37 @@ export const productService = {
     return response.data;
   },
 
+  createVariant: async (productId, data) => {
+    const response = await adminApiRequest(`/admin/products/${productId}/variants`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return response.data;
+  },
+
+  updateVariant: async (variantId, data) => {
+    const response = await adminApiRequest(`/admin/products/variants/${variantId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    return response.data;
+  },
+
+  deleteVariant: async (variantId) => {
+    const response = await adminApiRequest(`/admin/products/variants/${variantId}`, {
+      method: 'DELETE'
+    });
+    return response;
+  },
+
+  updateVariantStock: async (variantId, stockOnHand) => {
+    const response = await adminApiRequest(`/admin/products/variants/${variantId}/stock`, {
+      method: 'PATCH',
+      body: JSON.stringify({ stockOnHand })
+    });
+    return response.data;
+  },
+
   updateProductStatus: async (id, isActive) => {
     const response = await adminApiRequest(`/admin/products/${id}/status`, {
       method: 'PATCH',
@@ -55,6 +86,16 @@ export const productService = {
   deleteProduct: async (id) => {
     const response = await adminApiRequest(`/admin/products/${id}`, {
       method: 'DELETE'
+    });
+    return response;
+  },
+
+  uploadProductImage: async (id, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await adminApiRequest(`/admin/uploads/products/${id}`, {
+      method: 'POST',
+      body: formData
     });
     return response.data;
   },

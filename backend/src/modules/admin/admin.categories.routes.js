@@ -16,4 +16,5 @@ export async function adminCategoryRoutes(app) {
   app.post('/', controller.createCategory);
   app.patch('/:id', controller.updateCategory);
   app.patch('/:id/status', controller.updateStatus);
+  app.delete('/:id', controller.deleteCategory);
 }

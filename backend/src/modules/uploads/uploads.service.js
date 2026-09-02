@@ -59,6 +59,45 @@ export class UploadsService {
     }
   }
 
+  async uploadGenericImage(fileBuffer, mimeType, filename) {
+    const validMimes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validMimes.includes(mimeType)) {
+      throw Errors.INVALID_IMAGE('Only JPEG, PNG, and WEBP formats are allowed.');
+    }
+
+    const maxSize = env.MAX_IMAGE_SIZE_MB * 1024 * 1024;
+    if (fileBuffer.length > maxSize) {
+      throw Errors.INVALID_IMAGE(`Image size must not exceed ${env.MAX_IMAGE_SIZE_MB}MB.`);
+    }
+
+    const uniqueSuffix = crypto.randomBytes(4).toString('hex');
+    const safeName = filename.replace(/[^a-zA-Z0-9]/g, '_');
+    const publicId = `rajwadi/uploads/${safeName}_${uniqueSuffix}`;
+
+    try {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            public_id: publicId,
+            resource_type: 'image',
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        uploadStream.end(fileBuffer);
+      });
+
+      return {
+        imageUrl: uploadResult.secure_url,
+        publicId: uploadResult.public_id
+      };
+    } catch (error) {
+      throw Errors.IMAGE_UPLOAD_FAILED(error.message);
+    }
+  }
+
   async deleteProductImage(imageId) {
     const [image] = await db.select().from(productImages).where(eq(productImages.id, imageId)).limit(1);
     if (!image) throw Errors.IMAGE_NOT_FOUND();

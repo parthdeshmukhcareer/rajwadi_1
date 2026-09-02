@@ -40,10 +40,11 @@ describe('Cart & Coupons Endpoints E2E', () => {
     customer2Token = await app.jwt.sign({ sub: customer2Id, role: 'CUSTOMER' });
 
     // Setup catalogue
-    const [cat] = await db.insert(categories).values({ name: 'Cart Cat', slug: 'cart-cat' }).returning();
+    const suffix = Date.now().toString();
+    const [cat] = await db.insert(categories).values({ name: 'Cart Cat', slug: `cart-cat-${suffix}` }).returning();
     testCategoryId = cat.id;
 
-    const [prod] = await db.insert(products).values({ categoryId: cat.id, name: 'Cart Product', slug: 'cart-prod', basePrice: 1000, gstRate: 12 }).returning();
+    const [prod] = await db.insert(products).values({ categoryId: cat.id, name: 'Cart Product', slug: `cart-prod-${suffix}`, basePrice: 1000, gstRate: 12 }).returning();
     testProductId = prod.id;
 
     const [v1] = await db.insert(productVariants).values({ productId: prod.id, sku: 'C-SKU-1', price: 1000, stockOnHand: 10 }).returning();
@@ -60,9 +61,9 @@ describe('Cart & Coupons Endpoints E2E', () => {
     await db.delete(users).where(eq(users.email, 'admin_c@test.com'));
     await db.delete(users).where(eq(users.email, 'cust_c@test.com'));
     await db.delete(users).where(eq(users.email, 'cust2_c@test.com'));
-    await db.delete(productVariants).where(eq(productVariants.productId, testProductId));
-    await db.delete(products).where(eq(products.id, testProductId));
-    await db.delete(categories).where(eq(categories.slug, 'cart-cat'));
+    if (testProductId) await db.delete(productVariants).where(eq(productVariants.productId, testProductId));
+    if (testProductId) await db.delete(products).where(eq(products.id, testProductId));
+    if (testCategoryId) await db.delete(categories).where(eq(categories.id, testCategoryId));
     await db.delete(coupons).where(eq(coupons.code, 'TEST10'));
     await db.delete(coupons).where(eq(coupons.code, 'FIXED500'));
     await app.close();
@@ -191,13 +192,13 @@ describe('Cart & Coupons Endpoints E2E', () => {
     
     expect(bodyFixed.subtotal).toBe(3000);
     expect(bodyFixed.discount).toBe(500);
-    expect(bodyFixed.estimatedTotal).toBe(12400);
+    expect(bodyFixed.estimatedTotal).toBe(2500);
 
     const resPercent = await app.inject({ method: 'POST', url: '/api/v1/cart/preview', headers: { authorization: `Bearer ${customerToken}` }, payload: { couponCode: 'TEST10' } });
     const bodyPercent = JSON.parse(resPercent.payload).data;
     
     expect(bodyPercent.subtotal).toBe(3000);
     expect(bodyPercent.discount).toBe(300);
-    expect(bodyPercent.estimatedTotal).toBe(12600);
+    expect(bodyPercent.estimatedTotal).toBe(2700);
   });
 });

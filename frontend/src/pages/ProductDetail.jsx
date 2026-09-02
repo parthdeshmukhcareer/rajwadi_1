@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { productService } from '../services/product.service';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -14,6 +14,8 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const [crossSellProducts, setCrossSellProducts] = useState([]);
 
   // Review Form State
   const [reviewRating, setReviewRating] = useState(5);
@@ -29,6 +31,7 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
   const [selectedMainImage, setSelectedMainImage] = useState('');
   const [activeSize, setActiveSize] = useState('');
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -45,6 +48,9 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
         let mainImg = '/assets/images/placeholder.png';
         if (data.image) mainImg = data.image;
         else if (data.images && data.images.length > 0) mainImg = data.images[0].imageUrl || data.images[0].url || mainImg;
+        if (mainImg && !mainImg.startsWith('http') && !mainImg.startsWith('/')) {
+            mainImg = '/' + mainImg;
+        }
         
         setSelectedMainImage(mainImg);
         setError(null);
@@ -60,6 +66,9 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
           let mainImg = '/assets/images/placeholder.png';
           if (localProd.image) mainImg = localProd.image;
           else if (localProd.images && localProd.images.length > 0) mainImg = localProd.images[0].url || localProd.images[0] || mainImg;
+          if (mainImg && !mainImg.startsWith('http') && !mainImg.startsWith('/')) {
+              mainImg = '/' + mainImg;
+          }
           
           setSelectedMainImage(mainImg);
           setError(null);
@@ -69,9 +78,21 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
       } finally {
         setIsLoading(false);
       }
+      
+      // Fetch Cross Sell Products
+      try {
+        const crossSellRes = await productService.getProducts({ limit: 4 });
+        if (crossSellRes && crossSellRes.data) {
+          // Filter out current product
+          const filtered = crossSellRes.data.filter(p => p.slug !== slug && p.id !== slug).slice(0, 4);
+          setCrossSellProducts(filtered);
+        }
+      } catch (err) {
+        console.error("Failed to fetch cross sell products", err);
+      }
     };
     if (slug) fetchProduct();
-  }, [slug]);
+  }, [slug, products]);
 
   if (isLoading) {
     return (
@@ -114,13 +135,28 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
       return;
     }
     try {
-      await addToCart(activeSize, 1);
+      await addToCart(activeSize, quantity);
       if (redirect) {
         navigate('/checkout');
       }
     } catch (err) {
       alert(err.message || "Failed to add to cart");
     }
+  };
+
+  const currentVariantUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const selectedVariantData = product.variants?.find(v => v.id === activeSize) || {};
+  const currentSku = selectedVariantData.sku || product.sku || 'N/A';
+  
+  const handleWhatsAppEnquiry = () => {
+    const text = `Hello Rajwadi, I want to enquire about this product:\nProduct: ${product.name}\nSKU: ${currentSku}\nURL: ${currentVariantUrl}`;
+    window.open(`https://wa.me/919766631092?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const handleEmailEnquiry = () => {
+    const subject = `Enquiry: ${product.name}`;
+    const body = `Hello Rajwadi,\n\nI want to enquire about this product:\nProduct: ${product.name}\nSKU: ${currentSku}\nURL: ${currentVariantUrl}\n\nPlease provide more details.`;
+    window.location.href = `mailto:support@rajwadi.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   const handleReviewSubmit = async (e) => {
@@ -178,95 +214,190 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
               style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: `hue-rotate(${previewTint}deg)`, transform: 'scale(1.5)', transformOrigin: 'center 75%' }} 
             />
           </div>
+
+          {/* Complete The Look Section */}
+          {crossSellProducts.length > 0 && (
+            <div style={{ marginTop: '50px' }}>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', color: '#432227', marginBottom: '20px', borderBottom: '2px solid #f0f0f0', paddingBottom: '10px' }}>Complete The Look</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '15px' }}>
+                {crossSellProducts.map((item) => (
+                  <Link to={`/product/${item.slug || item.id}`} key={item.id} style={{ textDecoration: 'none', color: 'inherit', display: 'block', backgroundColor: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-3px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+                    <div style={{ height: '160px', overflow: 'hidden' }}>
+                      {(() => {
+                        let crossImg = item.image || (item.images && (item.images[0]?.imageUrl || item.images[0]?.url)) || '/assets/images/placeholder.png';
+                        if (crossImg && !crossImg.startsWith('http') && !crossImg.startsWith('/')) crossImg = '/' + crossImg;
+                        return <img src={crossImg} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+                      })()}
+                    </div>
+                    <div style={{ padding: '10px' }}>
+                      <h4 style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</h4>
+                      <div style={{ fontWeight: 'bold', color: '#d32f2f', fontSize: '14px' }}>Rs. {(Number(item.startingPrice || item.basePrice || item.price) || 0).toFixed(2)}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Purchase details & Custom Stitching */}
         <div className="p-detail-info">
-          <span className="p-detail-cat">{product.category?.name}</span>
-          <h1 className="p-detail-title">{product.name}</h1>
+          <h1 className="p-detail-title" style={{ fontSize: '28px', color: '#111', marginBottom: '10px', lineHeight: '1.2' }}>{product.name}</h1>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: '#666', fontSize: '14px', marginBottom: '20px' }}>
+            <span>SKU:{currentSku}</span>
+            <span style={{ color: '#ccc' }}>|</span>
+            <span>{product.stitchedType === 'STITCHED' ? 'Ready for immediate delivery' : 'Ships in 10–15 days'}</span>
+          </div>
           <div className="p-detail-rating" style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '15px' }}>
             {[...Array(fullStars)].map((_, i) => <i key={`f-${i}`} className="fa-solid fa-star" style={{ color: '#a48c5a', fontSize: '14px' }}></i>)}
             {hasHalfStar && <i className="fa-solid fa-star-half-stroke" style={{ color: '#a48c5a', fontSize: '14px' }}></i>}
           </div>
 
-          <div className="p-detail-price-myntra" style={{ marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
-              <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#432227' }}>₹{(Number(product.startingPrice || product.basePrice || product.price) || 0).toFixed(2)}</span>
-              <span style={{ fontSize: '20px', color: '#888', textDecoration: 'line-through' }}>MRP ₹{(Number(product.startingPrice || product.basePrice || product.price) * 1.5).toFixed(2)}</span>
-              <span style={{ fontSize: '20px', color: '#a48c5a', fontWeight: 'bold' }}>(33% OFF)</span>
+          <div className="p-detail-price-myntra" style={{ marginBottom: '15px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '15px' }}>
+              {(product.compareAtPrice && product.compareAtPrice > (product.startingPrice || product.basePrice || product.price)) ? (
+                 <span style={{ fontSize: '18px', color: '#888', textDecoration: 'line-through' }}>Rs. {(Number(product.compareAtPrice)).toFixed(2)}</span>
+              ) : null}
+              <span style={{ fontSize: '22px', fontWeight: 'bold', color: '#d32f2f' }}>Rs. {(Number(product.startingPrice || product.basePrice || product.price) || 0).toFixed(2)}</span>
+              <span style={{ backgroundColor: '#212121', color: '#fff', fontSize: '12px', padding: '4px 10px', borderRadius: '15px', fontWeight: 'bold' }}>Sold out</span>
             </div>
-            <div style={{ color: '#666', fontSize: '14px', marginTop: '5px' }}>inclusive of all taxes</div>
-          </div>
-          
-          <div className="size-selector-section" style={{ marginTop: '25px', marginBottom: '25px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-              <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#432227' }}>SELECT SIZE</span>
-              <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#a48c5a', cursor: 'pointer', letterSpacing: '0.05em' }} onClick={() => setIsSizeChartOpen(true)}>SIZE CHART &gt;</span>
-            </div>
-            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-              {(() => {
-                let displaySizes = product.variants && product.variants.length > 0 ? product.variants : [];
-                if (displaySizes.length === 0 && product.sizes) {
-                  displaySizes = product.sizes.map(opt => ({
-                    id: `${product.id}-${opt}`,
-                    size: opt.toUpperCase(),
-                    stockOnHand: 10
-                  }));
-                }
-                
-                if (displaySizes.length > 0) {
-                  return displaySizes.map((variant) => {
-                    const stock = variant.availableStock ?? variant.stockOnHand ?? 0;
-                    return (
-                    <div key={variant.id} 
-                         onClick={() => stock > 0 && setActiveSize(variant.id)}
-                         style={{ 
-                           width: 'auto', minWidth: '50px', padding: '0 10px', height: '50px', borderRadius: '8px', 
-                           border: activeSize === variant.id ? '2px solid #a48c5a' : '1px solid #d4d5d9', 
-                           display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                           fontSize: '14px', fontWeight: 'bold', 
-                           color: stock > 0 ? (activeSize === variant.id ? '#a48c5a' : '#432227') : '#ccc', 
-                           cursor: stock > 0 ? 'pointer' : 'not-allowed', 
-                           transition: 'all 0.2s', 
-                           backgroundColor: activeSize === variant.id ? 'rgba(164, 140, 90, 0.05)' : 'transparent',
-                           textDecoration: stock <= 0 ? 'line-through' : 'none',
-                           textTransform: 'capitalize'
-                         }} 
-                    >
-                      {variant.size || variant.sku}
-                    </div>
-                  )});
-                } else {
-                  return <div style={{ fontSize: '14px', color: '#666' }}>No sizes available</div>;
-                }
-              })()}
-            </div>
-          </div>
-          
-          <p className="p-detail-desc">{product.description}</p>
-
-          <div className="p-detail-specs">
-            {specs.map((s, idx) => (
-              <div className="spec-item" key={idx}><strong>{s.label}:</strong> {s.value}</div>
-            ))}
+            <div style={{ color: '#888', fontSize: '13px', marginTop: '8px' }}>(Inclusive of all taxes)</div>
           </div>
 
-          <div className="action-row" style={{ display: 'flex', gap: '10px', alignItems: 'stretch', marginTop: '20px' }}>
-            <button className="btn-buy-now" onClick={() => handleAddToCart(true)} disabled={isCartLoading} style={{ flex: 1, padding: '15px', background: '#1c120f', color: 'white', border: 'none', borderRadius: '4px', fontWeight: '600', cursor: isCartLoading ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '1px', opacity: isCartLoading ? 0.7 : 1, transition: 'opacity 0.2s' }}>
-              {isCartLoading ? 'Adding...' : 'Buy Now'}
-            </button>
-            <button className="btn-add-cart-icon" onClick={() => handleAddToCart(false)} disabled={isCartLoading} style={{ width: '50px', padding: 0, background: 'white', border: '1px solid var(--color-gray-light)', borderRadius: '4px', color: '#555', cursor: isCartLoading ? 'not-allowed' : 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: isCartLoading ? 0.7 : 1, transition: 'all 0.2s' }} title="Add to Cart">
-              <i className="fa-solid fa-cart-plus"></i>
-            </button>
-            <button 
-              className="btn-wishlist-icon" 
-              onClick={() => toggleWishlist(product.id)}
-              style={{ width: '50px', padding: 0, background: 'white', border: '1px solid var(--color-gray-light)', borderRadius: '4px', color: wishlist.includes(product.id) ? 'var(--color-maroon)' : '#555', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }} 
-              title="Wishlist"
-            >
-              <i className={`${wishlist.includes(product.id) ? 'fa-solid' : 'fa-regular'} fa-heart`}></i>
-            </button>
+          <div style={{ marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #eee', paddingTop: '10px' }}>
+             <h3 style={{ fontSize: '18px', color: '#333', marginBottom: '15px', fontWeight: 'bold' }}>Product Details:</h3>
+             <div style={{ fontSize: '15px', color: '#555', lineHeight: '1.8' }}>
+                <p>{product.description}</p>
+                <div className="p-detail-specs" style={{ marginTop: '15px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', backgroundColor: '#fafafa', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
+                  {specs.map((s, idx) => (
+                    <div className="spec-item" key={idx} style={{ fontSize: '14px' }}><strong>{s.label}:</strong> {s.value}</div>
+                  ))}
+                </div>
+             </div>
           </div>
+          
+          <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+             <a href="#" style={{ color: '#0000FF', textDecoration: 'underline', fontWeight: 'bold', fontSize: '15px' }}>Stitching Service Available</a>
+             <span style={{ color: '#666', fontSize: '15px' }}>(Optional)</span>
+          </div>
+
+          <div style={{ marginBottom: '25px', fontSize: '15px', color: '#333' }}>
+             Shipping: <span style={{ color: '#d32f2f', fontWeight: 'bold' }}>FREE (in India)</span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '25px' }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '15px', color: '#333' }}>
+                <i className="fa-regular fa-star" style={{ fontSize: '20px' }}></i>
+                <span>Authentic & Quality Assured</span>
+             </div>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '15px', color: '#333' }}>
+                <i className="fa-solid fa-tags" style={{ fontSize: '20px' }}></i>
+                <span>No Refund Policy Applies * <Link to="/no-refund-policy" style={{ color: '#333', textDecoration: 'underline' }}>Learn More</Link></span>
+             </div>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '15px', color: '#333' }}>
+                <i className="fa-solid fa-arrow-rotate-left" style={{ fontSize: '20px' }}></i>
+                <span>Shipping Policy Available * <Link to="/shipping-policy" style={{ color: '#333', textDecoration: 'underline' }}>Learn More</Link></span>
+             </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
+             <button onClick={handleWhatsAppEnquiry} style={{ backgroundColor: '#4CAF50', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', flex: 1 }}>Enquiry on WhatsApp</button>
+             <button onClick={handleEmailEnquiry} style={{ backgroundColor: '#F44336', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', flex: 1 }}>Enquiry on Email</button>
+          </div>
+
+
+          
+          <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap', alignItems: 'flex-start', marginTop: '25px', marginBottom: '25px' }}>
+            <div className="size-selector-section" style={{ flex: '1 1 auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
+                <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#432227' }}>SELECT SIZE</span>
+                <button 
+                  onClick={() => setIsSizeChartOpen(true)}
+                  style={{ background: 'rgba(164, 140, 90, 0.1)', color: '#a48c5a', border: '1px solid #a48c5a', borderRadius: '4px', padding: '2px 8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', letterSpacing: '0.05em' }}
+                >
+                  SIZE CHART &gt;
+                </button>
+              </div>
+              <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                {(() => {
+                  const allowedSizes = ['S', 'M', 'L', 'XL'];
+                  let displaySizes = [];
+                  
+                  if (product.variants && product.variants.length > 0) {
+                     displaySizes = product.variants.filter(v => allowedSizes.includes(v.size?.toUpperCase() || v.sku?.split('-').pop()?.toUpperCase() || ''));
+                  }
+                  
+                  // Removed fake sizes fallback
+                  
+                  if (displaySizes.length > 0) {
+                    return displaySizes.map((variant) => {
+                      const stock = variant.availableStock ?? variant.stockOnHand ?? 0;
+                      return (
+                      <div key={variant.id} 
+                           onClick={() => stock > 0 && setActiveSize(variant.id)}
+                           style={{ 
+                             width: 'auto', minWidth: '50px', padding: '0 10px', height: '50px', borderRadius: '8px', 
+                             border: activeSize === variant.id ? '2px solid #a48c5a' : '1px solid #d4d5d9', 
+                             display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                             fontSize: '14px', fontWeight: 'bold', 
+                             color: stock > 0 ? (activeSize === variant.id ? '#a48c5a' : '#432227') : '#ccc', 
+                             cursor: stock > 0 ? 'pointer' : 'not-allowed', 
+                             transition: 'all 0.2s', 
+                             backgroundColor: activeSize === variant.id ? 'rgba(164, 140, 90, 0.05)' : 'transparent',
+                             textDecoration: stock <= 0 ? 'line-through' : 'none',
+                             textTransform: 'capitalize'
+                           }} 
+                      >
+                        {variant.size || variant.sku}
+                      </div>
+                    )});
+                  } else {
+                    return <div style={{ fontSize: '14px', color: '#666', fontWeight: 'bold' }}>Size unavailable</div>;
+                  }
+                })()}
+              </div>
+              {(!product.variants || product.variants.length === 0) && (
+                <div style={{ marginTop: '10px', color: '#d9534f', fontSize: '14px', fontWeight: '500' }}>
+                  This product is currently unavailable. Please contact support.
+                </div>
+              )}
+            </div>
+            
+            <div style={{ width: '130px' }}>
+              <label style={{ display: 'block', marginBottom: '15px', color: '#432227', fontSize: '16px', fontWeight: 'bold' }}>Quantity</label>
+              <div style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden', height: '50px', width: '100%' }}>
+                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ flex: 1, background: '#f9f9f9', border: 'none', cursor: 'pointer', fontSize: '18px', color: '#666', height: '100%' }}>-</button>
+                <input type="text" value={quantity} readOnly style={{ width: '40px', textAlign: 'center', border: 'none', outline: 'none', fontSize: '16px', fontWeight: 'bold', color: '#432227', background: 'transparent' }} />
+                <button onClick={() => setQuantity(quantity + 1)} style={{ flex: 1, background: '#f9f9f9', border: 'none', cursor: 'pointer', fontSize: '18px', color: '#666', height: '100%' }}>+</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="action-row" style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
+            {(!product.variants || product.variants.length === 0 || (activeSize && product.variants.find(v => v.id === activeSize)?.availableStock <= 0)) ? (
+               <>
+                 <button disabled style={{ width: '100%', padding: '15px', background: '#fff', color: '#999', border: '1px solid #ccc', borderRadius: '4px', fontWeight: '600', cursor: 'not-allowed', fontSize: '16px' }}>Sold out</button>
+                 <button disabled style={{ width: '100%', padding: '15px', background: '#e0e0e0', color: '#999', border: 'none', borderRadius: '4px', fontWeight: '600', cursor: 'not-allowed', fontSize: '16px' }}>Buy it now</button>
+               </>
+            ) : (
+               <>
+                 <button className="btn-buy-now" onClick={() => handleAddToCart(false)} disabled={isCartLoading || !activeSize} style={{ width: '100%', padding: '15px', background: '#fff', color: '#111', border: '1px solid #111', borderRadius: '4px', fontWeight: '600', cursor: isCartLoading || !activeSize ? 'not-allowed' : 'pointer', fontSize: '16px', opacity: isCartLoading || !activeSize ? 0.7 : 1, transition: 'all 0.2s' }}>
+                   {isCartLoading ? 'Adding...' : 'Add to cart'}
+                 </button>
+                 <button className="btn-buy-now" onClick={() => handleAddToCart(true)} disabled={isCartLoading || !activeSize} style={{ width: '100%', padding: '15px', background: '#111', color: 'white', border: 'none', borderRadius: '4px', fontWeight: '600', cursor: isCartLoading || !activeSize ? 'not-allowed' : 'pointer', fontSize: '16px', opacity: isCartLoading || !activeSize ? 0.7 : 1, transition: 'opacity 0.2s' }}>
+                   Buy it now
+                 </button>
+               </>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
+             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" style={{ height: '24px' }} />
+             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MasterCard" style={{ height: '24px' }} />
+          </div>
+
+
         </div>
 
       </div>

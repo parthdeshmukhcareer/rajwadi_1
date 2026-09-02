@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { cartService } from '../services/cart.service';
 import { useAuth } from './AuthContext';
 import localProducts from '../data/products';
+import { productService } from '../services/product.service';
 
 const CartContext = createContext();
 
@@ -82,27 +83,59 @@ export const CartProvider = ({ children }) => {
         await fetchCart();
       } else {
         // Guest or mock product -> add to local state
+        // Try to fetch live data FIRST before modifying state
+        const { productData, size } = findLocalProductByVariant(variantId);
+        let liveProductData = null;
+        
+        if (!isMockProduct(variantId)) {
+          try {
+            // It might be a slug or product ID
+            liveProductData = await productService.getProductBySlug(variantId);
+          } catch (err) {
+            // If it's a variant ID, getProductBySlug fails. Let's try with the matched product ID.
+            if (productData && productData.id) {
+              try {
+                liveProductData = await productService.getProductBySlug(productData.id);
+              } catch (innerErr) {
+                console.error("Failed to fetch live product data by mapped product ID", innerErr);
+              }
+            } else {
+              console.error("Failed to fetch live product data for cart:", err);
+            }
+          }
+        }
+
         setLocalCartItems(prev => {
           const existing = prev.find(item => item.product?.id === variantId || item.variantId === variantId);
           if (existing) {
             return prev.map(item => (item.product?.id === variantId || item.variantId === variantId) ? { ...item, quantity: item.quantity + quantity } : item);
           }
-          
-          const { productData, size } = findLocalProductByVariant(variantId);
-          
+
+          let imageUrl = liveProductData?.image || productData?.image || '/assets/images/placeholder.png';
+          if (liveProductData?.images && liveProductData.images.length > 0) {
+            const img = liveProductData.images[0];
+            imageUrl = img.imageUrl || img.url || (typeof img === 'string' ? img : imageUrl);
+          }
+          if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+            imageUrl = '/' + imageUrl;
+          }
+
           return [...prev, { 
              id: `local-${Date.now()}`, 
              variantId: variantId, 
              quantity: quantity, 
-             price: productData?.price || 0,
+             price: liveProductData?.basePrice || liveProductData?.startingPrice || liveProductData?.price || productData?.price || 0,
              product: { 
-                 id: productData?.id || variantId,
-                 name: productData?.name || 'Mock Product',
-                 price: productData?.price || 0,
-                 images: productData?.images ? productData.images.map(url => ({ url })) : [{ url: productData?.image }],
-                 variants: productData?.variants || []
+                 id: liveProductData?.id || productData?.id || variantId,
+                 name: liveProductData?.name || productData?.name || 'Mock Product',
+                 image: imageUrl,
+                 variants: liveProductData?.variants || productData?.variants || []
              },
-             variant: { id: variantId, size: size.toUpperCase() }
+             variant: {
+                 id: variantId,
+                 size: size || 'Size unavailable'
+             },
+             size: size
           }];
         });
       }

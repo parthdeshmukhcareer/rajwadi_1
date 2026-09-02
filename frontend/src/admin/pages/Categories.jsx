@@ -10,6 +10,7 @@ const Categories = () => {
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -88,6 +89,50 @@ const Categories = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this category?")) return;
+    try {
+      await categoryService.deleteCategory(id);
+      setSuccessMsg('Category deleted successfully');
+      fetchCategories();
+      setTimeout(() => setSuccessMsg(''), 3000);
+    } catch (err) {
+      setError(err.message || 'Failed to delete category');
+      setTimeout(() => setError(''), 4000);
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0] || e.dataTransfer?.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a valid image file (JPEG, PNG, WEBP).');
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      const res = await categoryService.uploadCategoryImage(file);
+      setFormData(prev => ({ ...prev, imageUrl: res.imageUrl }));
+    } catch (err) {
+      alert('Failed to upload image: ' + err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    handleImageUpload(e);
+  };
+
   const columns = [
     { 
       header: 'Category', 
@@ -107,7 +152,6 @@ const Categories = () => {
         </div>
       ) 
     },
-    { header: 'Description', cell: (row) => row.description || '-' },
     { 
       header: 'Status', 
       cell: (row) => (
@@ -125,11 +169,11 @@ const Categories = () => {
           </button>
           <button 
             className="admin-icon-btn" 
-            title={row.isActive ? "Deactivate" : "Activate"} 
-            style={{ color: row.isActive ? 'var(--admin-danger)' : 'var(--admin-success)' }}
-            onClick={() => toggleStatus(row.id, row.isActive)}
+            title="Delete Category"
+            style={{ color: 'var(--admin-danger)' }}
+            onClick={() => handleDelete(row.id)}
           >
-            {row.isActive ? <XCircle size={18} /> : <CheckCircle size={18} />}
+            <Trash2 size={18} />
           </button>
         </div>
       ) 
@@ -218,16 +262,43 @@ const Categories = () => {
                 />
               </div>
               <div>
-                <label className="admin-label">Image URL</label>
-                <input 
-                  className="admin-input" 
-                  value={formData.imageUrl} 
-                  onChange={e => setFormData({...formData, imageUrl: e.target.value})} 
-                />
+                <label className="admin-label">Category Image</label>
+                <div 
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  style={{
+                    border: '2px dashed var(--admin-border)',
+                    borderRadius: '4px',
+                    padding: '20px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    backgroundColor: '#fafafa',
+                    position: 'relative'
+                  }}
+                >
+                  <input 
+                    type="file" 
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleImageUpload}
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
+                  />
+                  {isUploading ? (
+                    <div style={{ color: 'var(--admin-primary)' }}>Uploading...</div>
+                  ) : formData.imageUrl ? (
+                    <div>
+                      <img src={formData.imageUrl} alt="Category" style={{ maxHeight: '100px', borderRadius: '4px', marginBottom: '10px' }} />
+                      <div style={{ fontSize: '12px', color: 'var(--admin-text-muted)' }}>Click or drag to replace image</div>
+                    </div>
+                  ) : (
+                    <div style={{ color: 'var(--admin-text-muted)' }}>
+                      Drag and drop an image here, or click to select
+                    </div>
+                  )}
+                </div>
               </div>
               <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
                 <button type="button" className="admin-btn admin-btn-outline" onClick={handleCloseModal} style={{ flex: 1 }}>Cancel</button>
-                <button type="submit" className="admin-btn admin-btn-primary" style={{ flex: 1 }}>Save</button>
+                <button type="submit" className="admin-btn admin-btn-primary" disabled={isUploading} style={{ flex: 1 }}>{isUploading ? 'Uploading...' : 'Save'}</button>
               </div>
             </form>
           </div>

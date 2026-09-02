@@ -77,20 +77,12 @@ button {
   transition: var(--transition);
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - Hidden per user request */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  display: none;
 }
-::-webkit-scrollbar-track {
-  background: var(--color-ivory);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-gold);
-  border-radius: var(--border-radius-sm);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold-dark);
+* {
+  scrollbar-width: none;
 }
 
 /* Top Promo Bar */

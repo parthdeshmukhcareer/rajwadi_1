@@ -97,23 +97,12 @@ button {
   transition: var(--transition);
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - Hidden per user request */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  display: none;
 }
-
-::-webkit-scrollbar-track {
-  background: var(--color-ivory);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-gold);
-  border-radius: var(--border-radius-sm);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold-dark);
+* {
+  scrollbar-width: none;
 }
 
 /* ============================================================
@@ -4168,6 +4157,7 @@ body.lock-scroll {
   padding: 0 20px;
   /* Exactly matches header-container padding */
   color: var(--color-gold-light);
+  transform: translateX(-2vw);
 }
 
 .custom-hero-kicker {
@@ -4194,7 +4184,7 @@ body.lock-scroll {
 
 .custom-hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(2.8rem, 4.5vw, 4.6rem);
+  font-size: clamp(2.5rem, 3.8vw, 3.9rem);
   line-height: 1.1;
   font-weight: 300;
   letter-spacing: 0.05em;
