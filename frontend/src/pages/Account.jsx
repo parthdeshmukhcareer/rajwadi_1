@@ -268,18 +268,25 @@ function Account() {
           @media (max-width: 768px) {
             .dashboard-sidebar-inner {
               flex-direction: row;
-              overflow-x: auto;
-              white-space: nowrap;
+              flex-wrap: wrap;
               padding: 5px;
               gap: 10px;
               margin-bottom: 20px;
             }
             .dashboard-sidebar-link, .dashboard-sidebar-btn {
               margin-bottom: 0;
-              padding: 12px 18px;
-              width: auto;
-              border-radius: 30px;
+              padding: 12px 15px;
+              flex: 1 1 calc(50% - 10px);
+              justify-content: center;
+              border-radius: 8px;
               background-color: #fff;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            }
+          }
+          @media (min-width: 769px) {
+            .dashboard-sidebar {
+              position: sticky;
+              top: 100px;
             }
           }
         `}
@@ -294,7 +301,7 @@ function Account() {
           )}
 
           {/* Sidebar */}
-          <div style={{ flex: '1 1 250px', maxWidth: '100%', position: 'sticky', top: '100px' }} className="dashboard-sidebar">
+          <div style={{ flex: '1 1 250px', maxWidth: '100%' }} className="dashboard-sidebar">
              <div className="dashboard-sidebar-inner">
                 <Link to="/account" className={`dashboard-sidebar-link ${location.pathname === '/account' ? 'active' : ''}`}>
                   <i className="fa-regular fa-user" style={{ width: '20px', textAlign: 'center' }}></i> Overview

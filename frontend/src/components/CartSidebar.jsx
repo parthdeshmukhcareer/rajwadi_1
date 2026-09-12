@@ -15,7 +15,7 @@ function CartSidebar() {
   return (
     <>
       <div className="cart-drawer-overlay active" onClick={toggleCartSidebar} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1000, transition: 'opacity 0.3s' }}></div>
-      <div className="cart-drawer active" style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '400px', maxWidth: '100vw', backgroundColor: '#fff', zIndex: 1001, display: 'flex', flexDirection: 'column', boxShadow: '-5px 0 25px rgba(0,0,0,0.15)', transform: 'translateX(0)', transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}>
+      <div className="cart-drawer active" style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: 'min(460px, 100%)', height: '100dvh', backgroundColor: '#fff', zIndex: 1001, display: 'flex', flexDirection: 'column', boxShadow: '-5px 0 25px rgba(0,0,0,0.15)', transform: 'translateX(0)', transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)' }}>
         <div className="cart-drawer-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '25px', borderBottom: '1px solid #eaeaea', backgroundColor: '#fcf8f0' }}>
           <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: '#432227', margin: 0, fontWeight: '400' }}>Shopping Bag</h3>
           <button onClick={toggleCartSidebar} style={{ background: 'none', border: 'none', fontSize: '22px', color: '#432227', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '30px', height: '30px', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>

@@ -254,7 +254,39 @@ function OrderDetails() {
   const canCancel = ['PENDING_PAYMENT', 'CONFIRMED'].includes(order.status);
 
   return (
-    <div>
+    <div className="order-details-wrapper">
+      <style>{`
+        .order-details-grid {
+          display: grid;
+          grid-template-columns: 1fr 350px;
+          gap: 40px;
+          align-items: start;
+        }
+        .tracker-step-text {
+          font-size: 11px;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+        @media (max-width: 900px) {
+          .order-details-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+          }
+        }
+        @media (max-width: 480px) {
+          .tracker-step-text {
+            font-size: 8px; /* Prevent text clumping on tiny screens */
+            letter-spacing: -0.2px;
+          }
+          .payment-status-boxes {
+            flex-direction: column;
+            width: 100%;
+          }
+          .payment-status-boxes > div {
+            width: 100%;
+          }
+        }
+      `}</style>
       <div>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -267,12 +299,12 @@ function OrderDetails() {
             <p style={{ color: '#888', margin: 0, fontSize: '14px' }}>Placed on {formattedDate}</p>
           </div>
           
-          <div style={{ display: 'flex', gap: '15px' }}>
-            <div style={{ textAlign: 'center', backgroundColor: '#fff', padding: '10px 20px', borderRadius: '8px', border: '1px solid #eaeaea' }}>
+          <div className="payment-status-boxes" style={{ display: 'flex', gap: '15px' }}>
+            <div style={{ flex: 1, textAlign: 'center', backgroundColor: '#fff', padding: '10px 20px', borderRadius: '8px', border: '1px solid #eaeaea' }}>
               <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>Payment</span>
               <span style={{ color: getPaymentStatusColor(order.paymentStatus), fontWeight: 'bold', fontSize: '13px' }}>{order.paymentStatus}</span>
             </div>
-            <div style={{ textAlign: 'center', backgroundColor: '#fff', padding: '10px 20px', borderRadius: '8px', border: '1px solid #eaeaea' }}>
+            <div style={{ flex: 1, textAlign: 'center', backgroundColor: '#fff', padding: '10px 20px', borderRadius: '8px', border: '1px solid #eaeaea' }}>
               <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>Order Status</span>
               <span style={{ color: getStatusColor(order.status), fontWeight: 'bold', fontSize: '13px' }}>{order.status}</span>
             </div>
@@ -333,7 +365,7 @@ function OrderDetails() {
                       <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: isCompleted ? '#a48c5a' : '#fff', border: `3px solid ${isCompleted ? '#a48c5a' : '#eaeaea'}`, color: isCompleted ? '#fff' : '#eaeaea', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px', fontSize: '12px' }}>
                         <i className={`fa-solid ${index === 0 ? 'fa-check' : index === 1 ? 'fa-box' : index === 2 ? 'fa-truck-fast' : 'fa-house'}`}></i>
                       </div>
-                      <span style={{ fontSize: '11px', fontWeight: 'bold', color: isCompleted ? '#432227' : '#aaa', textTransform: 'uppercase' }}>{step}</span>
+                      <span className="tracker-step-text" style={{ color: isCompleted ? '#432227' : '#aaa' }}>{step}</span>
                     </div>
                   );
                 })}
@@ -376,7 +408,7 @@ function OrderDetails() {
         <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', marginBottom: '30px' }}>
           <h3 style={{ fontFamily: 'var(--font-serif)', color: '#432227', fontSize: '20px', marginTop: 0, marginBottom: '20px', borderBottom: '1px solid #eaeaea', paddingBottom: '10px' }}>Items Ordered</h3>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px', alignItems: 'start' }}>
+          <div className="order-details-grid">
             {/* Items Column */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {order.items?.map((item) => (

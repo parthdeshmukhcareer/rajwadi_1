@@ -20,6 +20,7 @@ export const products = pgTable('products', {
   gstRate: integer('gst_rate').notNull(),
   isFeatured: boolean('is_featured').default(false).notNull(),
   isActive: boolean('is_active').default(true).notNull(),
+  isSoldOut: boolean('is_sold_out').default(false).notNull(),
   seoTitle: varchar('seo_title', { length: 255 }),
   seoDescription: text('seo_description'),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),

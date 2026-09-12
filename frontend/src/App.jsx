@@ -67,7 +67,7 @@ function App() {
       />
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home wishlist={wishlist} toggleWishlist={toggleWishlist} addToCart={addToCart} />} />
           <Route path="/about" element={<About />} />
           <Route path="/story" element={<Story />} />
           <Route path="/catalog" element={<Catalog products={products} wishlist={wishlist} toggleWishlist={toggleWishlist} addToCart={addToCart} />} />

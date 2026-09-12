@@ -3788,7 +3788,7 @@ body.lock-scroll {
 
   /* Hide Account icon on mobile (matches live site) */
   .account-btn {
-    display: none !important;
+    display: flex !important;
   }
 
   /* Mobile Drawer Overlay */
@@ -4390,7 +4390,7 @@ body.lock-scroll {
 /* Golden filter for the logo */
 .main-header .logo-desktop,
 .main-header .logo-mobile {
-  filter: brightness(0) saturate(100%) invert(86%) sepia(21%) saturate(546%) hue-rotate(352deg) brightness(87%) contrast(85%);
+  /* filter: brightness(0) saturate(100%) invert(86%) sepia(21%) saturate(546%) hue-rotate(352deg) brightness(87%) contrast(85%); */
 }
 
 /* Premium Stores Section */

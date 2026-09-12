@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import NewArrivals from '../components/NewArrivals';
 
-function Home() {
+function Home({ wishlist = [], toggleWishlist = () => {}, addToCart = () => {} }) {
   useDocumentTitle('Rajwadi | Premium Ethnic Fashion');
   const navigate = useNavigate();
   return (
@@ -11,17 +12,10 @@ function Home() {
       {/*  Hero Carousel  */}
       {/*  Hero Section (Static Image)  */}
       <div className="static-hero-image" style={{width: '100%', position: 'relative', height: '100vh', overflow: 'hidden', background: '#000'}}>
-        {/* Seamless reflection trick to fill the top gap perfectly without blur or black lines */}
-        <div style={{position: 'absolute', top: 0, left: '-2%', width: '104%', height: '90px', overflow: 'hidden', zIndex: 0}}>
-           <img src="assets/images/eec54ddf-9a5f-4e61-ae42-8ab880568471.png" alt="Reflection" style={{width: '100%', height: '100vh', objectFit: 'cover', objectPosition: '100% 0%', position: 'absolute', top: '90px', left: 0, transform: 'rotateX(180deg)', transformOrigin: 'top center'}} />
-        </div>
+        {/* Main image shifted slightly right and more downwards, anchored at bottom to prevent top gap */}
+        <img src="assets/images/eec54ddf-9a5f-4e61-ae42-8ab880568471.png" alt="Rajwadi Hero" className="hero-bg-img" style={{width: '104%', height: '100vh', objectFit: 'cover', objectPosition: '100% 0%', display: 'block', position: 'absolute', top: '0', left: '-2%', zIndex: '1', transformOrigin: 'bottom center', transform: 'scale(1.2) translate(-5%, 15%)'}} />
         
-        {/* Main image shifted down and left, with no weird zooming */}
-        <img src="assets/images/eec54ddf-9a5f-4e61-ae42-8ab880568471.png" alt="Rajwadi Hero" className="hero-bg-img" style={{width: '104%', height: '100vh', objectFit: 'cover', objectPosition: '100% 0%', display: 'block', position: 'absolute', top: '90px', left: '-2%', zIndex: '1'}} />
-        
-        {/*  Dark gradient overlay for text readability - REMOVED per user request  */}
-        {/* <div className="custom-hero-overlay" style={{background: 'linear-gradient(to right, rgba(15,10,10,0.9) 0%, rgba(15,10,10,0.4) 50%, rgba(15,10,10,0) 100%)', position: 'absolute', inset: '0', zIndex: '1'}}></div> */}
-        
+        {/*  Overlay removed per user request  */}
         <div className="custom-hero-content-wrapper">
           <div className="custom-hero-content">
             <p className="custom-hero-kicker" style={{color: '#dfceab', fontWeight: '500', marginBottom: '25px', display: 'flex', alignItems: 'center', flexWrap: 'wrap'}}>
@@ -41,76 +35,11 @@ function Home() {
       </div>
 
 
-      {/*  Categories Block (Revamped)  */}
-      <div className="section-padding premium-categories-section" style={{backgroundColor: '#fcf8f0', padding: '65px 4% 40px 4%', position: 'relative'}}>
-        {/*  Header  */}
-        <div className="premium-stores-header" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '40px', maxWidth: '900px', marginLeft: 'auto', marginRight: 'auto', padding: '0 20px'}}>
-          <div className="store-kicker" style={{fontFamily: 'var(--font-sans)', fontSize: '0.85rem', letterSpacing: '0.25em', color: '#a48c5a', marginBottom: '15px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '600'}}>
-            <span style={{display: 'inline-block', width: '40px', height: '1px', backgroundColor: '#a48c5a', marginRight: '15px'}}></span>
-            OUR STORES
-            <span style={{display: 'inline-block', width: '40px', height: '1px', backgroundColor: '#a48c5a', marginLeft: '15px'}}></span>
-          </div>
-          <h2 style={{fontFamily: 'var(--font-serif)', fontSize: 'clamp(2.5rem, 4vw, 3.8rem)', color: '#432227', lineHeight: '1.15', fontWeight: '300', marginBottom: '20px'}}>
-            Shop By Category
-          </h2>
-          {/*  Decorative Line under Heading  */}
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginTop: '5px', marginBottom: '20px'}}>
-            <div style={{height: '1px', width: '80px', backgroundColor: 'rgba(164, 140, 90, 0.5)'}}></div>
-            <i className="fa-solid fa-crown" style={{color: '#a48c5a', fontSize: '0.9rem'}}></i>
-            <div style={{height: '1px', width: '80px', backgroundColor: 'rgba(164, 140, 90, 0.5)'}}></div>
-          </div>
-
-        </div>
-
-        {/*  Carousel  */}
-        <div className="premium-stores-carousel-container" style={{position: 'relative', maxWidth: '1400px', margin: '0 auto', padding: '0 60px', marginBottom: '40px'}}>
-
-          
-          <div className="premium-stores-carousel" id="premiumCategoriesScroll" style={{display: 'flex', justifyContent: 'center', gap: '20px', overflowX: 'auto', scrollbarWidth: 'none', padding: '15px 5px', scrollBehavior: 'smooth'}}>
-            
-            {/*  Card 1: Rajputi Poshak  */}
-            <div className="premium-store-card" style={{flex: '0 0 calc(33.333% - 15px)', minWidth: '280px', height: '380px', borderRadius: '8px', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 25px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => {navigate('/catalog?category=Rajputi Poshak')}}>
-              <img src="assets/images/c448f31266ab16343b17a56cca813e6e.jpg" style={{ objectPosition: 'top center' }} />
-              <div className="store-card-overlay" style={{position: 'absolute', inset: '0', background: 'linear-gradient(to top, rgba(15,5,5,0.95) 0%, rgba(15,5,5,0.4) 45%, transparent 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '30px 15px'}}>
-                <i className="fa-solid fa-crown" style={{color: '#dfceab', fontSize: '1.6rem', marginBottom: '12px'}}></i>
-                <h3 style={{fontFamily: 'var(--font-serif)', color: '#fcfbf9', fontSize: '1.3rem', letterSpacing: '0.15em', marginBottom: '12px', fontWeight: '300'}}>RAJPUTI POSHAK</h3>
-                <span className="explore-text" style={{fontFamily: 'var(--font-sans)', color: '#a48c5a', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px'}}>Explore Collection <i className="fa-solid fa-arrow-right" style={{fontSize: '9px'}}></i></span>
-              </div>
-            </div>
-            
-            {/*  Card 2: Accessories  */}
-            <div className="premium-store-card" style={{flex: '0 0 calc(33.333% - 15px)', minWidth: '280px', height: '380px', borderRadius: '8px', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 25px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => {navigate('/catalog?category=Accessories')}}>
-              <img src="assets/images/7d08712106caadebf74d60911d9d2474.jpg" style={{ objectPosition: 'center 75%' }} />
-              <div className="store-card-overlay" style={{position: 'absolute', inset: '0', background: 'linear-gradient(to top, rgba(15,5,5,0.95) 0%, rgba(15,5,5,0.4) 45%, transparent 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '30px 15px'}}>
-                <i className="fa-solid fa-gem" style={{color: '#dfceab', fontSize: '1.6rem', marginBottom: '12px'}}></i>
-                <h3 style={{fontFamily: 'var(--font-serif)', color: '#fcfbf9', fontSize: '1.3rem', letterSpacing: '0.15em', marginBottom: '12px', fontWeight: '300'}}>ACCESSORIES</h3>
-                <span className="explore-text" style={{fontFamily: 'var(--font-sans)', color: '#a48c5a', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px'}}>Explore Collection <i className="fa-solid fa-arrow-right" style={{fontSize: '9px'}}></i></span>
-              </div>
-            </div>
-            
-            {/*  Card 4: Jewellery  */}
-            <div className="premium-store-card" style={{flex: '0 0 calc(33.333% - 15px)', minWidth: '280px', height: '380px', borderRadius: '8px', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 25px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => {navigate('/catalog?category=Jewellery')}}>
-              <img src="assets/images/jewellery_royal.png" />
-              <div className="store-card-overlay" style={{position: 'absolute', inset: '0', background: 'linear-gradient(to top, rgba(15,5,5,0.95) 0%, rgba(15,5,5,0.4) 45%, transparent 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '30px 15px'}}>
-                <i className="fa-solid fa-ring" style={{color: '#dfceab', fontSize: '1.6rem', marginBottom: '12px'}}></i>
-                <h3 style={{fontFamily: 'var(--font-serif)', color: '#fcfbf9', fontSize: '1.3rem', letterSpacing: '0.15em', marginBottom: '12px', fontWeight: '300'}}>JEWELLERY</h3>
-                <span className="explore-text" style={{fontFamily: 'var(--font-sans)', color: '#a48c5a', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px'}}>Explore Collection <i className="fa-solid fa-arrow-right" style={{fontSize: '9px'}}></i></span>
-              </div>
-            </div>
-            
-          </div>
-          
-
-        </div>
-        
-        {/*  View All Button Moved to Bottom  */}
-        <div style={{textAlign: 'center', marginBottom: '50px'}}>
-          <button className="custom-hero-btn-outline" onClick={() => {navigate('/catalog')}} style={{padding: '16px 40px', border: '1px solid rgba(164, 140, 90, 0.4)', color: '#432227', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: '0.85rem', letterSpacing: '0.15em', fontWeight: '600', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '10px', cursor: 'pointer', transition: 'all 0.3s ease'}}>
-            VIEW ALL COLLECTIONS <i className="fa-solid fa-arrow-right-long"></i>
-          </button>
-        </div>
+      {/* New Arrivals Section */}
+      <NewArrivals wishlist={wishlist} toggleWishlist={toggleWishlist} addToCart={addToCart} />
         
         {/* Elegant Moments - High End Feature */}
+      <div style={{backgroundColor: '#fcf8f0', width: '100%', position: 'relative'}}>
       <div className="elegant-moments-section resp-flex-col resp-padding" style={{display: 'flex', gap: '0', maxWidth: '1400px', margin: '0 auto', backgroundColor: 'transparent', paddingTop: '80px', paddingBottom: '60px'}}>
           
           {/*  Left Side  */}

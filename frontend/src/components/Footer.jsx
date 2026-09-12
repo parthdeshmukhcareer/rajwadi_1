@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function Footer() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [openSections, setOpenSections] = useState({});
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleSection = (section) => {
+    if (!isMobile) return;
+    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
   return (
 <footer className="main-footer" style={{backgroundColor: '#17100e', position: 'relative', overflow: 'hidden', padding: '0', color: '#e5d1b3'}}>
     {/*  Main Footer Area  */}
@@ -27,9 +43,15 @@ function Footer() {
        </div>
 
        {/*  Column 2 (Quick Links & Categories)  */}
-       <div style={{flex: '1 1 200px'}}>
-          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: '#b59c68', fontWeight: '400', marginBottom: '25px', letterSpacing: '0.02em'}}>Categories</h3>
-          <ul style={{listStyle: 'none', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '15px'}}>
+       <div style={{flex: '1 1 200px', borderBottom: isMobile ? '1px solid rgba(181, 156, 104, 0.2)' : 'none', paddingBottom: isMobile ? '15px' : '0'}}>
+          <h3 style={{
+                margin: isMobile ? '0' : '0 0 25px 0', padding: 0,
+                fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: '#b59c68', fontWeight: '400', letterSpacing: '0.02em', 
+                textAlign: 'left'
+              }}>
+              Categories
+          </h3>
+          <ul id="footer-categories-list" style={{listStyle: 'none', padding: '0', margin: isMobile ? '15px 0 0 0' : '0', display: 'flex', flexDirection: 'column', gap: '15px'}}>
              <li><Link to="/catalog?category=Rajputi Poshak" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Rajputi Poshak</Link></li>
              <li><Link to="/catalog?category=Accessories" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Accessories</Link></li>
              <li><Link to="/catalog?category=Jewellery" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Jewellery</Link></li>
@@ -40,9 +62,15 @@ function Footer() {
        </div>
 
        {/*  Column 3 (Customer Care & Policies)  */}
-       <div style={{flex: '1 1 200px'}}>
-          <h3 style={{fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: '#b59c68', fontWeight: '400', marginBottom: '25px', letterSpacing: '0.02em'}}>Customer Care</h3>
-          <ul style={{listStyle: 'none', padding: '0', margin: '0', display: 'flex', flexDirection: 'column', gap: '15px'}}>
+       <div style={{flex: '1 1 200px', borderBottom: isMobile ? '1px solid rgba(181, 156, 104, 0.2)' : 'none', paddingBottom: isMobile ? '15px' : '0'}}>
+          <h3 style={{
+                margin: isMobile ? '0' : '0 0 25px 0', padding: 0,
+                fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: '#b59c68', fontWeight: '400', letterSpacing: '0.02em', 
+                textAlign: 'left'
+              }}>
+              Customer Care
+          </h3>
+          <ul id="footer-customercare-list" style={{listStyle: 'none', padding: '0', margin: isMobile ? '15px 0 0 0' : '0', display: 'flex', flexDirection: 'column', gap: '15px'}}>
              <li><Link to="/customer-support" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Contact Us</Link></li>
              <li><Link to="/shipping-policy" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Shipping Policy</Link></li>
              <li><Link to="/terms-and-conditions" style={{color: '#e5d1b3', textDecoration: 'none', fontSize: '0.9rem', opacity: '0.85', transition: 'opacity 0.2s'}} onMouseOver={(e) => e.target.style.opacity = '1'} onMouseOut={(e) => e.target.style.opacity = '0.85'}>Terms & Conditions</Link></li>

@@ -16,7 +16,7 @@ const ProductEdit = () => {
   const [productImages, setProductImages] = useState([]);
   const [variants, setVariants] = useState([]);
 
-  const VariantRow = ({ variant, onUpdate, onDelete, basePrice }) => {
+  const VariantRow = ({ variant, onUpdate, onDelete, basePrice, onVariantImageUpload, variantImage }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({ ...variant });
 
@@ -25,18 +25,20 @@ const ProductEdit = () => {
         price: parseInt(editData.price) || basePrice || 0,
         compareAtPrice: editData.compareAtPrice ? parseInt(editData.compareAtPrice) : null,
         stockOnHand: parseInt(editData.stockOnHand) || 0,
-        isActive: editData.isActive
+        isActive: editData.isActive,
+        color: editData.color
       });
       setIsEditing(false);
     };
 
     if (isEditing) {
       return (
-        <div style={{ display: 'flex', gap: '8px', padding: '8px', border: '1px solid #ddd', borderRadius: '4px', marginBottom: '8px', alignItems: 'center' }}>
-          <div style={{ width: '60px', fontWeight: 'bold' }}>{variant.size}</div>
-          <input type="number" value={editData.price} onChange={e => setEditData({ ...editData, price: e.target.value })} placeholder="Price" className="admin-input" style={{ width: '100px', padding: '4px' }} />
-          <input type="number" value={editData.compareAtPrice || ''} onChange={e => setEditData({ ...editData, compareAtPrice: e.target.value })} placeholder="Compare At" className="admin-input" style={{ width: '100px', padding: '4px' }} />
-          <input type="number" value={editData.stockOnHand} onChange={e => setEditData({ ...editData, stockOnHand: e.target.value })} placeholder="Stock" className="admin-input" style={{ width: '80px', padding: '4px' }} />
+        <div style={{ display: 'flex', gap: '8px', padding: '8px', border: '1px solid #ddd', borderRadius: '4px', marginBottom: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ width: '50px', fontWeight: 'bold' }}>{variant.size}</div>
+          <input type="text" value={editData.color || ''} onChange={e => setEditData({ ...editData, color: e.target.value })} placeholder="Color" className="admin-input" style={{ width: '100px', padding: '4px' }} />
+          <input type="number" value={editData.price} onChange={e => setEditData({ ...editData, price: e.target.value })} placeholder="Price" className="admin-input" style={{ width: '80px', padding: '4px' }} />
+          <input type="number" value={editData.compareAtPrice || ''} onChange={e => setEditData({ ...editData, compareAtPrice: e.target.value })} placeholder="Compare At" className="admin-input" style={{ width: '80px', padding: '4px' }} />
+          <input type="number" value={editData.stockOnHand} onChange={e => setEditData({ ...editData, stockOnHand: e.target.value })} placeholder="Stock" className="admin-input" style={{ width: '70px', padding: '4px' }} />
           <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
             <input type="checkbox" checked={editData.isActive} onChange={e => setEditData({ ...editData, isActive: e.target.checked })} /> Active
           </label>
@@ -49,13 +51,23 @@ const ProductEdit = () => {
     }
 
     return (
-      <div style={{ display: 'flex', gap: '16px', padding: '8px', border: '1px solid #eee', borderRadius: '4px', marginBottom: '8px', alignItems: 'center' }}>
-        <div style={{ width: '60px', fontWeight: 'bold', color: '#432227' }}>{variant.size}</div>
-        <div style={{ width: '100px' }}>₹{variant.price}</div>
-        <div style={{ width: '100px', textDecoration: 'line-through', color: '#999' }}>{variant.compareAtPrice ? `₹${variant.compareAtPrice}` : '-'}</div>
-        <div style={{ width: '80px' }}>Stock: {variant.stockOnHand}</div>
+      <div style={{ display: 'flex', gap: '12px', padding: '8px', border: '1px solid #eee', borderRadius: '4px', marginBottom: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ width: '40px', fontWeight: 'bold', color: '#432227' }}>{variant.size}</div>
+        <div style={{ width: '80px', color: '#555', fontSize: '13px' }}>{variant.color || 'No Color'}</div>
+        <div style={{ width: '40px', display: 'flex', alignItems: 'center' }}>
+          {variantImage ? (
+            <img src={variantImage.imageUrl.startsWith('http') ? variantImage.imageUrl : `/${variantImage.imageUrl}`} alt="variant" style={{ width: '32px', height: '32px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #ccc' }} />
+          ) : (
+            <label style={{ cursor: 'pointer', color: '#007bff', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', border: '1px dashed #007bff', borderRadius: '4px', background: '#f8f9fa' }} title="Upload Variant Image">
+              +
+              <input type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={(e) => onVariantImageUpload(variant.id, e)} />
+            </label>
+          )}
+        </div>
+        <div style={{ width: '70px', fontSize: '14px' }}>₹{variant.price}</div>
+        <div style={{ width: '70px', textDecoration: 'line-through', color: '#999', fontSize: '13px' }}>{variant.compareAtPrice ? `₹${variant.compareAtPrice}` : '-'}</div>
+        <div style={{ width: '70px', fontSize: '13px' }}>Stock: {variant.stockOnHand}</div>
         <div style={{ width: '60px', color: variant.isActive ? 'green' : 'red', fontSize: '12px' }}>{variant.isActive ? 'Active' : 'Inactive'}</div>
-        <div style={{ width: '100px', fontSize: '12px', color: '#666' }}>{variant.sku}</div>
         <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
           <button type="button" onClick={() => setIsEditing(true)} style={{ background: '#f8f9fa', border: '1px solid #ddd', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>Edit</button>
           <button type="button" onClick={() => onDelete(variant.id)} style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
@@ -76,6 +88,7 @@ const ProductEdit = () => {
     gstRate: '18',
     hsnCode: '',
     isActive: true,
+    isSoldOut: false,
     stitchedType: 'UNSTITCHED',
   });
 
@@ -104,6 +117,7 @@ const ProductEdit = () => {
           hsnCode: productData.hsnCode || '',
           stitchedType: productData.stitchedType || 'UNSTITCHED',
           isActive: productData.isActive,
+          isSoldOut: productData.isSoldOut || false,
         });
 
         if (productData.images && productData.images.length > 0) {
@@ -151,7 +165,8 @@ const ProductEdit = () => {
         gstRate: parseInt(formData.gstRate) || 0,
         hsnCode: formData.hsnCode || undefined,
         stitchedType: formData.stitchedType,
-        isActive: formData.isActive
+        isActive: formData.isActive,
+        isSoldOut: formData.isSoldOut
       };
 
       await productService.updateProduct(id, payload);
@@ -195,6 +210,31 @@ const ProductEdit = () => {
     handleImageUpload(e);
   };
 
+  const handleVariantImageUpload = async (variantId, e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a valid image file (JPEG, PNG, WEBP).');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const res = await productService.uploadProductImage(id, file, variantId);
+      if (res && res.imageUrl) {
+        setProductImages(prev => [...prev, res]);
+        setSuccessMsg('Variant image uploaded successfully!');
+        setTimeout(() => setSuccessMsg(''), 3000);
+      }
+    } catch (err) {
+      alert('Failed to upload variant image: ' + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleAddDefaultSizes = async () => {
     const existingSizes = variants.map(v => v.size);
     const defaultSizes = ['S', 'M', 'L', 'XL'];
@@ -208,7 +248,7 @@ const ProductEdit = () => {
     try {
       setIsSubmitting(true);
       const newVariants = [];
-      const baseSku = formData.name.substring(0, 3).toUpperCase() || 'PRD';
+      const baseSku = `${formData.name.substring(0, 3).toUpperCase() || 'PRD'}-${Date.now().toString().slice(-4)}`;
       
       for (const size of missingSizes) {
         const payload = {
@@ -257,6 +297,16 @@ const ProductEdit = () => {
     try {
       setIsSubmitting(true);
       const saved = await productService.updateVariant(variantId, updatedData);
+      
+      // Also update stock since it's a separate endpoint
+      if (updatedData.stockOnHand !== undefined) {
+        const stockSaved = await productService.updateVariantStock(variantId, updatedData.stockOnHand);
+        if (stockSaved && (stockSaved.data || stockSaved)) {
+          // Merge the updated stock into the saved variant object
+          Object.assign(saved.data || saved, { stockOnHand: (stockSaved.data || stockSaved).stockOnHand });
+        }
+      }
+
       setVariants(variants.map(v => v.id === variantId ? (saved.data || saved) : v));
       setSuccessMsg('Variant updated successfully');
       setTimeout(() => setSuccessMsg(''), 2000);
@@ -331,57 +381,46 @@ const ProductEdit = () => {
             <div className="admin-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                 <h2>Product Sizes / Variants</h2>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <button type="button" onClick={handleAddDefaultSizes} className="admin-btn admin-btn-outline" style={{ fontSize: '12px', padding: '4px 8px' }}>
-                    Add Default Sizes (S, M, L, XL)
-                  </button>
-                  {(() => {
-                    const existingSizes = variants.map(v => v.size);
-                    const allowedSizes = ['S', 'M', 'L', 'XL'];
-                    const availableSizes = allowedSizes.filter(s => !existingSizes.includes(s));
-                    
-                    if (availableSizes.length === 0) {
-                      return <span style={{ fontSize: '12px', color: '#6b7280' }}>All sizes added.</span>;
-                    }
-                    
-                    return (
-                      <select 
-                        style={{ fontSize: '12px', padding: '4px 8px', borderRadius: '4px', border: '1px solid #d2d6dc', outline: 'none' }}
-                        onChange={async (e) => {
-                          const size = e.target.value;
-                          if (!size) return;
-                          
-                          try {
-                            setIsSubmitting(true);
-                            const baseSku = formData.name.substring(0, 3).toUpperCase() || 'PRD';
-                            const payload = {
-                              sku: `${baseSku}-${size}`,
-                              size,
-                              price: parseInt(formData.basePrice) || 0,
-                              compareAtPrice: formData.compareAtPrice ? parseInt(formData.compareAtPrice) : null,
-                              stockOnHand: 0,
-                              isActive: formData.isActive
-                            };
-                            const saved = await productService.createVariant(id, payload);
-                            setVariants([...variants, saved.data || saved]);
-                            setSuccessMsg(`Added size: ${size}`);
-                            setTimeout(() => setSuccessMsg(''), 3000);
-                          } catch (err) {
-                            alert('Failed to add size: ' + err.message);
-                          } finally {
-                            setIsSubmitting(false);
-                            e.target.value = "";
-                          }
-                        }}
-                      >
-                        <option value="">+ Add Size</option>
-                        {availableSizes.map(s => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                    );
-                  })()}
-                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px', background: '#f9fafb', padding: '12px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                <span style={{ fontSize: '14px', fontWeight: 'bold' }}>Add Variant:</span>
+                <input type="text" id="newVarSize" placeholder="Size (e.g. M)" className="admin-input" style={{ width: '80px', padding: '4px 8px', fontSize: '13px' }} />
+                <input type="text" id="newVarColor" placeholder="Color (Required)" className="admin-input" style={{ width: '120px', padding: '4px 8px', fontSize: '13px' }} />
+                <button type="button" className="admin-btn admin-btn-outline" style={{ fontSize: '12px', padding: '4px 8px' }} onClick={async () => {
+                  const sizeInput = document.getElementById('newVarSize');
+                  const colorInput = document.getElementById('newVarColor');
+                  const size = sizeInput.value.trim();
+                  const color = colorInput.value.trim();
+                  
+                  if (!color) {
+                    alert('Color is required for all variants!');
+                    return;
+                  }
+                  
+                  try {
+                    setIsSubmitting(true);
+                    const baseSku = `${formData.name.substring(0, 3).toUpperCase() || 'PRD'}-${Date.now().toString().slice(-4)}`;
+                    const payload = {
+                      sku: `${baseSku}-${size || 'OS'}-${color.substring(0,3).toUpperCase()}`,
+                      size: size || 'OS',
+                      color: color,
+                      price: parseInt(formData.basePrice) || 0,
+                      compareAtPrice: formData.compareAtPrice ? parseInt(formData.compareAtPrice) : null,
+                      stockOnHand: 0,
+                      isActive: formData.isActive
+                    };
+                    const saved = await productService.createVariant(id, payload);
+                    setVariants([...variants, saved.data || saved]);
+                    setSuccessMsg(`Added variant: ${size || 'OS'} - ${color}`);
+                    sizeInput.value = '';
+                    colorInput.value = '';
+                    setTimeout(() => setSuccessMsg(''), 3000);
+                  } catch (err) {
+                    alert('Failed to add variant: ' + err.message);
+                  } finally {
+                    setIsSubmitting(false);
+                  }
+                }}>+ Add Custom Variant</button>
               </div>
               <div style={{ marginTop: '16px' }}>
                 {variants.length > 0 ? (
@@ -392,11 +431,13 @@ const ProductEdit = () => {
                       onUpdate={handleUpdateVariant} 
                       onDelete={handleDeleteVariant} 
                       basePrice={formData.basePrice} 
+                      onVariantImageUpload={handleVariantImageUpload}
+                      variantImage={productImages.find(img => img.variantId === v.id)}
                     />
                   ))
                 ) : (
                   <div style={{ padding: '16px', textAlign: 'center', color: '#6b7280', border: '1px dashed #d2d6dc', borderRadius: '4px' }}>
-                    No variants added. Click "Add Default Sizes" to populate.
+                    No variants added. Add a custom variant above.
                   </div>
                 )}
               </div>
@@ -478,6 +519,22 @@ const ProductEdit = () => {
                     <option value="false">Draft</option>
                     <option value="true">Active</option>
                   </select>
+                </div>
+                <div>
+                  <label className="admin-label">Inventory Status</label>
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer', marginTop: '8px' }}>
+                    <input 
+                      type="checkbox" 
+                      name="isSoldOut" 
+                      checked={formData.isSoldOut} 
+                      onChange={e => setFormData({...formData, isSoldOut: e.target.checked})} 
+                      style={{ marginTop: '3px' }}
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>Mark as Sold Out</span>
+                      <span style={{ fontSize: '12px', color: '#6b7280' }}>Forces "Sold out" tag on storefront</span>
+                    </div>
+                  </label>
                 </div>
                 <div>
                   <label className="admin-label">Stitched Type</label>

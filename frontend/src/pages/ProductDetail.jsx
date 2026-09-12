@@ -149,13 +149,13 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
   const currentSku = selectedVariantData.sku || product.sku || 'N/A';
   
   const handleWhatsAppEnquiry = () => {
-    const text = `Hello Rajwadi, I want to enquire about this product:\nProduct: ${product.name}\nSKU: ${currentSku}\nURL: ${currentVariantUrl}`;
-    window.open(`https://wa.me/919766631092?text=${encodeURIComponent(text)}`, '_blank');
+    const text = `Hello Rajwadi team,\n\nI am interested in purchasing the following product and would like to know more details about it.\n\n*Product Name:* ${product.name}\n*SKU:* ${currentSku}\n*Link:* ${currentVariantUrl}\n\nPlease let me know about its availability and delivery options.\n\nThank you!`;
+    window.open(`https://wa.me/918766667101?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   const handleEmailEnquiry = () => {
-    const subject = `Enquiry: ${product.name}`;
-    const body = `Hello Rajwadi,\n\nI want to enquire about this product:\nProduct: ${product.name}\nSKU: ${currentSku}\nURL: ${currentVariantUrl}\n\nPlease provide more details.`;
+    const subject = `Product Enquiry: ${product.name}`;
+    const body = `Hello Rajwadi team,\n\nI am interested in purchasing the following product and would like to know more details about it.\n\nProduct Name: ${product.name}\nSKU: ${currentSku}\nLink: ${currentVariantUrl}\n\nPlease let me know about its availability and delivery options.\n\nThank you!`;
     window.location.href = `mailto:support@rajwadi.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -211,47 +211,78 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
               src={selectedMainImage} 
               alt={product.name} 
               id="mainProductImage" 
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: `hue-rotate(${previewTint}deg)`, transform: 'scale(1.5)', transformOrigin: 'center 75%' }} 
+              style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center', filter: `hue-rotate(${previewTint}deg)` }} 
             />
           </div>
 
-          {/* Complete The Look Section */}
-          {crossSellProducts.length > 0 && (
-            <div style={{ marginTop: '50px' }}>
-              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', color: '#432227', marginBottom: '20px', borderBottom: '2px solid #f0f0f0', paddingBottom: '10px' }}>Complete The Look</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '15px' }}>
-                {crossSellProducts.map((item) => (
-                  <Link to={`/product/${item.slug || item.id}`} key={item.id} style={{ textDecoration: 'none', color: 'inherit', display: 'block', backgroundColor: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', transition: 'transform 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-3px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                    <div style={{ height: '160px', overflow: 'hidden' }}>
-                      {(() => {
-                        let crossImg = item.image || (item.images && (item.images[0]?.imageUrl || item.images[0]?.url)) || '/assets/images/placeholder.png';
-                        if (crossImg && !crossImg.startsWith('http') && !crossImg.startsWith('/')) crossImg = '/' + crossImg;
-                        return <img src={crossImg} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
-                      })()}
+          {/* Available Colors Section */}
+          {(() => {
+            if (!product || !product.variants) return null;
+            const colorMap = new Map();
+            product.variants.forEach(v => {
+              if (v.color && !colorMap.has(v.color.toLowerCase())) {
+                const img = product.images?.find(i => i.variantId === v.id);
+                if (img) { // Only show colors that have an image uploaded
+                  colorMap.set(v.color.toLowerCase(), {
+                    color: v.color,
+                    variantId: v.id,
+                    image: img.imageUrl
+                  });
+                }
+              }
+            });
+            const colorVariants = Array.from(colorMap.values());
+
+            if (colorVariants.length === 0) return null;
+
+            return (
+              <div style={{ marginTop: '50px' }}>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', color: '#432227', marginBottom: '20px', borderBottom: '2px solid #f0f0f0', paddingBottom: '10px' }}>Available Colors</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '15px' }}>
+                  {colorVariants.map((item, idx) => (
+                    <div 
+                      key={idx} 
+                      onClick={() => {
+                        let imgUrl = item.image;
+                        if (imgUrl && !imgUrl.startsWith('http') && !imgUrl.startsWith('/')) imgUrl = '/' + imgUrl;
+                        setSelectedMainImage(imgUrl);
+                        // Also auto-select a variant with this color if possible
+                        const matchingVariant = product.variants.find(v => v.color?.toLowerCase() === item.color.toLowerCase() && (v.availableStock > 0 || v.stockOnHand > 0));
+                        if (matchingVariant) setActiveSize(matchingVariant.id);
+                      }}
+                      style={{ cursor: 'pointer', backgroundColor: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', transition: 'transform 0.2s', border: '1px solid #eee' }} 
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-3px)'} 
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                      <div style={{ height: '160px', overflow: 'hidden' }}>
+                        {(() => {
+                          let crossImg = item.image;
+                          if (crossImg && !crossImg.startsWith('http') && !crossImg.startsWith('/')) crossImg = '/' + crossImg;
+                          return <img src={crossImg} alt={item.color} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+                        })()}
+                      </div>
+                      <div style={{ padding: '10px', textAlign: 'center' }}>
+                        <h4 style={{ margin: '0', fontSize: '14px', color: '#333', textTransform: 'capitalize' }}>{item.color}</h4>
+                      </div>
                     </div>
-                    <div style={{ padding: '10px' }}>
-                      <h4 style={{ margin: '0 0 5px 0', fontSize: '13px', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</h4>
-                      <div style={{ fontWeight: 'bold', color: '#d32f2f', fontSize: '14px' }}>Rs. {(Number(item.startingPrice || item.basePrice || item.price) || 0).toFixed(2)}</div>
-                    </div>
-                  </Link>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
 
         {/* Purchase details & Custom Stitching */}
         <div className="p-detail-info">
           <h1 className="p-detail-title" style={{ fontSize: '28px', color: '#111', marginBottom: '10px', lineHeight: '1.2' }}>{product.name}</h1>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: '#666', fontSize: '14px', marginBottom: '20px' }}>
-            <span>SKU:{currentSku}</span>
-            <span style={{ color: '#ccc' }}>|</span>
-            <span>{product.stitchedType === 'STITCHED' ? 'Ready for immediate delivery' : 'Ships in 10–15 days'}</span>
-          </div>
-          <div className="p-detail-rating" style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '15px' }}>
-            {[...Array(fullStars)].map((_, i) => <i key={`f-${i}`} className="fa-solid fa-star" style={{ color: '#a48c5a', fontSize: '14px' }}></i>)}
-            {hasHalfStar && <i className="fa-solid fa-star-half-stroke" style={{ color: '#a48c5a', fontSize: '14px' }}></i>}
+
+          <div className="p-detail-rating" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px' }}>
+            <span style={{ fontSize: '14px', color: '#666', fontWeight: '500' }}>Rating:</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {[...Array(fullStars)].map((_, i) => <i key={`f-${i}`} className="fa-solid fa-star" style={{ color: '#a48c5a', fontSize: '14px' }}></i>)}
+              {hasHalfStar && <i className="fa-solid fa-star-half-stroke" style={{ color: '#a48c5a', fontSize: '14px' }}></i>}
+            </div>
           </div>
 
           <div className="p-detail-price-myntra" style={{ marginBottom: '15px' }}>
@@ -260,7 +291,9 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
                  <span style={{ fontSize: '18px', color: '#888', textDecoration: 'line-through' }}>Rs. {(Number(product.compareAtPrice)).toFixed(2)}</span>
               ) : null}
               <span style={{ fontSize: '22px', fontWeight: 'bold', color: '#d32f2f' }}>Rs. {(Number(product.startingPrice || product.basePrice || product.price) || 0).toFixed(2)}</span>
-              <span style={{ backgroundColor: '#212121', color: '#fff', fontSize: '12px', padding: '4px 10px', borderRadius: '15px', fontWeight: 'bold' }}>Sold out</span>
+              {product.isSoldOut && (
+                <span style={{ backgroundColor: '#212121', color: '#fff', fontSize: '12px', padding: '4px 10px', borderRadius: '15px', fontWeight: 'bold' }}>Sold out</span>
+              )}
             </div>
             <div style={{ color: '#888', fontSize: '13px', marginTop: '8px' }}>(Inclusive of all taxes)</div>
           </div>
@@ -301,9 +334,9 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
              </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
-             <button onClick={handleWhatsAppEnquiry} style={{ backgroundColor: '#4CAF50', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', flex: 1 }}>Enquiry on WhatsApp</button>
-             <button onClick={handleEmailEnquiry} style={{ backgroundColor: '#F44336', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', flex: 1 }}>Enquiry on Email</button>
+          <div style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
+             <button onClick={handleWhatsAppEnquiry} style={{ backgroundColor: '#4CAF50', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', flex: '1 1 140px' }}>Enquiry on WhatsApp</button>
+             <button onClick={handleEmailEnquiry} style={{ backgroundColor: '#F44336', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', flex: '1 1 140px' }}>Enquiry on Email</button>
           </div>
 
 
@@ -375,7 +408,7 @@ function ProductDetail({ products, toggleCart, wishlist = [], toggleWishlist }) 
           </div>
 
           <div className="action-row" style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
-            {(!product.variants || product.variants.length === 0 || (activeSize && product.variants.find(v => v.id === activeSize)?.availableStock <= 0)) ? (
+            {(product.isSoldOut || !product.variants || product.variants.length === 0 || (activeSize && product.variants.find(v => v.id === activeSize)?.availableStock <= 0)) ? (
                <>
                  <button disabled style={{ width: '100%', padding: '15px', background: '#fff', color: '#999', border: '1px solid #ccc', borderRadius: '4px', fontWeight: '600', cursor: 'not-allowed', fontSize: '16px' }}>Sold out</button>
                  <button disabled style={{ width: '100%', padding: '15px', background: '#e0e0e0', color: '#999', border: 'none', borderRadius: '4px', fontWeight: '600', cursor: 'not-allowed', fontSize: '16px' }}>Buy it now</button>

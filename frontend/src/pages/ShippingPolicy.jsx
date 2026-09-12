@@ -19,7 +19,7 @@ function ShippingPolicy() {
           <p>Shipping timelines depend on the product type/category:</p>
           <ul style={{ paddingLeft: '20px', marginBottom: '20px' }}>
             <li><strong>Unstitched Poshak:</strong> Shipping timeline is 10–15 days.</li>
-            <li><strong>Stitched Poshak:</strong> Immediate delivery / ready for dispatch, subject to availability.</li>
+            <li><strong>Stitched Poshak:</strong> Immediate availability for dispatch, subject to availability. Dispatch time depends on the courier company.</li>
           </ul>
 
           <h2 style={{ fontSize: '1.5rem', marginTop: '30px', marginBottom: '15px' }}>Delays and Tracking</h2>

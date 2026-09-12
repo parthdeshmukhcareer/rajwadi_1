@@ -90,9 +90,12 @@ export const productService = {
     return response;
   },
 
-  uploadProductImage: async (id, file) => {
+  uploadProductImage: async (id, file, variantId = null) => {
     const formData = new FormData();
     formData.append('file', file);
+    if (variantId) {
+      formData.append('variantId', variantId);
+    }
     const response = await adminApiRequest(`/admin/uploads/products/${id}`, {
       method: 'POST',
       body: formData

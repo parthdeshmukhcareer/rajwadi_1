@@ -1,6 +1,7 @@
 import { db } from '../../db/index.js';
 import { supportQueries } from '../../db/schema/index.js';
 import { whatsappService } from '../../services/whatsapp.service.js';
+import { emailService } from '../../services/email.service.js';
 
 export class SupportService {
   async createQuery(data) {
@@ -14,12 +15,12 @@ export class SupportService {
       status: 'OPEN'
     }).returning();
     
-    // Optionally log/send to whatsapp
+    // Send email notification to owner
     try {
       console.log('New Support Query:', query.id);
-      // We could use whatsappService here if we want to notify owner of queries too.
+      await emailService.sendSupportQueryNotification(query);
     } catch (err) {
-      console.error('Failed to notify owner about support query', err);
+      console.error('Failed to notify owner about support query via email', err);
     }
     
     return query;

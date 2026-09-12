@@ -310,6 +310,7 @@ export class PaymentsService {
       .where(eq(orderItems.orderId, orderId));
 
       await emailService.sendOrderConfirmation(order, user, items, shippingAddress);
+      await emailService.sendOwnerOrderNotification(order, user, items, shippingAddress);
 
       const { whatsappService } = await import('../../services/whatsapp.service.js');
       whatsappService.sendOwnerWhatsAppNotification({

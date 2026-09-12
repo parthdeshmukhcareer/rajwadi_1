@@ -17,7 +17,7 @@ function About() {
             </span>
           </div>
 
-          <h2 className="about-title" style={{fontFamily: 'var(--font-serif)', fontSize: 'clamp(2.5rem, 4vw, 3.8rem)', color: '#3a1a20', lineHeight: '1.1', fontWeight: '400', marginBottom: '20px', letterSpacing: '-0.02em', whiteSpace: 'nowrap'}}>
+          <h2 className="about-title" style={{fontFamily: 'var(--font-serif)', fontSize: 'clamp(2.5rem, 4vw, 3.8rem)', color: '#3a1a20', lineHeight: '1.1', fontWeight: '400', marginBottom: '20px', letterSpacing: '-0.02em'}}>
             Timeless Heritage.<br />Thoughtfully Yours.
           </h2>
 
@@ -49,7 +49,7 @@ function About() {
       {/*  Restored Original About Content (Enhanced Luxury)  */}
       <div className="about-container section-padding" style={{backgroundColor: '#FDFBF7', position: 'relative', overflow: 'hidden', padding: '60px 20px', borderTop: '1px solid rgba(164, 140, 90, 0.15)', borderBottom: '1px solid rgba(164, 140, 90, 0.15)', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         
-        <div style={{width: '100%', display: 'flex', alignItems: 'stretch', justifyContent: 'space-between', maxWidth: '1300px', margin: '0 auto', gap: '50px', position: 'relative', zIndex: '2'}}>
+        <div className="about-split-container" style={{width: '100%', display: 'flex', alignItems: 'stretch', justifyContent: 'space-between', maxWidth: '1300px', margin: '0 auto', gap: '50px', position: 'relative', zIndex: '2'}}>
           
           {/*  Text Column (Moved to Left)  */}
           <div className="about-text-col" style={{flex: '1', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '20px 20px 20px 0'}}>
@@ -77,7 +77,7 @@ function About() {
           </div>
 
           {/*  Vertical Divider  */}
-          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 0'}}>
+          <div className="about-vertical-divider" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 0'}}>
             <div style={{width: '1px', flexGrow: '1', background: 'linear-gradient(to bottom, rgba(164,140,90,0), rgba(164,140,90,0.3) 20%, rgba(164,140,90,0.3) 80%, rgba(164,140,90,0))'}}></div>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a48c5a" stroke-width="1.5" style={{margin: '20px 0'}}>
               <path d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z"/>
@@ -111,7 +111,7 @@ function About() {
              <div style={{width: '50px', height: '1px', backgroundColor: '#a48c5a'}}></div>
           </div>
 
-          <h2 className="heritage-title" style={{fontFamily: 'var(--font-serif)', fontSize: 'clamp(2.2rem, 3.5vw, 3rem)', color: '#3a1a20', lineHeight: '1.1', fontWeight: '400', marginBottom: '25px', letterSpacing: '-0.02em', whiteSpace: 'nowrap'}}>
+          <h2 className="heritage-title" style={{fontFamily: 'var(--font-serif)', fontSize: 'clamp(2.2rem, 3.5vw, 3rem)', color: '#3a1a20', lineHeight: '1.1', fontWeight: '400', marginBottom: '25px', letterSpacing: '-0.02em'}}>
             Crafted By Generations
           </h2>
 

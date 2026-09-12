@@ -28,7 +28,7 @@ function Payment() {
         order_id: razorpayOrderId,
         name: "Rajwadi Collection",
         description: `Order ${orderNumber}`,
-        image: "https://www.rajwadi.com/static/version1780378735/frontend/Aureatelabs/rajwadi/en_US/images/logo.svg",
+        image: window.location.origin + "/assets/images/logo%20without%20bg.png",
         handler: async function (response) {
           // Step 6: Verify payment via backend
           try {

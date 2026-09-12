@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar }) {
@@ -7,7 +7,19 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isCompact = location.pathname !== '/' || isScrolled;
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -29,8 +41,33 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
   }, [isMobileMenuOpen]);
 
   return (
-    <header className="main-header" style={{ width: '100%', zIndex: 1000, position: 'relative', backgroundColor: '#1c120f' }}>
-      <div className="header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', height: '50px', padding: '0 0 0 10px', boxSizing: 'border-box' }}>
+    <>
+      <style>{`
+        .main-header {
+          background-color: ${isCompact ? '#17100e' : 'transparent'} !important;
+          background: ${isCompact ? '#17100e' : 'transparent'} !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          transition: background-color 0.3s ease, height 0.3s ease;
+          width: 100%;
+          z-index: 1000;
+          position: fixed;
+          top: 0;
+          left: 0;
+          border-bottom: none !important;
+        }
+        .header-container {
+          height: ${isCompact ? '60px' : '100px'} !important;
+        }
+        .main-header .logo-desktop {
+          height: ${isCompact ? '50px' : '90px'} !important;
+        }
+        .main-header .logo-mobile {
+          height: ${isCompact ? '50px' : '80px'} !important;
+        }
+      `}</style>
+      <header className="main-header">
+        <div className="header-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', transition: 'height 0.3s ease', padding: '0 0 0 10px', boxSizing: 'border-box' }}>
         
         {/* Left side: Mobile Menu Toggle & Logo */}
         <div style={{ display: 'flex', alignItems: 'center', flex: 1, justifyContent: 'flex-start' }}>
@@ -39,22 +76,38 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
           </button>
 
           <Link to="/" className="logo-area" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-            <img src="https://www.rajwadi.com/static/version1780378735/frontend/Aureatelabs/rajwadi/en_US/images/logo.svg" alt="Rajwadi Logo Desktop" style={{ height: '35px', width: 'auto', border: 'none', background: 'transparent', boxShadow: 'none', borderRadius: '0' }} className="logo-desktop" />
-            <img src="https://www.rajwadi.com/static/version1780378735/frontend/Aureatelabs/rajwadi/en_US/images/logo.svg" alt="Rajwadi Logo Mobile" style={{ height: '35px', width: 'auto', border: 'none', background: 'transparent', boxShadow: 'none', borderRadius: '0' }} className="logo-mobile" />
+            <img src="/assets/images/logo%20without%20bg.png" alt="Rajwadi Logo Desktop" style={{ height: isCompact ? '50px' : '90px', transition: 'height 0.3s ease', width: 'auto', border: 'none', background: 'transparent', boxShadow: 'none', borderRadius: '0' }} className="logo-desktop" />
+            <img src="/assets/images/logo%20without%20bg.png" alt="Rajwadi Logo Mobile" style={{ height: isCompact ? '50px' : '80px', transition: 'height 0.3s ease', width: 'auto', border: 'none', background: 'transparent', boxShadow: 'none', borderRadius: '0' }} className="logo-mobile" />
           </Link>
         </div>
 
         {/* Center side: Navigation Links */}
-        <nav className={`nav-categories-header ${isMobileMenuOpen ? 'active' : ''}`} style={{ backgroundColor: '#17100e' }}>
-          <div className="mobile-drawer-header" style={{ backgroundColor: '#17100e' }}>
-            <button className="mobile-menu-close" onClick={() => setIsMobileMenuOpen(false)}>
+        <style>{`
+          .nav-categories-header,
+          .nav-categories-header.active {
+            background-color: transparent !important;
+            background-image: none !important;
+          }
+          .mobile-drawer-header {
+            background-color: #1c120f !important;
+            background-image: none !important;
+            border-bottom: none !important;
+          }
+          ul.nav-menu {
+            background-color: transparent !important;
+            background-image: none !important;
+          }
+        `}</style>
+        <nav className={`nav-categories-header ${isMobileMenuOpen ? 'active' : ''}`} style={{ backgroundColor: 'transparent', backgroundImage: 'none', top: 0, margin: 0, paddingTop: 0 }}>
+          <div className="mobile-drawer-header" style={{ backgroundColor: '#1c120f', backgroundImage: 'none', margin: 0, borderBottom: 'none' }}>
+            <button className="mobile-menu-close" onClick={() => setIsMobileMenuOpen(false)} style={{ background: 'transparent', border: 'none' }}>
               <i className="fa-solid fa-xmark"></i>
             </button>
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, paddingRight: '40px'}}>
               <span style={{color: '#dfceab', fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: '400', letterSpacing: '0.05em'}}>Rajwadi</span>
             </div>
           </div>
-          <ul className="nav-menu" style={{ display: 'flex', gap: '40px', listStyle: 'none', margin: 0, padding: 0, marginRight: '30px' }}>
+          <ul className="nav-menu" style={{ display: 'flex', gap: '40px', listStyle: 'none', margin: 0, padding: 0, marginRight: '30px', backgroundColor: 'transparent', backgroundImage: 'none' }}>
             <li className="nav-item"><Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>HOME</Link></li>
             <li className="nav-item"><Link to="/catalog" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>COLLECTION</Link></li>
             <li className="nav-item"><Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="nav-link" style={{ color: '#d4c098', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold', letterSpacing: '1px' }}>ABOUT US</Link></li>
@@ -67,8 +120,9 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
         <div className={`mobile-menu-overlay ${isMobileMenuOpen ? 'active' : ''}`} onClick={() => setIsMobileMenuOpen(false)}></div>
 
         {/* Right side: Actions */}
-        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '25px', flex: 1, justifyContent: 'flex-end', marginRight: '-15px' }}>
-          <Link to="/account" className="action-icon-btn account-btn" title="Account" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: '8px', cursor: 'pointer', background: 'none', border: 'none', padding: '10px 0', marginRight: '15px' }}>
+        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '20px', flex: 1, justifyContent: 'flex-end', marginRight: '15px' }}>
+          
+          <Link to="/account" className="action-icon-btn account-btn" title="Account" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: '8px', cursor: 'pointer', background: 'none', border: 'none', padding: '10px 0', marginRight: '5px' }}>
             {isAuthenticated && user ? (
               <>
                 <div style={{
@@ -132,6 +186,7 @@ function Header({ cartCount, wishlistCount, toggleCart, toggleWishlistSidebar })
         </div>
       </div>
     </header>
+    </>
   );
 }
 

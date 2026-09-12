@@ -4,7 +4,9 @@ import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
 
 const AdminLayout = () => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  );
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);

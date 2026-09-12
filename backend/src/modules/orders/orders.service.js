@@ -126,6 +126,7 @@ export class OrdersService {
             productName: item.productName
           }));
           emailService.sendOrderConfirmation(order, user, emailItems, order.shippingAddress).catch(console.error);
+          emailService.sendOwnerOrderNotification(order, user, emailItems, order.shippingAddress).catch(console.error);
           whatsappService.sendOwnerWhatsAppNotification({
             type: 'ORDER_PLACED',
             orderId: order.id,

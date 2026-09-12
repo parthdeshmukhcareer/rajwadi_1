@@ -24,7 +24,7 @@ export const whatsappService = {
         return;
       }
 
-      const ownerNumber = '+919766631092';
+      const ownerNumber = '+91876667101';
       const hasCredentials = !!env.WHATSAPP_API_TOKEN;
 
       let message = '';

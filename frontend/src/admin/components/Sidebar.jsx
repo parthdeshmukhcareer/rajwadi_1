@@ -56,13 +56,12 @@ const Sidebar = ({ isCollapsed }) => {
             <span style={{ color: 'var(--admin-secondary)', fontSize: '24px', fontWeight: 'bold', fontFamily: 'var(--admin-font-heading)' }}>R</span>
           ) : (
             <img 
-              src="https://www.rajwadi.com/static/version1780378735/frontend/Aureatelabs/rajwadi/en_US/images/logo.svg" 
+              src="/assets/images/logo%20without%20bg.png" 
               alt="Rajwadi Admin Logo" 
               style={{ 
-                height: '35px', 
+                height: '60px', 
                 width: 'auto', 
-                maxWidth: '100%',
-                filter: 'brightness(0) invert(0.95) sepia(0.3) hue-rotate(345deg) saturate(1.2)'
+                maxWidth: '100%'
               }} 
             />
           )}

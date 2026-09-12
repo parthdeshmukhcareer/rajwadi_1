@@ -254,6 +254,13 @@ export class ProductsRepository {
     if (productRows.length === 0) return { data: [], total };
 
     const productIds = productRows.map(p => p.id);
+    const categoryIds = [...new Set(productRows.map(p => p.categoryId).filter(id => id))];
+    
+    let allCategories = [];
+    if (categoryIds.length > 0) {
+      allCategories = await db.select().from(categories).where(inArray(categories.id, categoryIds));
+    }
+
     const allImages = await db.select().from(productImages)
       .where(inArray(productImages.productId, productIds))
       .orderBy(asc(productImages.sortOrder));
@@ -264,10 +271,12 @@ export class ProductsRepository {
     const data = productRows.map(prod => {
       const prodImages = allImages.filter(img => img.productId === prod.id);
       const prodVariants = allVariants.filter(v => v.productId === prod.id);
+      const category = allCategories.find(c => c.id === prod.categoryId) || null;
       return {
         ...prod,
         images: prodImages,
-        variants: prodVariants
+        variants: prodVariants,
+        category
       };
     });
 

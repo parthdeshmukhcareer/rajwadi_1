@@ -104,8 +104,26 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
       <div className="catalog-layout">
         {/* Sidebar Filters */}
         <aside className={`filter-sidebar ${isMobileFilterOpen ? 'active' : ''}`}>
+          <style>{`
+            .filter-header-mobile {
+              display: flex !important;
+              padding: 20px 20px 10px 20px !important;
+              border-bottom: 1px solid #eee;
+              margin-bottom: 20px !important;
+              justify-content: space-between !important;
+              align-items: center !important;
+            }
+            .mobile-filter-close {
+              display: block !important;
+              background: none !important;
+              border: none !important;
+              font-size: 24px !important;
+              color: #333 !important;
+              cursor: pointer !important;
+            }
+          `}</style>
           <div className="filter-header-mobile">
-            <h3 className="filter-title" style={{ marginBottom: 0 }}>Filters</h3>
+            <h3 className="filter-title" style={{ marginBottom: 0, fontSize: '18px', fontWeight: 'bold', color: '#333' }}>Filters</h3>
             <button className="mobile-filter-close" onClick={() => setIsMobileFilterOpen(false)}>
               <i className="fa-solid fa-xmark"></i>
             </button>
@@ -116,7 +134,7 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
           <div className="filter-group" style={{ marginBottom: '20px' }}>
             <h4 className="filter-group-title" style={{ marginBottom: '10px', fontSize: '15px' }}>Category</h4>
             <div className="filter-options" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {['Pure Poshak', 'Semi Pure Poshak'].map(cat => (
+              {['Pure Poshak', 'Semi Pure Poshak', 'Cotton Poshaks'].map(cat => (
                 <label className="filter-checkbox-label" key={cat} style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input 
                     type="checkbox" 
@@ -268,7 +286,7 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
 
                 return (
                   <div className="product-card myntra-style-card" key={product.id}>
-                    <div className="product-img-wrapper" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden' }} onClick={() => navigate(`/product/${product.slug || product.id}`)}>
+                    <div className="product-img-wrapper" style={{ position: 'relative', cursor: 'pointer', overflow: 'hidden', aspectRatio: '3/4' }} onClick={() => navigate(`/product/${product.slug || product.id}`)}>
                       <button 
                         className="wishlist-btn-myntra"
                         title="Wishlist" 
@@ -276,9 +294,9 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
                       >
                         <i className={`${wishlist.includes(product.id) ? 'fa-solid' : 'fa-regular'} fa-heart`} style={{ color: wishlist.includes(product.id) ? '#ff3f6c' : '#535766', fontSize: '18px' }}></i>
                       </button>
-                      <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: product.name === 'testing' ? 'top center' : (product.name === 'Mustard Blossom Georgette Lehenga' ? 'center 10%' : 'center 25%'), opacity: product.totalStock === 0 ? '0.5' : '1' }} loading="lazy" />
-                      {product.totalStock === 0 && (
-                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', padding: '5px 15px', fontWeight: 'bold', letterSpacing: '2px', fontSize: '12px' }}>
+                      <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: product.name === 'testing' ? 'top center' : (product.name === 'Mustard Blossom Georgette Lehenga' ? 'center 10%' : (product.name === 'Indigo Floral Anarkali Suit' ? 'center 10%' : 'center 25%')), opacity: (product.isSoldOut || product.totalStock === 0) ? '0.5' : '1' }} loading="lazy" />
+                      {(product.isSoldOut || product.totalStock === 0) && (
+                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#2b2b2b', color: 'white', padding: '12px 0', width: '60%', textAlign: 'center', fontWeight: 'bold', letterSpacing: '2px', fontSize: '15px' }}>
                           SOLD OUT
                         </div>
                       )}
@@ -295,11 +313,11 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
                         </div>
                         <div style={{ display: 'flex', gap: '8px' }}>
                           <button 
-                            style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#fff', color: product.totalStock === 0 ? '#ccc' : '#432227', border: `1px solid ${product.totalStock === 0 ? '#ccc' : '#432227'}`, cursor: product.totalStock === 0 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+                            style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#fff', color: (product.isSoldOut || product.totalStock === 0) ? '#ccc' : '#432227', border: `1px solid ${(product.isSoldOut || product.totalStock === 0) ? '#ccc' : '#432227'}`, cursor: (product.isSoldOut || product.totalStock === 0) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
                             title="Add to Cart"
-                            disabled={product.totalStock === 0}
-                            onMouseOver={e => { if(product.totalStock !== 0) { e.currentTarget.style.backgroundColor = '#432227'; e.currentTarget.style.color = '#fff'; } }}
-                            onMouseOut={e => { if(product.totalStock !== 0) { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#432227'; } }}
+                            disabled={product.isSoldOut || product.totalStock === 0}
+                            onMouseOver={e => { if(!product.isSoldOut && product.totalStock !== 0) { e.currentTarget.style.backgroundColor = '#432227'; e.currentTarget.style.color = '#fff'; } }}
+                            onMouseOut={e => { if(!product.isSoldOut && product.totalStock !== 0) { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#432227'; } }}
                             onClick={(e) => { 
                               e.stopPropagation(); 
                               if (product.defaultVariantId) {
@@ -313,10 +331,10 @@ function Catalog({ products, wishlist = [], toggleWishlist, addToCart }) {
                             <i className="fa-solid fa-cart-shopping"></i>
                           </button>
                           <button 
-                            style={{ padding: '0 12px', height: '32px', borderRadius: '4px', backgroundColor: product.totalStock === 0 ? '#ccc' : '#432227', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: '11px', cursor: product.totalStock === 0 ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s' }}
-                            disabled={product.totalStock === 0}
-                            onMouseOver={e => { if(product.totalStock !== 0) e.currentTarget.style.backgroundColor = '#2a1518' }}
-                            onMouseOut={e => { if(product.totalStock !== 0) e.currentTarget.style.backgroundColor = '#432227' }}
+                            style={{ padding: '0 12px', height: '32px', borderRadius: '4px', backgroundColor: (product.isSoldOut || product.totalStock === 0) ? '#ccc' : '#432227', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: '11px', cursor: (product.isSoldOut || product.totalStock === 0) ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s' }}
+                            disabled={product.isSoldOut || product.totalStock === 0}
+                            onMouseOver={e => { if(!product.isSoldOut && product.totalStock !== 0) e.currentTarget.style.backgroundColor = '#2a1518' }}
+                            onMouseOut={e => { if(!product.isSoldOut && product.totalStock !== 0) e.currentTarget.style.backgroundColor = '#432227' }}
                             onClick={(e) => { 
                               e.stopPropagation(); 
                               if (product.defaultVariantId) {

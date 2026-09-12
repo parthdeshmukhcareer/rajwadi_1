@@ -227,3 +227,39 @@
     page-break-inside: avoid;
   }
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    transform: translateX(0);
+    width: 260px !important;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  }
+  .admin-sidebar.collapsed {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+  .admin-main-wrapper {
+    width: 100vw;
+  }
+  .admin-topbar {
+    padding: 0 16px;
+    height: 60px;
+  }
+  .admin-search-container {
+    display: none; /* Hide global search in topbar on mobile to save space */
+  }
+  .admin-profile-name {
+    display: none;
+  }
+  .admin-content {
+    padding: 16px;
+  }
+}

@@ -24,6 +24,7 @@ const ProductCreate = () => {
     gstRate: '18',
     hsnCode: '',
     isActive: true,
+    isSoldOut: false,
     sku: '',
     stockOnHand: '',
     stitchedType: 'UNSTITCHED'
@@ -74,6 +75,7 @@ const ProductCreate = () => {
         hsnCode: formData.hsnCode || undefined,
         stitchedType: formData.stitchedType,
         isActive: formData.isActive,
+        isSoldOut: formData.isSoldOut,
         variants: [
           {
             sku: formData.sku || `SKU-${Date.now()}`,
@@ -184,6 +186,22 @@ const ProductCreate = () => {
                     <option value="false">Draft</option>
                     <option value="true">Active</option>
                   </select>
+                </div>
+                <div>
+                  <label className="admin-label">Inventory Status</label>
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer', marginTop: '8px' }}>
+                    <input 
+                      type="checkbox" 
+                      name="isSoldOut" 
+                      checked={formData.isSoldOut} 
+                      onChange={e => setFormData({...formData, isSoldOut: e.target.checked})} 
+                      style={{ marginTop: '3px' }}
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>Mark as Sold Out</span>
+                      <span style={{ fontSize: '12px', color: '#6b7280' }}>Forces "Sold out" tag on storefront</span>
+                    </div>
+                  </label>
                 </div>
                 <div>
                   <label className="admin-label">Stitched Type</label>

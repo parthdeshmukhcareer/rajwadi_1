@@ -23,7 +23,10 @@ const Inventory = () => {
       // Flatten products into variants for inventory management
       const flattened = [];
       products.forEach(product => {
-        const productMainImage = product.images?.[0]?.imageUrl || product.imageUrl || product.image;
+        let productMainImage = product.images?.[0]?.imageUrl || product.imageUrl || product.image;
+        if (productMainImage && !productMainImage.startsWith('http') && !productMainImage.startsWith('/')) {
+          productMainImage = '/' + productMainImage;
+        }
         if (product.variants && product.variants.length > 0) {
           product.variants.forEach((variant, index) => {
             flattened.push({

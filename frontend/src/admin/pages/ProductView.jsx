@@ -76,7 +76,7 @@ const ProductView = () => {
                 <div style={{ padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '8px', color: 'var(--admin-primary)' }}><Tag size={20} /></div>
                 <div>
                   <div style={{ fontSize: '12px', color: 'var(--admin-text-muted)', textTransform: 'uppercase' }}>SKU</div>
-                  <div className="font-medium">{product.sku || 'N/A'}</div>
+                  <div className="font-medium">{product.variants?.[0]?.sku || product.sku || 'N/A'}</div>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -90,7 +90,9 @@ const ProductView = () => {
                 <div style={{ padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '8px', color: 'var(--admin-primary)' }}><Package size={20} /></div>
                 <div>
                   <div style={{ fontSize: '12px', color: 'var(--admin-text-muted)', textTransform: 'uppercase' }}>Stock</div>
-                  <div className="font-medium">{product.stockOnHand || 0} units</div>
+                  <div className="font-medium">
+                    {product.variants?.reduce((sum, v) => sum + (v.stockOnHand ?? v.availableStock ?? 0), 0) || 0} units
+                  </div>
                 </div>
               </div>
             </div>
@@ -156,7 +158,7 @@ const ProductView = () => {
                 {product.images.map((img, idx) => (
                   <div key={idx} style={{ position: 'relative', paddingBottom: '100%', backgroundColor: '#f0f0f0', borderRadius: '8px', overflow: 'hidden' }}>
                     <img 
-                      src={img.url} 
+                      src={img.imageUrl?.startsWith('http') ? img.imageUrl : `/${img.imageUrl}`} 
                       alt={`Product ${idx}`} 
                       style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     />

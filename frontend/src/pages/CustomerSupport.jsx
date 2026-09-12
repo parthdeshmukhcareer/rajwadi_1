@@ -63,7 +63,7 @@ function CustomerSupport() {
           <div style={{ flex: '1 1 300px', backgroundColor: '#fcf8f0', padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
             <i className="fa-solid fa-phone" style={{ fontSize: '24px', color: '#a48c5a', marginBottom: '15px' }}></i>
             <h3 style={{ fontSize: '18px', color: '#3a1a20', marginBottom: '10px' }}>Call Us</h3>
-            <p style={{ color: '#432227' }}>+91 9766631092</p>
+            <p style={{ color: '#432227' }}>+91 87666 67101</p>
           </div>
         </div>
 
@@ -80,9 +80,22 @@ function CustomerSupport() {
               {errorMsg}
             </div>
           )}
+          
+          <style>{`
+            .support-form-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+            }
+            @media (max-width: 768px) {
+              .support-form-grid {
+                grid-template-columns: 1fr;
+              }
+            }
+          `}</style>
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="support-form-grid">
               <div>
                 <label style={{ display: 'block', marginBottom: '8px', color: '#432227', fontSize: '14px' }}>Name *</label>
                 <input type="text" name="name" value={formData.name} onChange={handleChange} required style={{ width: '100%', padding: '12px', border: '1px solid #d4d5d9', borderRadius: '4px' }} />
@@ -93,7 +106,7 @@ function CustomerSupport() {
               </div>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="support-form-grid">
               <div>
                 <label style={{ display: 'block', marginBottom: '8px', color: '#432227', fontSize: '14px' }}>Phone *</label>
                 <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required style={{ width: '100%', padding: '12px', border: '1px solid #d4d5d9', borderRadius: '4px' }} />

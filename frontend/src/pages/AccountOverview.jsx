@@ -95,8 +95,21 @@ function AccountOverview() {
           </div>
         )}
 
+        <style>{`
+          .profile-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+          }
+          @media (max-width: 768px) {
+            .profile-info-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        `}</style>
+
         {!isEditing ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div className="profile-info-grid">
             <div>
               <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', marginBottom: '5px' }}>First Name</span>
               <strong style={{ fontSize: '14px', color: '#333' }}>{user?.firstName}</strong>
@@ -107,7 +120,7 @@ function AccountOverview() {
             </div>
             <div>
               <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', marginBottom: '5px' }}>Email</span>
-              <strong style={{ fontSize: '14px', color: '#333' }}>{user?.email}</strong>
+              <strong style={{ fontSize: '14px', color: '#333', wordBreak: 'break-all' }}>{user?.email}</strong>
             </div>
             <div>
               <span style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', marginBottom: '5px' }}>Phone</span>
@@ -123,7 +136,7 @@ function AccountOverview() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <form onSubmit={handleSubmit} className="profile-info-grid">
             <div>
               <label style={{ display: 'block', fontSize: '12px', color: '#888', textTransform: 'uppercase', marginBottom: '5px' }}>First Name</label>
               <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd', boxSizing: 'border-box' }} />
